@@ -91,7 +91,6 @@ export default function MDXRenderer({ content }: Props) {
 
   return (
     <div className="prose-custom">
-      {/* @ts-expect-error MDXRemote is a client component with dynamic props */}
       <MDXRemote
         source={content}
         components={components}
