@@ -81,6 +81,19 @@ export interface Project {
 }
 
 // --- Interview Types ---
+
+/** 四大面试维度 */
+export type InterviewDimension = "basics" | "engineering" | "practice" | "trends";
+
+export interface DimensionMeta {
+  id: InterviewDimension;
+  name: string;
+  icon: string;
+  description: string;
+  color: string;
+  subCategories: string[];
+}
+
 export interface InterviewFrontmatter {
   title: string;
   description: string;
@@ -88,12 +101,26 @@ export interface InterviewFrontmatter {
   tags: string[];
   difficulty: "easy" | "medium" | "hard";
   order: number;
+  dimension: InterviewDimension;
+  qNumber: number; // Q1-Q100
 }
 
 export interface InterviewQuestion {
   slug: string;
   frontmatter: InterviewFrontmatter;
   content: string;
+}
+
+export interface InterviewQuestionItem {
+  slug: string;
+  qNumber: number;
+  title: string;
+  question: string; // 题目原文
+  answer: string; // 期望回答 (markdown)
+  category: string;
+  tags: string[];
+  difficulty: "easy" | "medium" | "hard";
+  dimension: InterviewDimension;
 }
 
 // --- Search Types ---

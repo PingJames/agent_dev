@@ -69,13 +69,7 @@ export default async function LatestPosts() {
                 {post.frontmatter.description}
               </p>
 
-              {/* Reading Time */}
-              <div className="mt-4 flex items-center text-xs text-slate-400 dark:text-slate-500">
-                <svg className="mr-1 h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                </svg>
-                {post.frontmatter.readingTime} 分钟阅读
-              </div>
+
             </Link>
           ))}
         </div>

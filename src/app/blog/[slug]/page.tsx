@@ -4,7 +4,12 @@ import { notFound } from "next/navigation";
 import { format } from "date-fns";
 import { zhCN } from "date-fns/locale";
 import Link from "next/link";
-import MDXRenderer from "@/components/blog/MDXRenderer";
+import { compileMDX } from "next-mdx-remote/rsc";
+import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
+import rehypeHighlight from "rehype-highlight";
+import { mdxComponents } from "@/components/blog/mdx-components";
 
 interface Props {
   params: { slug: string };
@@ -40,11 +45,23 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default function BlogDetailPage({ params }: Props) {
+export default async function BlogDetailPage({ params }: Props) {
   const post = getBlogPost(params.slug);
   if (!post) notFound();
 
   const { frontmatter, content } = post;
+
+  const compiled = await compileMDX({
+    source: content,
+    options: {
+      mdxOptions: {
+        remarkPlugins: [remarkGfm, remarkMath],
+        rehypePlugins: [rehypeHighlight, rehypeKatex],
+      },
+      parseFrontmatter: false,
+    },
+    components: mdxComponents,
+  });
 
   const difficultyLabels: Record<string, string> = {
     beginner: "入门",
@@ -104,12 +121,6 @@ export default function BlogDetailPage({ params }: Props) {
                 </svg>
                 {format(new Date(frontmatter.date), "yyyy年MM月dd日", { locale: zhCN })}
               </span>
-              <span className="flex items-center gap-1">
-                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                </svg>
-                {frontmatter.readingTime} 分钟阅读
-              </span>
               {frontmatter.updated && (
                 <span className="flex items-center gap-1">
                   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
@@ -145,7 +156,7 @@ export default function BlogDetailPage({ params }: Props) {
 
           {/* Article Content */}
           <div className="prose-custom">
-            <MDXRenderer content={content} frontmatter={frontmatter} />
+            {compiled.content}
           </div>
 
           {/* Back to Blog */}

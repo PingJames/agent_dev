@@ -64,12 +64,6 @@ export default function BlogCard({ post }: Props) {
       {/* Footer */}
       <div className="mt-4 flex items-center justify-between text-xs text-slate-400 dark:text-slate-500">
         <div className="flex items-center gap-3">
-          <span className="flex items-center gap-1">
-            <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-            </svg>
-            {frontmatter.readingTime} 分钟
-          </span>
           <span>{format(new Date(frontmatter.date), "yyyy/MM/dd", { locale: zhCN })}</span>
         </div>
       </div>
