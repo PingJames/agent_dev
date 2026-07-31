@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -27,7 +27,7 @@ const typeColors: Record<string, string> = {
   roadmap: "badge-info",
 };
 
-export default function SearchPage() {
+function SearchContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const initialQuery = searchParams.get("q") || "";
@@ -232,5 +232,21 @@ export default function SearchPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense fallback={
+      <div className="section-padding">
+        <div className="container-custom">
+          <div className="mx-auto max-w-2xl py-20 text-center">
+            <div className="h-6 w-48 mx-auto rounded bg-slate-200 dark:bg-slate-700 animate-pulse" />
+          </div>
+        </div>
+      </div>
+    }>
+      <SearchContent />
+    </Suspense>
   );
 }
