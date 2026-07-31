@@ -1,0 +1,51 @@
+{
+  "slug": "llm-basics",
+  "title": "阶段2：大模型应用基础",
+  "order": 2,
+  "description": "知道大模型是什么、如何使用。大幅压缩理论内容，聚焦应用开发者所需的核心概念：LLM、Token、Embedding，为后续开发打好基础。",
+  "icon": "📚",
+  "nodes": [
+    {
+      "id": "what-is-llm",
+      "title": "什么是 LLM",
+      "description": "简单理解大语言模型的核心概念，了解 GPT、Claude、Gemini、Qwen、DeepSeek 等主流模型的特点和适用场景。",
+      "difficulty": "beginner",
+      "estimatedHours": 5,
+      "resources": [
+        { "title": "OpenAI GPT 文档", "url": "https://platform.openai.com/docs/models", "type": "article", "isFree": true },
+        { "title": "Anthropic Claude 介绍", "url": "https://docs.anthropic.com/en/docs/about-claude", "type": "article", "isFree": true }
+      ]
+    },
+    {
+      "id": "transformer-intro",
+      "title": "Transformer 简介",
+      "description": "只需要理解文本 → Token → 模型计算 → 预测下一个 Token → 生成文本 的基本流程，不深入数学推导和 Attention 公式。",
+      "difficulty": "beginner",
+      "estimatedHours": 3,
+      "resources": [
+        { "title": "The Illustrated Transformer", "url": "https://jalammar.github.io/illustrated-transformer/", "type": "article", "isFree": true }
+      ]
+    },
+    {
+      "id": "token",
+      "title": "Token 与成本",
+      "description": "理解 Token 是什么、为什么按 Token 收费、输入和输出 Token 的区别、如何通过控制上下文长度来优化成本。",
+      "difficulty": "beginner",
+      "estimatedHours": 3,
+      "resources": [
+        { "title": "OpenAI Tokenizer", "url": "https://platform.openai.com/tokenizer", "type": "article", "isFree": true }
+      ]
+    },
+    {
+      "id": "embedding",
+      "title": "Embedding 向量嵌入",
+      "description": "理解把文本转换成向量的概念和用途，为后续 RAG 检索增强生成阶段做准备。知道如何用 Embedding 做语义搜索。",
+      "difficulty": "intermediate",
+      "estimatedHours": 4,
+      "prerequisites": ["what-is-llm"],
+      "resources": [
+        { "title": "OpenAI Embeddings 文档", "url": "https://platform.openai.com/docs/guides/embeddings", "type": "article", "isFree": true }
+      ]
+    }
+  ]
+}

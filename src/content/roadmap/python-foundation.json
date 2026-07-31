@@ -1,0 +1,70 @@
+{
+  "slug": "python-foundation",
+  "title": "Python 编程基础",
+  "order": -1,
+  "description": "掌握 AI 开发必备的 Python 编程能力。涵盖 Python 语法、数据结构、函数式编程、面向对象编程及常用标准库，为后续 AI 开发打下坚实基础。",
+  "icon": "🐍",
+  "nodes": [
+    {
+      "id": "python-basics",
+      "title": "Python 基础语法",
+      "description": "掌握 Python 的基本数据类型、控制流、函数定义、模块导入等核心语法。",
+      "difficulty": "beginner",
+      "estimatedHours": 10,
+      "resources": [
+        { "title": "Python 官方教程", "url": "https://docs.python.org/zh-cn/3/tutorial/", "type": "article", "isFree": true }
+      ],
+      "children": [
+        {
+          "id": "python-data-types",
+          "title": "数据类型与变量",
+          "description": "数值、字符串、列表、元组、字典、集合等内置数据结构的用法。"
+        },
+        {
+          "id": "python-control-flow",
+          "title": "控制流与循环",
+          "description": "if/else 条件判断、for/while 循环、列表推导式等。"
+        },
+        {
+          "id": "python-functions",
+          "title": "函数与模块",
+          "description": "函数定义、参数传递、lambda 表达式、模块导入与包管理。"
+        }
+      ]
+    },
+    {
+      "id": "python-oop",
+      "title": "面向对象编程",
+      "description": "理解类与对象、继承、多态、封装等 OOP 核心概念，掌握 Python 中的面向对象设计。",
+      "difficulty": "beginner",
+      "estimatedHours": 8,
+      "prerequisites": ["python-basics"],
+      "resources": [
+        { "title": "Real Python OOP 教程", "url": "https://realpython.com/python3-object-oriented-programming/", "type": "article", "isFree": true }
+      ]
+    },
+    {
+      "id": "python-advanced",
+      "title": "Python 进阶特性",
+      "description": "学习装饰器、生成器、上下文管理器、迭代器等 Python 高级特性，提升代码质量和开发效率。",
+      "difficulty": "intermediate",
+      "estimatedHours": 10,
+      "prerequisites": ["python-oop"],
+      "resources": [
+        { "title": "Python 进阶教程", "url": "https://docs.python.org/zh-cn/3/howto/", "type": "article", "isFree": true }
+      ]
+    },
+    {
+      "id": "python-data-libs",
+      "title": "科学计算库入门",
+      "description": "初步了解 NumPy 数值计算、Pandas 数据处理、Matplotlib 数据可视化等 AI 开发必备库。",
+      "difficulty": "intermediate",
+      "estimatedHours": 12,
+      "prerequisites": ["python-advanced"],
+      "resources": [
+        { "title": "NumPy 官方文档", "url": "https://numpy.org/doc/", "type": "article", "isFree": true },
+        { "title": "Pandas 入门教程", "url": "https://pandas.pydata.org/docs/getting_started/", "type": "article", "isFree": true }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "slug": "prompt-engineering",
+  "title": "阶段4：Prompt Engineering",
+  "order": 4,
+  "description": "系统提升 AI 应用的输出效果。掌握 Prompt 基础四要素和 Few Shot、Chain of Thought、ReAct 等高级技巧，完成 AI 代码助手项目。",
+  "icon": "✍️",
+  "nodes": [
+    {
+      "id": "prompt-basics",
+      "title": "Prompt 基础四要素",
+      "description": "系统学习 Role（角色设定）、Instruction（指令约束）、Context（上下文信息）、Example（示例引导）四大 Prompt 组成要素，掌握高质量 Prompt 的编写方法。",
+      "difficulty": "beginner",
+      "estimatedHours": 8,
+      "resources": [
+        { "title": "Prompt Engineering Guide", "url": "https://www.promptingguide.ai/zh", "type": "article", "isFree": true },
+        { "title": "OpenAI Prompt Engineering 指南", "url": "https://platform.openai.com/docs/guides/prompt-engineering", "type": "article", "isFree": true }
+      ]
+    },
+    {
+      "id": "advanced-prompt",
+      "title": "高级提示技巧",
+      "description": "了解 Few Shot 少样本提示、Chain of Thought 思维链推理、ReAct 推理-行动模式等高级提示技术，提升复杂任务的处理能力。",
+      "difficulty": "intermediate",
+      "estimatedHours": 8,
+      "prerequisites": ["prompt-basics"],
+      "resources": [
+        { "title": "Chain-of-Thought 论文解读", "url": "https://arxiv.org/abs/2201.11903", "type": "article", "isFree": true },
+        { "title": "ReAct 论文", "url": "https://arxiv.org/abs/2210.03629", "type": "article", "isFree": true }
+      ],
+      "children": [
+        {
+          "id": "few-shot",
+          "title": "Few Shot 少样本提示",
+          "description": "通过提供少量示例让模型理解任务模式，适用于分类、翻译、代码生成等场景。"
+        },
+        {
+          "id": "cot",
+          "title": "Chain of Thought 思维链",
+          "description": "引导模型分步骤推理，显著提升数学、逻辑推理等复杂任务准确率。"
+        },
+        {
+          "id": "react",
+          "title": "ReAct 推理行动模式",
+          "description": "结合推理和行动，让模型在思考过程中调用工具、查找信息，为 Agent 开发做铺垫。"
+        }
+      ]
+    },
+    {
+      "id": "prompt-project",
+      "title": "项目实战：AI 代码助手",
+      "description": "综合运用 Prompt 技术开发一个 AI 代码助手：代码解释、代码审查建议、Bug 修复建议、代码优化。",
+      "difficulty": "intermediate",
+      "estimatedHours": 8,
+      "prerequisites": ["advanced-prompt"],
+      "resources": [
+        { "title": "GitHub Copilot 文档", "url": "https://docs.github.com/en/copilot", "type": "article", "isFree": true }
+      ]
+    }
+  ]
+}

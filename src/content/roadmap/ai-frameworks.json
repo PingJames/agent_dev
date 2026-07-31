@@ -1,0 +1,73 @@
+{
+  "slug": "ai-frameworks",
+  "title": "阶段5：AI 应用开发框架",
+  "order": 5,
+  "description": "不要重复造轮子。掌握 LangChain、LangGraph、LlamaIndex 三大主流框架，了解 Dify/Coze 低代码 AI 平台，大幅提升开发效率。",
+  "icon": "🏗️",
+  "nodes": [
+    {
+      "id": "langchain",
+      "title": "LangChain 框架",
+      "description": "掌握 Prompt Template 模板管理、Chain 链式调用、Retriever 检索器、Agent 智能体等核心组件，理解 LCEL 表达式语言。",
+      "difficulty": "intermediate",
+      "estimatedHours": 15,
+      "resources": [
+        { "title": "LangChain 官方文档", "url": "https://python.langchain.com/docs/", "type": "article", "isFree": true }
+      ],
+      "children": [
+        {
+          "id": "prompt-template",
+          "title": "Prompt Template",
+          "description": "模板化管理 Prompt，支持变量替换和动态提示词生成。"
+        },
+        {
+          "id": "chain",
+          "title": "Chain 链",
+          "description": "将多个组件串联成处理管道，实现复杂 AI 工作流。"
+        },
+        {
+          "id": "retriever",
+          "title": "Retriever 检索器",
+          "description": "连接向量数据库，实现文档检索和相似度搜索。"
+        },
+        {
+          "id": "lc-agent",
+          "title": "Agent 智能体",
+          "description": "基于 LangChain 构建具有自主决策和工具调用能力的 AI Agent。"
+        }
+      ]
+    },
+    {
+      "id": "langgraph",
+      "title": "LangGraph 工作流",
+      "description": "掌握 State 状态管理和 Workflow 工作流设计，构建包含条件分支、循环、并行执行等复杂逻辑的 AI 应用。",
+      "difficulty": "advanced",
+      "estimatedHours": 10,
+      "prerequisites": ["langchain"],
+      "resources": [
+        { "title": "LangGraph 官方文档", "url": "https://langchain-ai.github.io/langgraph/", "type": "article", "isFree": true }
+      ]
+    },
+    {
+      "id": "llamaindex",
+      "title": "LlamaIndex 数据框架",
+      "description": "掌握 LlamaIndex 的数据连接能力：多源数据加载、索引构建、查询引擎，实现高效的数据检索和问答。",
+      "difficulty": "intermediate",
+      "estimatedHours": 8,
+      "resources": [
+        { "title": "LlamaIndex 官方文档", "url": "https://docs.llamaindex.ai/", "type": "article", "isFree": true }
+      ]
+    },
+    {
+      "id": "lowcode-ai",
+      "title": "Dify / Coze 低代码平台",
+      "description": "了解低代码 AI 应用平台的使用方式，学会用可视化方式快速搭建 AI 应用原型，适用于快速验证和不需复杂定制的场景。",
+      "difficulty": "beginner",
+      "estimatedHours": 5,
+      "resources": [
+        { "title": "Dify 官方文档", "url": "https://docs.dify.ai/zh-hans", "type": "article", "isFree": true },
+        { "title": "Coze 开发平台", "url": "https://www.coze.com/", "type": "article", "isFree": true }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "slug": "rag",
+  "title": "阶段6：RAG 企业知识库开发（核心）",
+  "order": 6,
+  "description": "招聘重点！开发企业最常见的 AI 应用——知识库问答系统。掌握文档解析、向量数据库、检索优化全链路技术。",
+  "icon": "🔍",
+  "nodes": [
+    {
+      "id": "rag-flow",
+      "title": "RAG 核心流程",
+      "description": "理解 用户问题 → Embedding 向量化 → 向量搜索 → 相关文档 → LLM 回答 的完整 RAG 流程，建立端到端认知。",
+      "difficulty": "beginner",
+      "estimatedHours": 8,
+      "resources": [
+        { "title": "LangChain RAG 教程", "url": "https://python.langchain.com/docs/tutorials/rag/", "type": "article", "isFree": true }
+      ]
+    },
+    {
+      "id": "doc-processing",
+      "title": "文档解析与处理",
+      "description": "学习 PDF 解析（PyPDF2、pdfplumber）、Word 解析（python-docx）、Markdown 解析，掌握文档加载、文本清洗、分块策略。",
+      "difficulty": "intermediate",
+      "estimatedHours": 10,
+      "prerequisites": ["rag-flow"],
+      "resources": [
+        { "title": "LangChain Document Loaders", "url": "https://python.langchain.com/docs/integrations/document_loaders/", "type": "article", "isFree": true }
+      ],
+      "children": [
+        {
+          "id": "pdf-parse",
+          "title": "PDF 解析",
+          "description": "使用 PyPDF2、pdfplumber 等工具解析 PDF 文档，处理扫描件和复杂排版。"
+        },
+        {
+          "id": "word-md-parse",
+          "title": "Word / Markdown 解析",
+          "description": "处理企业常见文档格式，保持文档结构和语义信息。"
+        }
+      ]
+    },
+    {
+      "id": "vector-db",
+      "title": "向量数据库",
+      "description": "掌握至少一个主流向量数据库（Milvus/Elasticsearch），了解 FAISS、Chroma 等轻量级方案，理解向量索引和相似度搜索原理。",
+      "difficulty": "intermediate",
+      "estimatedHours": 12,
+      "prerequisites": ["rag-flow"],
+      "resources": [
+        { "title": "Milvus 官方文档", "url": "https://milvus.io/docs/zh/", "type": "article", "isFree": true },
+        { "title": "Elasticsearch 向量搜索指南", "url": "https://www.elastic.co/guide/en/elasticsearch/reference/current/knn-search.html", "type": "article", "isFree": true }
+      ]
+    },
+    {
+      "id": "rag-optimization",
+      "title": "RAG 优化技巧（重点）",
+      "description": "掌握 Chunk 分块策略优化、Rerank 重排序、Query Rewrite 查询重写、Hybrid Search 混合检索等进阶优化技术，大幅提升检索准确率。",
+      "difficulty": "advanced",
+      "estimatedHours": 15,
+      "prerequisites": ["doc-processing", "vector-db"],
+      "resources": [
+        { "title": "RAG 最佳实践", "url": "https://www.pinecone.io/learn/retrieval-augmented-generation/", "type": "article", "isFree": true }
+      ],
+      "children": [
+        {
+          "id": "chunk-opt",
+          "title": "Chunk 优化",
+          "description": "固定大小分块、语义分块、重叠窗口、层级分块等多策略对比选择。"
+        },
+        {
+          "id": "rerank",
+          "title": "Rerank 重排序",
+          "description": "使用 Cohere Rerank、BGE Reranker 等模型对初步检索结果进行精排。"
+        },
+        {
+          "id": "query-rewrite",
+          "title": "Query Rewrite 查询重写",
+          "description": "利用 LLM 对用户问题进行改写、扩展、分解，提升检索召回率。"
+        },
+        {
+          "id": "hybrid-search",
+          "title": "Hybrid Search 混合检索",
+          "description": "结合向量检索和关键词检索（BM25），优势互补提高检索效果。"
+        }
+      ]
+    },
+    {
+      "id": "rag-project",
+      "title": "项目实战：企业知识库平台",
+      "description": "综合运用 RAG 技术栈开发完整的企业知识库问答平台，包含文档上传、知识库管理、智能问答、引用溯源等功能。",
+      "difficulty": "advanced",
+      "estimatedHours": 15,
+      "prerequisites": ["rag-optimization"]
+    }
+  ]
+}

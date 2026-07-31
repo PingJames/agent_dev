@@ -1,0 +1,75 @@
+{
+  "slug": "llm-application",
+  "title": "大模型应用开发实战",
+  "order": 3.5,
+  "description": "将大模型能力落地为实际应用。涵盖 API 调用优化、流式输出、上下文管理、多模态应用、模型部署与监控等工程实践。",
+  "icon": "🚀",
+  "nodes": [
+    {
+      "id": "llm-api-integration",
+      "title": "大模型 API 集成",
+      "description": "掌握 OpenAI、Claude、国产大模型等 API 的调用方法，理解参数配置（temperature、top_p、max_tokens）对输出质量的影响。",
+      "difficulty": "beginner",
+      "estimatedHours": 6,
+      "resources": [
+        { "title": "OpenAI API 文档", "url": "https://platform.openai.com/docs/api-reference", "type": "article", "isFree": true }
+      ],
+      "children": [
+        {
+          "id": "llm-api-params",
+          "title": "API 参数调优",
+          "description": "temperature、top_p、frequency_penalty、presence_penalty 等参数的深入理解与调优实践。"
+        },
+        {
+          "id": "llm-multi-provider",
+          "title": "多平台适配",
+          "description": "统一封装不同大模型提供商的 API，实现灵活切换和降级策略。"
+        }
+      ]
+    },
+    {
+      "id": "streaming",
+      "title": "流式输出与实时交互",
+      "description": "实现 SSE（Server-Sent Events）流式响应，优化用户体验，处理 token 级别的实时渲染。",
+      "difficulty": "intermediate",
+      "estimatedHours": 6,
+      "prerequisites": ["llm-api-integration"],
+      "resources": [
+        { "title": "SSE 规范", "url": "https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events", "type": "article", "isFree": true }
+      ]
+    },
+    {
+      "id": "context-management",
+      "title": "上下文窗口管理",
+      "description": "管理长对话的上下文：滑动窗口、摘要压缩、重要信息提取、token 计数与预算控制。",
+      "difficulty": "intermediate",
+      "estimatedHours": 8,
+      "prerequisites": ["llm-api-integration"],
+      "resources": [
+        { "title": "LangChain Memory 文档", "url": "https://python.langchain.com/docs/concepts/memory/", "type": "article", "isFree": true }
+      ]
+    },
+    {
+      "id": "multimodal",
+      "title": "多模态应用开发",
+      "description": "整合文本、图像、语音、视频等多模态能力，构建丰富的 AI 交互体验。",
+      "difficulty": "advanced",
+      "estimatedHours": 10,
+      "prerequisites": ["streaming"],
+      "resources": [
+        { "title": "GPT-4 Vision API", "url": "https://platform.openai.com/docs/guides/vision", "type": "article", "isFree": true }
+      ]
+    },
+    {
+      "id": "llm-deployment",
+      "title": "模型部署与监控",
+      "description": "学习模型服务化部署（vLLM、TGI），API 网关配置，负载均衡，以及日志、监控、告警体系的搭建。",
+      "difficulty": "advanced",
+      "estimatedHours": 12,
+      "prerequisites": ["context-management"],
+      "resources": [
+        { "title": "vLLM 官方文档", "url": "https://docs.vllm.ai/", "type": "article", "isFree": true }
+      ]
+    }
+  ]
+}

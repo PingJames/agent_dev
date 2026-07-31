@@ -1,0 +1,171 @@
+---
+title: "Prompt Engineering 实战指南：从基础到高级技巧"
+description: "系统学习 Prompt Engineering 的核心技巧，包括零样本、少样本、思维链、结构化输出等，提升 LLM 应用的输出质量和可控性。"
+date: "2024-07-25"
+category: "prompt-engineering"
+tags: ["Prompt Engineering", "LLM", "GPT", "结构化输出", "最佳实践"]
+author: "AI Engineer Roadmap"
+featured: true
+draft: false
+difficulty: "beginner"
+---
+
+## 什么是 Prompt Engineering？
+
+Prompt Engineering 是设计和优化输入提示词（Prompt）以引导 LLM 产生期望输出的技术。一个好的 Prompt 能显著提升模型输出的质量和可靠性。
+
+## 核心技巧
+
+### 1. 角色扮演
+
+为模型设定特定角色，可以显著改善输出质量：
+
+```text
+❌ 差：解释什么是机器学习
+
+✅ 好：你是一位资深机器学习教授，正在为一个完全没有
+编程经验的大学生解释机器学习的基本概念。请用通俗易懂的
+语言，配合生活化的例子来说明。
+```
+
+### 2. 格式约束
+
+明确指定输出格式，确保结果可解析：
+
+```text
+请以 JSON 格式总结以下会议记录：
+{
+  "title": "会议标题",
+  "date": "日期",
+  "participants": ["参与者列表"],
+  "key_points": ["要点1", "要点2"],
+  "action_items": [
+    {"task": "任务", "assignee": "负责人", "deadline": "截止日期"}
+  ]
+}
+
+会议记录：
+{MEETING_TRANSCRIPT}
+```
+
+### 3. 思维链（Chain of Thought）
+
+引导模型逐步推理：
+
+```text
+请一步一步分析这个逻辑问题：
+
+问题：一个房间里有三个开关分别控制另一个房间的三盏灯。
+你只能去有灯的房间一次，如何确定每个开关控制哪盏灯？
+
+请按照以下步骤思考：
+1. 列出所有可能的策略
+2. 分析每种策略的可行性
+3. 选择最优方案
+4. 给出最终答案
+```
+
+### 4. Few-Shot Learning
+
+提供几个示例来引导模型的输出模式：
+
+```python
+# 情感分析示例
+examples = [
+    {
+        "text": "这家餐厅的服务太棒了！",
+        "sentiment": "positive",
+        "confidence": 0.95
+    },
+    {
+        "text": "等了一个小时还没上菜，再也不会来了。",
+        "sentiment": "negative",
+        "confidence": 0.92
+    },
+]
+
+prompt = f"""
+请按照以下示例分析文本的情感：
+
+示例：
+{format_examples(examples)}
+
+新文本：{text}
+请给出情感标签和置信度：
+"""
+```
+
+### 5. 结构化分段
+
+使用清晰的 Markdown 结构组织 Prompt：
+
+```markdown
+## 任务
+将以下代码从 Python 翻译成 TypeScript
+
+## 要求
+- 保持相同的逻辑和功能
+- 使用 TypeScript 的类型系统
+- 遵循 ESLint 规范
+- 添加必要的注释
+
+## 输入代码
+```python
+{CODE}
+```
+
+## 输出格式
+请直接给出翻译后的 TypeScript 代码，
+不需要解释翻译过程。
+```
+
+## 高级技巧
+
+### 自我一致性（Self-Consistency）
+
+让模型多次回答同一问题，选择最一致的答案：
+
+```python
+def self_consistency_prompt(query, n=5):
+    responses = []
+    for _ in range(n):
+        response = llm.generate(
+            prompt=f"{query}\n请仔细思考后给出答案"
+        )
+        responses.append(response)
+    return most_frequent(responses)
+```
+
+### 反思（Reflection）
+
+让模型评估和改进自己的输出：
+
+```text
+第一步：请回答以下问题
+{QUESTION}
+
+第二步：请反思你刚才的回答：
+1. 是否有逻辑错误？
+2. 是否遗漏了重要信息？
+3. 表述是否清晰？
+
+第三步：基于反思，给出改进后的最终答案
+```
+
+## 常见陷阱与对策
+
+| 问题 | 原因 | 解决方案 |
+|------|------|----------|
+| 输出不稳定 | 温度参数过高 | 降低 temperature 到 0-0.3 |
+| 回答偏离主题 | 指令不够明确 | 增加约束条件和角色设定 |
+| 输出截断 | max_tokens 不足 | 分段处理或增加 token 限制 |
+| 幻觉问题 | 模型编造信息 | 要求引用来源，配合 RAG |
+
+## 总结
+
+Prompt Engineering 是一门实践性很强的技艺。核心原则是：
+
+1. **清晰明确**：指令要具体，不要留太多模糊空间
+2. **结构化**：使用 Markdown 或分隔符组织 Prompt
+3. **迭代优化**：不断测试和调整 Prompt
+4. **质量评估**：建立自动化评估指标

@@ -1,0 +1,144 @@
+---
+title: "AI 智能客服 Agent"
+description: "构建一个基于 Multi-Agent 架构的智能客服系统，支持意图识别、知识库检索、工单创建和人工转接等功能。"
+date: "2024-06-25"
+category: "agent"
+tags: ["AI Agent", "客服系统", "LangGraph", "Multi-Agent", "WebSocket"]
+difficulty: "advanced"
+featured: true
+draft: false
+techStack: ["Python", "LangGraph", "FastAPI", "WebSocket", "Redis", "PostgreSQL"]
+githubUrl: "https://github.com/example/ai-customer-service"
+---
+
+## 项目概述
+
+构建一个生产级 AI 智能客服系统，能够：
+
+- 自动识别用户意图
+- 从知识库检索答案
+- 处理复杂多轮对话
+- 自动创建和跟踪工单
+- 智能转接人工客服
+
+## 系统架构
+
+```text
+                    ┌──────────────┐
+                    │  Web Client  │
+                    └──────┬───────┘
+                           │ WebSocket
+                    ┌──────▼───────┐
+                    │  API Gateway │
+                    └──────┬───────┘
+                           │
+              ┌────────────┼────────────┐
+              │            │            │
+       ┌──────▼─────┐ ┌───▼────┐ ┌────▼────┐
+       │Intent Agent│ │QA Agent│ │Ticket   │
+       │  (意图识别)  │ │(问答)  │ │Agent    │
+       └──────┬─────┘ └───┬────┘ └────┬────┘
+              │            │           │
+              └────────────┼───────────┘
+                           │
+                    ┌──────▼──────┐
+                    │  Supervisor │
+                    │   Agent     │
+                    └─────────────┘
+```
+
+## 核心实现
+
+### Supervisor Agent
+
+```python
+from langgraph.graph import StateGraph, END
+from langgraph.prebuilt import ToolNode
+
+class CustomerServiceState(TypedDict):
+    messages: list
+    intent: str
+    context: dict
+    ticket_id: str | None
+    transfer_to_human: bool
+
+def supervisor(state: CustomerServiceState):
+    """主管 Agent：路由决策"""
+    last_message = state["messages"][-1]
+
+    if "人工" in last_message.content:
+        return {"transfer_to_human": True, "next": "human_agent"}
+
+    if state.get("ticket_id"):
+        return {"next": "ticket_agent"}
+
+    intent = classify_intent(last_message.content)
+    return {"intent": intent, "next": "qa_agent"}
+```
+
+### WebSocket 实时通信
+
+```python
+from fastapi import WebSocket
+
+@app.websocket("/ws/chat/{session_id}")
+async def chat_websocket(websocket: WebSocket, session_id: str):
+    await websocket.accept()
+
+    agent = CustomerServiceAgent(session_id)
+
+    while True:
+        # 接收用户消息
+        data = await websocket.receive_json()
+        user_message = data["message"]
+
+        # Agent 处理
+        async for chunk in agent.stream(user_message):
+            # 流式返回
+            await websocket.send_json({
+                "type": "message",
+                "content": chunk,
+                "role": "assistant"
+            })
+
+        await websocket.send_json({"type": "done"})
+```
+
+## 部署与监控
+
+### Docker 部署
+
+```dockerfile
+FROM python:3.11-slim
+
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+COPY . .
+
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+```
+
+### 监控指标
+
+```python
+from prometheus_client import Counter, Histogram
+
+# 对话次数
+chat_counter = Counter("chat_total", "Total chat messages")
+
+# Agent 延迟
+agent_latency = Histogram("agent_latency_seconds", "Agent processing time")
+
+# 转人工率
+transfer_rate = Counter("transfer_to_human_total", "Transfers to human")
+```
+
+## 最佳实践
+
+1. **意图分类**：使用 LLM + 规则引擎混合方案，提高准确性
+2. **知识库管理**：定期更新和优化文档分块策略
+3. **灰度发布**：先在小范围用户中测试 Agent 效果
+4. **A/B 测试**：对比不同 Prompt 策略的 CSAT 得分
+5. **人工兜底**：设置置信度阈值，低置信度自动转人工

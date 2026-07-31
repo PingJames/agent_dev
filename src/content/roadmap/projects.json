@@ -1,0 +1,52 @@
+{
+  "slug": "projects",
+  "title": "阶段9：企业级 AI 项目实战",
+  "order": 9,
+  "description": "必须做完整项目。通过 4 个企业级实战项目将所学技术融会贯通，积累可展示的项目经验，提升求职竞争力。",
+  "icon": "💼",
+  "nodes": [
+    {
+      "id": "project-kb",
+      "title": "项目一：企业知识库平台",
+      "description": "开发完整的企业知识库问答平台。技术栈：FastAPI + LangChain + Milvus + React。功能包含文档上传解析、知识库管理、权限控制、RAG 智能问答、引用溯源。",
+      "difficulty": "advanced",
+      "estimatedHours": 25,
+      "resources": [
+        { "title": "Dify 开源知识库方案", "url": "https://github.com/langgenius/dify", "type": "project", "isFree": true }
+      ]
+    },
+    {
+      "id": "project-customer-service",
+      "title": "项目二：AI 客服系统",
+      "description": "开发智能客服系统。技术栈：FastAPI + LangGraph + Agent + PostgreSQL。功能包含多轮对话、意图识别、Agent 工具调用、人工转接、对话分析。",
+      "difficulty": "advanced",
+      "estimatedHours": 25,
+      "prerequisites": ["project-kb"],
+      "resources": [
+        { "title": "Chatwoot 开源客服系统", "url": "https://github.com/chatwoot/chatwoot", "type": "project", "isFree": true }
+      ]
+    },
+    {
+      "id": "project-code-assistant",
+      "title": "项目三：AI 代码助手",
+      "description": "开发 AI 代码助手工具。技术栈：FastAPI + LangChain + GitPython。功能包含 Git 仓库代码分析、代码审查（Code Review）、Bug 检测、代码优化建议。",
+      "difficulty": "advanced",
+      "estimatedHours": 20,
+      "prerequisites": ["project-customer-service"],
+      "resources": [
+        { "title": "GitPython 文档", "url": "https://gitpython.readthedocs.io/", "type": "article", "isFree": true }
+      ]
+    },
+    {
+      "id": "project-data-analyst",
+      "title": "项目四：AI 数据分析助手",
+      "description": "开发自然语言数据分析助手。技术栈：FastAPI + LangChain + SQLAlchemy。功能包含自然语言转 SQL、自动数据查询、可视化图表生成、分析报告输出。",
+      "difficulty": "advanced",
+      "estimatedHours": 20,
+      "prerequisites": ["project-code-assistant"],
+      "resources": [
+        { "title": "Vanna AI SQL 生成", "url": "https://github.com/vanna-ai/vanna", "type": "project", "isFree": true }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,134 @@
+---
+title: "智能文档问答系统"
+description: "构建一个基于 RAG 的企业文档智能问答系统，支持 PDF、Word、TXT 等多种格式，实现自然语言检索和回答。"
+date: "2024-06-10"
+category: "rag"
+tags: ["RAG", "LangChain", "FastAPI", "Chroma", "Streamlit"]
+difficulty: "intermediate"
+featured: true
+draft: false
+techStack: ["Python", "LangChain", "FastAPI", "ChromaDB", "Streamlit", "OpenAI API"]
+githubUrl: "https://github.com/example/doc-qa-system"
+demoUrl: "https://doc-qa-demo.streamlit.app"
+---
+
+## 项目概述
+
+构建一个完整的企业级文档智能问答系统，核心功能包括：
+
+- 支持多种文档格式上传（PDF、DOCX、TXT、Markdown）
+- 智能文档分割与向量化
+- 基于 RAG 的精准问答
+- Web 交互界面
+
+## 技术架构
+
+```text
+┌──────────────────────────────────────────┐
+│              Streamlit UI                │
+│    (文档上传 / 提问输入 / 回答展示)         │
+└──────────────────┬───────────────────────┘
+                   │
+┌──────────────────▼───────────────────────┐
+│              FastAPI Backend             │
+│       /upload  /query  /history          │
+└───────┬──────────────────┬───────────────┘
+        │                  │
+┌───────▼───────┐  ┌───────▼───────────┐
+│  Document     │  │   RAG Pipeline    │
+│  Processing   │  │                   │
+│  • PDF Parser  │  │  • Embedding     │
+│  • Splitter   │  │  • Vector Search │
+│  • Cleaner    │  │  • LLM Generate  │
+└───────┬───────┘  └───────────────────┘
+        │
+┌───────▼───────┐
+│   ChromaDB    │
+│  (向量存储)    │
+└───────────────┘
+```
+
+## 核心实现
+
+### 文档处理模块
+
+```python
+from langchain.document_loaders import (
+    PyPDFLoader,
+    Docx2txtLoader,
+    TextLoader,
+    UnstructuredMarkdownLoader
+)
+
+class DocumentProcessor:
+    LOADERS = {
+        ".pdf": PyPDFLoader,
+        ".docx": Docx2txtLoader,
+        ".txt": TextLoader,
+        ".md": UnstructuredMarkdownLoader,
+    }
+
+    @staticmethod
+    def load(file_path: str):
+        ext = Path(file_path).suffix.lower()
+        loader_cls = DocumentProcessor.LOADERS.get(ext)
+        if not loader_cls:
+            raise ValueError(f"不支持的文件格式: {ext}")
+        loader = loader_cls(file_path)
+        return loader.load()
+```
+
+### API 设计
+
+```python
+from fastapi import FastAPI, UploadFile, HTTPException
+from pydantic import BaseModel
+
+app = FastAPI(title="文档问答系统")
+
+class QueryRequest(BaseModel):
+    question: str
+    collection_name: str
+    top_k: int = 4
+
+class QueryResponse(BaseModel):
+    answer: str
+    sources: list[str]
+    confidence: float
+
+@app.post("/api/upload")
+async def upload_document(file: UploadFile, collection: str):
+    # 文档处理 + 向量化 + 存储
+    pass
+
+@app.post("/api/query", response_model=QueryResponse)
+async def query_document(request: QueryRequest):
+    # RAG 检索 + 生成
+    pass
+```
+
+## 部署指南
+
+```bash
+# 1. 安装依赖
+pip install -r requirements.txt
+
+# 2. 配置环境变量
+export OPENAI_API_KEY=your_key_here
+
+# 3. 启动服务
+uvicorn main:app --host 0.0.0.0 --port 8000
+
+# 4. 启动 Streamlit UI
+streamlit run app.py
+```
+
+## 学习要点
+
+通过本项目，你将掌握：
+
+- 多格式文档解析与预处理
+- 向量数据库的实际应用
+- FastAPI 后端开发
+- RAG pipeline 的性能优化
+- Streamlit 前端快速开发

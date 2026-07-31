@@ -1,0 +1,117 @@
+---
+title: "你如何优化 LLM 推理的延迟？"
+description: "生产环境中的 LLM 性能优化是 AI 应用工程师的核心技能。"
+category: "AI 应用架构"
+tags: ["推理优化", "性能优化", "缓存", "量化", "LLM"]
+difficulty: "hard"
+order: 5
+---
+
+## 问题
+
+在构建 LLM 应用时，你如何优化推理延迟和吞吐量？请从不同层面讨论优化策略。
+
+## 参考答案
+
+### 优化分层策略
+
+```text
+┌─────────────────────────────────────┐
+│       应用层优化                      │
+│  缓存 / 批处理 / 流式输出             │
+├─────────────────────────────────────┤
+│       推理框架层优化                  │
+│  vLLM / TGI / TensorRT-LLM          │
+├─────────────────────────────────────┤
+│       模型层优化                      │
+│  量化 / 蒸馏 / 剪枝 / 投机解码         │
+├─────────────────────────────────────┤
+│       硬件层优化                      │
+│  GPU选型 / 多卡并行 / NVLink          │
+└─────────────────────────────────────┘
+```
+
+### 1. 应用层优化
+
+#### 语义缓存
+
+```python
+import hashlib
+from redis import Redis
+
+class SemanticCache:
+    def __init__(self, redis_client, similarity_threshold=0.95):
+        self.redis = redis_client
+        self.threshold = similarity_threshold
+
+    def get(self, query: str) -> str | None:
+        query_embedding = embed(query)
+        cached = self.redis.get(f"cache:{hashlib.md5(query_embedding).hexdigest()}")
+        if cached:
+            # 语义相似度检查
+            if cosine_similarity(query_embedding, cached.embedding) > self.threshold:
+                return cached.response
+        return None
+```
+
+#### 流式输出
+
+```python
+from openai import AsyncOpenAI
+
+async def stream_response(prompt: str):
+    client = AsyncOpenAI()
+    stream = await client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[{"role": "user", "content": prompt}],
+        stream=True  # 启用流式输出
+    )
+    async for chunk in stream:
+        if chunk.choices[0].delta.content:
+            yield chunk.choices[0].delta.content
+```
+
+### 2. 推理框架优化
+
+| 框架 | 核心优化技术 | 适用场景 |
+|------|-------------|---------|
+| vLLM | PagedAttention、连续批处理 | 高吞吐在线服务 |
+| Text Gen Inference | 水印批处理、Flash Attention | HuggingFace 生态 |
+| TensorRT-LLM | GPU 算子融合、FP8 | NVIDIA GPU 极致优化 |
+
+### 3. 模型层优化
+
+#### 量化（Quantization）
+
+```python
+from transformers import AutoModelForCausalLM, BitsAndBytesConfig
+
+# 4-bit 量化
+bnb_config = BitsAndBytesConfig(
+    load_in_4bit=True,
+    bnb_4bit_compute_dtype=torch.float16,
+    bnb_4bit_use_double_quant=True,
+)
+
+model = AutoModelForCausalLM.from_pretrained(
+    "meta-llama/Llama-3-8B",
+    quantization_config=bnb_config,
+    device_map="auto"
+)
+
+# 量化效果：显存 ~70%↓，延迟 ~30%↓，精度 ~1%↓
+```
+
+#### 投机解码（Speculative Decoding）
+
+使用小模型快速生成候选 token，大模型并行验证，实现 2-3x 加速。
+
+### 4. 延迟 vs 吞吐量 vs 成本权衡
+
+| 策略 | 延迟影响 | 吞吐量影响 | 成本影响 |
+|------|---------|-----------|---------|
+| 使用更小的模型 | ↓↓ ↓ | ↑↑ ↑ | ↓↓ ↓ |
+| 4-bit 量化 | ↓ | ↑↑ | ↓↓ |
+| 语义缓存 | ↓↓ ↓ | ↑↑ | ↓↓ |
+| 批处理 | ↑ | ↑↑ ↑ | ↓ |
+| 多 GPU 并行 | ↓ | ↑↑ | ↑↑ |

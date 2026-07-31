@@ -1,0 +1,175 @@
+---
+title: "RAG 从入门到精通：构建你的第一个检索增强生成应用"
+description: "本文将手把手教你理解 RAG（检索增强生成）的核心原理，并使用 LangChain 和 Chroma 构建一个完整的 RAG 问答系统。"
+date: "2024-07-15"
+category: "rag"
+tags: ["RAG", "LangChain", "向量数据库", "LLM", "Chroma"]
+author: "AI Engineer Roadmap"
+featured: true
+draft: false
+difficulty: "intermediate"
+---
+
+## 什么是 RAG？
+
+RAG（Retrieval-Augmented Generation，检索增强生成）是一种将信息检索与大语言模型生成能力相结合的技术架构。它的核心思想是：**先检索相关信息，再基于检索结果生成回答**。
+
+### 为什么需要 RAG？
+
+大语言模型虽然强大，但存在以下局限：
+
+1. **知识截止日期**：模型训练数据有截止时间，无法获取最新信息
+2. **幻觉问题**：可能生成不准确或虚构的内容
+3. **领域知识缺失**：通用模型缺乏特定领域的专业知识
+4. **可解释性弱**：难以追踪回答的信息来源
+
+RAG 通过引入外部知识库，有效解决了上述问题。
+
+## RAG 的核心流程
+
+```text
+         ┌──────────┐
+         │  用户提问  │
+         └────┬─────┘
+              ▼
+    ┌─────────────────┐
+    │   向量化查询      │
+    │   (Embedding)    │
+    └────────┬────────┘
+             ▼
+   ┌──────────────────┐
+   │   向量相似度搜索   │
+   │  (Vector Search)  │
+   └────────┬─────────┘
+            ▼
+   ┌──────────────────┐
+   │   检索相关文档     │
+   │   (Top-K)         │
+   └────────┬─────────┘
+            ▼
+   ┌──────────────────┐
+   │   构建增强 Prompt  │
+   │   Query + Context  │
+   └────────┬─────────┘
+            ▼
+   ┌──────────────────┐
+   │   LLM 生成回答    │
+   └──────────────────┘
+```
+
+### 1. 文档加载与分割
+
+首先，我们需要加载文档并将其分割成合适大小的块（chunks）：
+
+```python
+from langchain.document_loaders import TextLoader
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+
+# 加载文档
+loader = TextLoader("knowledge_base.txt")
+documents = loader.load()
+
+# 文本分割
+text_splitter = RecursiveCharacterTextSplitter(
+    chunk_size=500,
+    chunk_overlap=50,
+    separators=["\n\n", "\n", "。", "！", "？", "，", " ", ""]
+)
+chunks = text_splitter.split_documents(documents)
+
+print(f"共分割成 {len(chunks)} 个文本块")
+```
+
+### 2. 向量化与存储
+
+将文本块转换为向量并存入向量数据库：
+
+```python
+from langchain.embeddings import OpenAIEmbeddings
+from langchain.vectorstores import Chroma
+
+# 初始化嵌入模型
+embeddings = OpenAIEmbeddings()
+
+# 创建向量数据库
+vectorstore = Chroma.from_documents(
+    documents=chunks,
+    embedding=embeddings,
+    persist_directory="./chroma_db"
+)
+
+print(f"已存入 {vectorstore._collection.count()} 条向量")
+```
+
+### 3. 检索与生成
+
+构建完整的 RAG 链：
+
+```python
+from langchain.chat_models import ChatOpenAI
+from langchain.chains import RetrievalQA
+
+# 初始化 LLM
+llm = ChatOpenAI(
+    model="gpt-3.5-turbo",
+    temperature=0
+)
+
+# 创建检索器
+retriever = vectorstore.as_retriever(
+    search_type="similarity",
+    search_kwargs={"k": 4}
+)
+
+# 构建 RAG 链
+qa_chain = RetrievalQA.from_chain_type(
+    llm=llm,
+    chain_type="stuff",
+    retriever=retriever,
+    return_source_documents=True
+)
+
+# 提问
+query = "什么是注意力机制？"
+result = qa_chain({"query": query})
+
+print(f"回答: {result['result']}")
+print(f"来源文档数: {len(result['source_documents'])}")
+```
+
+## 进阶优化技巧
+
+### Chunk 大小调优
+
+Chunk 大小直接影响检索质量：
+- **过大**：检索精度降低，包含无关信息
+- **过小**：上下文不完整，丢失语义
+
+建议根据文档类型测试不同大小（200-1000 tokens）。
+
+### 检索策略选择
+
+对于复杂查询，可以使用高级检索策略：
+
+```python
+from langchain.retrievers import ParentDocumentRetriever
+
+# 父文档检索器
+retriever = ParentDocumentRetriever(
+    vectorstore=vectorstore,
+    docstore=docstore,
+    child_splitter=child_splitter,
+    parent_splitter=parent_splitter
+)
+```
+
+## 总结
+
+RAG 是当前 AI 应用开发中最实用的技术之一。通过本文的学习，你应该已经掌握了：
+
+- RAG 的核心原理和架构
+- 使用 LangChain + Chroma 构建 RAG 系统
+- 文档分块、向量化和检索的完整流程
+- 基本的优化方向
+
+下一步可以探索：多模态 RAG、Agent + RAG 混合架构、以及在生产环境中的最佳实践。

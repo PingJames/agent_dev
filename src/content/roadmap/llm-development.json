@@ -1,0 +1,67 @@
+{
+  "slug": "llm-development",
+  "title": "阶段3：LLM 应用开发",
+  "order": 3,
+  "description": "成为真正的 AI 应用开发者。掌握各大模型 API 调用、对话系统构建、Function Calling 工具调用和 Structured Output 结构化输出。",
+  "icon": "🤖",
+  "nodes": [
+    {
+      "id": "llm-api",
+      "title": "LLM API 调用",
+      "description": "学习 OpenAI API、Claude API、DeepSeek API 的调用方式，掌握 Chat Completion、Streaming 流式输出、Temperature 参数调优。",
+      "difficulty": "beginner",
+      "estimatedHours": 12,
+      "prerequisites": ["what-is-llm"],
+      "resources": [
+        { "title": "OpenAI Chat API 文档", "url": "https://platform.openai.com/docs/guides/chat", "type": "article", "isFree": true },
+        { "title": "Anthropic Messages API", "url": "https://docs.anthropic.com/en/api", "type": "article", "isFree": true },
+        { "title": "DeepSeek API 文档", "url": "https://platform.deepseek.com/api-docs", "type": "article", "isFree": true }
+      ]
+    },
+    {
+      "id": "conversation-system",
+      "title": "对话系统构建",
+      "description": "学习 Conversation History 对话历史管理、Context 上下文窗口管理，实现多轮对话能力。完成 ChatGPT 简易版项目。",
+      "difficulty": "intermediate",
+      "estimatedHours": 12,
+      "prerequisites": ["llm-api"],
+      "resources": [
+        { "title": "OpenAI Chat Completions 指南", "url": "https://platform.openai.com/docs/guides/text-generation", "type": "article", "isFree": true }
+      ],
+      "children": [
+        {
+          "id": "conversation-history",
+          "title": "对话历史管理",
+          "description": "维护 Messages 数组、控制上下文长度、实现滑动窗口截断策略。"
+        },
+        {
+          "id": "context-management",
+          "title": "上下文管理",
+          "description": "Token 计数、上下文压缩、关键信息摘要保留。"
+        }
+      ]
+    },
+    {
+      "id": "function-calling",
+      "title": "Function Calling 工具调用（重点）",
+      "description": "学习让 AI 调用业务能力：定义 Function Schema、解析调用参数、执行函数并将结果返回给 LLM。实战案例：AI 自动查询订单。",
+      "difficulty": "intermediate",
+      "estimatedHours": 10,
+      "prerequisites": ["conversation-system"],
+      "resources": [
+        { "title": "OpenAI Function Calling 指南", "url": "https://platform.openai.com/docs/guides/function-calling", "type": "article", "isFree": true }
+      ]
+    },
+    {
+      "id": "structured-output",
+      "title": "Structured Output 结构化输出",
+      "description": "让 AI 输出结构化 JSON 数据，应用于信息抽取、自动表单填写、报告生成等场景。学习 JSON Mode 和 Pydantic Schema 约束。",
+      "difficulty": "intermediate",
+      "estimatedHours": 6,
+      "prerequisites": ["llm-api"],
+      "resources": [
+        { "title": "OpenAI Structured Outputs", "url": "https://platform.openai.com/docs/guides/structured-outputs", "type": "article", "isFree": true }
+      ]
+    }
+  ]
+}

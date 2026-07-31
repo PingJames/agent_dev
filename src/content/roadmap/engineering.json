@@ -1,0 +1,90 @@
+{
+  "slug": "engineering",
+  "title": "阶段8：AI 应用工程化",
+  "order": 8,
+  "description": "企业级区别点。掌握 AI 应用架构设计、性能优化、成本控制、安全防护等工程化能力，将 Demo 变为生产级系统。",
+  "icon": "🚀",
+  "nodes": [
+    {
+      "id": "architecture",
+      "title": "AI 应用架构设计",
+      "description": "设计 前端 → 后端 → AI 服务 → RAG → 向量数据库 → LLM 的分层架构，理解各层职责和通信方式。",
+      "difficulty": "advanced",
+      "estimatedHours": 8,
+      "resources": [
+        { "title": "AI Engineering 最佳实践", "url": "https://www.latent.space/", "type": "article", "isFree": true }
+      ],
+      "children": [
+        {
+          "id": "frontend-backend",
+          "title": "前后端分离",
+          "description": "前端（React/Vue）→ 后端 API → AI 微服务的分层调用链路设计。"
+        },
+        {
+          "id": "ai-service-layer",
+          "title": "AI 服务层",
+          "description": "独立的 AI 服务部署，模型的负载均衡、故障切换、降级策略。"
+        }
+      ]
+    },
+    {
+      "id": "performance",
+      "title": "性能优化",
+      "description": "学习 Streaming 流式响应、多级 Cache 缓存策略（结果缓存、Embedding 缓存）、Async 异步处理，提升系统响应速度和吞吐量。",
+      "difficulty": "advanced",
+      "estimatedHours": 8,
+      "resources": [
+        { "title": "FastAPI Async 指南", "url": "https://fastapi.tiangolo.com/async/", "type": "article", "isFree": true }
+      ],
+      "children": [
+        {
+          "id": "streaming",
+          "title": "Streaming 流式输出",
+          "description": "SSE/WebSocket 实现 LLM 逐字输出，改善用户体验。"
+        },
+        {
+          "id": "cache-strategy",
+          "title": "Cache 缓存策略",
+          "description": "Redis 缓存 LLM 响应、Embedding 向量、常见问题答案，降低 API 调用成本。"
+        },
+        {
+          "id": "async",
+          "title": "Async 异步并发",
+          "description": "使用 asyncio 提升并发处理能力，支持高并发 AI 请求。"
+        }
+      ]
+    },
+    {
+      "id": "cost-optimization",
+      "title": "成本控制",
+      "description": "学习 Token 用量监控与优化、模型选择策略（大小模型分级调用）、Prompt 压缩，将 API 调用成本控制在合理范围内。",
+      "difficulty": "intermediate",
+      "estimatedHours": 5,
+      "resources": [
+        { "title": "OpenAI 成本优化指南", "url": "https://platform.openai.com/docs/guides/rate-limits", "type": "article", "isFree": true }
+      ]
+    },
+    {
+      "id": "security",
+      "title": "安全防护",
+      "description": "学习 Prompt Injection 注入攻击防御、权限控制（用户级/知识库级数据隔离）、内容安全过滤、敏感信息脱敏。",
+      "difficulty": "intermediate",
+      "estimatedHours": 6,
+      "resources": [
+        { "title": "OWASP LLM Security", "url": "https://owasp.org/www-project-top-10-for-large-language-model-applications/", "type": "article", "isFree": true }
+      ],
+      "children": [
+        {
+          "id": "prompt-injection",
+          "title": "Prompt Injection 防御",
+          "description": "输入过滤、角色强化、输出校验等防护手段。"
+        },
+        {
+          "id": "access-control",
+          "title": "权限与数据隔离",
+          "description": "多租户数据隔离、用户权限分级、API 鉴权。"
+        }
+      ]
+    }
+  ]
+}

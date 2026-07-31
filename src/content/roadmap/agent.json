@@ -1,0 +1,82 @@
+{
+  "slug": "agent",
+  "title": "阶段7：Agent 智能体开发",
+  "order": 7,
+  "description": "开发能自动执行任务的 AI。掌握 Agent 四大组件、Tool Calling 工具集成、Workflow Agent 工作流设计、Multi Agent 多智能体协作。",
+  "icon": "🎯",
+  "nodes": [
+    {
+      "id": "agent-architecture",
+      "title": "Agent 架构设计",
+      "description": "理解 Agent = LLM + Memory + Tools + Planning 四大核心组件，掌握 Agent 的思考-行动-观察循环模式。",
+      "difficulty": "intermediate",
+      "estimatedHours": 8,
+      "resources": [
+        { "title": "LangChain Agent 文档", "url": "https://python.langchain.com/docs/concepts/agents/", "type": "article", "isFree": true }
+      ],
+      "children": [
+        {
+          "id": "agent-llm",
+          "title": "LLM 推理核心",
+          "description": "大模型作为 Agent 的大脑，负责任务理解、计划制定、决策判断。"
+        },
+        {
+          "id": "agent-memory",
+          "title": "Memory 记忆管理",
+          "description": "短期记忆（对话上下文）、长期记忆（向量存储）、工作记忆（当前任务状态）。"
+        },
+        {
+          "id": "agent-tools",
+          "title": "Tools 工具集成",
+          "description": "API 调用、数据库查询、文件操作、代码执行等外部能力封装。"
+        },
+        {
+          "id": "agent-planning",
+          "title": "Planning 任务规划",
+          "description": "任务分解、步骤排序、条件判断、错误重试等规划能力。"
+        }
+      ]
+    },
+    {
+      "id": "tool-calling",
+      "title": "Tool Calling 工具调用",
+      "description": "掌握自定义 Tool 的开发与注册，实现 Agent 与外部系统（API、数据库、文件系统等）的交互能力。",
+      "difficulty": "intermediate",
+      "estimatedHours": 10,
+      "prerequisites": ["agent-architecture"],
+      "resources": [
+        { "title": "LangChain Tools 文档", "url": "https://python.langchain.com/docs/concepts/tools/", "type": "article", "isFree": true }
+      ]
+    },
+    {
+      "id": "workflow-agent",
+      "title": "Workflow Agent 工作流设计",
+      "description": "学习基于 LangGraph 构建有状态的工作流 Agent，包含条件路由、循环执行、并行任务、人工审核节点等。",
+      "difficulty": "advanced",
+      "estimatedHours": 12,
+      "prerequisites": ["tool-calling"],
+      "resources": [
+        { "title": "LangGraph Agent 教程", "url": "https://langchain-ai.github.io/langgraph/tutorials/", "type": "article", "isFree": true }
+      ]
+    },
+    {
+      "id": "multi-agent",
+      "title": "Multi Agent 多智能体协作",
+      "description": "学习多 Agent 系统的设计模式：角色分工、消息传递、任务委派、协作决策。了解 AutoGen 等多 Agent 框架。",
+      "difficulty": "advanced",
+      "estimatedHours": 10,
+      "prerequisites": ["workflow-agent"],
+      "resources": [
+        { "title": "AutoGen 官方文档", "url": "https://microsoft.github.io/autogen/", "type": "article", "isFree": true }
+      ]
+    },
+    {
+      "id": "agent-project",
+      "title": "项目实战：AI 办公助手",
+      "description": "开发一个 AI 办公助手 Agent：自动处理邮件、安排日程、查询信息、生成报告，真正实现自动化办公。",
+      "difficulty": "advanced",
+      "estimatedHours": 10,
+      "prerequisites": ["multi-agent"]
+    }
+  ]
+}

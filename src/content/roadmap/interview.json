@@ -1,0 +1,52 @@
+{
+  "slug": "interview",
+  "title": "阶段10：AI 应用工程师面试",
+  "order": 10,
+  "description": "重点不是背算法，而是展示企业应用设计能力。梳理 LLM、RAG、Agent、系统设计四大面试方向的核心考点。",
+  "icon": "💡",
+  "nodes": [
+    {
+      "id": "llm-interview",
+      "title": "LLM 基础面试题",
+      "description": "掌握核心概念面试题：Token 是什么？如何控制 API 调用成本？Temperature 参数的作用？模型选型策略？",
+      "difficulty": "intermediate",
+      "estimatedHours": 4,
+      "resources": [
+        { "title": "大模型面试题合集", "url": "https://github.com/mlabonne/llm-course", "type": "article", "isFree": true }
+      ]
+    },
+    {
+      "id": "rag-interview",
+      "title": "RAG 面试题",
+      "description": "掌握 RAG 核心面试题：为什么需要 RAG？RAG 和微调的区别？如何提高 RAG 准确率？Chunk 策略如何选择？Rerank 的作用？",
+      "difficulty": "advanced",
+      "estimatedHours": 4,
+      "prerequisites": ["llm-interview"],
+      "resources": [
+        { "title": "RAG 评估与优化", "url": "https://docs.ragas.io/", "type": "article", "isFree": true }
+      ]
+    },
+    {
+      "id": "agent-interview",
+      "title": "Agent 面试题",
+      "description": "掌握 Agent 核心面试题：Agent 如何调用外部工具？Agent 和普通 Chat 的区别？多 Agent 如何协作？如何处理 Agent 的错误决策？",
+      "difficulty": "advanced",
+      "estimatedHours": 3,
+      "prerequisites": ["rag-interview"],
+      "resources": [
+        { "title": "Agent 设计模式", "url": "https://www.deeplearning.ai/short-courses/", "type": "course", "isFree": true }
+      ]
+    },
+    {
+      "id": "system-design",
+      "title": "系统设计面试",
+      "description": "掌握典型 AI 系统设计题：设计企业智能客服系统——包含架构设计、技术选型、容量规划、高可用方案、成本估算。",
+      "difficulty": "advanced",
+      "estimatedHours": 5,
+      "prerequisites": ["agent-interview"],
+      "resources": [
+        { "title": "System Design Interview", "url": "https://github.com/donnemartin/system-design-primer", "type": "article", "isFree": true }
+      ]
+    }
+  ]
+}

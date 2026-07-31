@@ -1,0 +1,55 @@
+{
+  "slug": "dev-environment",
+  "title": "阶段0：AI应用开发环境准备",
+  "order": 0,
+  "description": "第一天就具备开发环境。搭建 Python 开发环境，安装必要的开发工具和 AI 开发工具，完成第一个调用 AI API 的 Python 程序。",
+  "icon": "⚙️",
+  "nodes": [
+    {
+      "id": "dev-tools",
+      "title": "开发工具",
+      "description": "安装和配置 VS Code、Cursor、Git、Docker 等核心开发工具，建立高效的开发工作流。",
+      "difficulty": "beginner",
+      "estimatedHours": 4,
+      "resources": [
+        { "title": "VS Code 官方文档", "url": "https://code.visualstudio.com/docs", "type": "article", "isFree": true },
+        { "title": "Git 入门指南", "url": "https://git-scm.com/book/zh/v2", "type": "book", "isFree": true }
+      ]
+    },
+    {
+      "id": "python-env",
+      "title": "Python 环境搭建",
+      "description": "学习 Python 安装、pip 包管理、venv 虚拟环境、poetry 依赖管理，确保开发环境隔离和可复现。",
+      "difficulty": "beginner",
+      "estimatedHours": 4,
+      "prerequisites": ["dev-tools"],
+      "resources": [
+        { "title": "Python 官方安装指南", "url": "https://docs.python.org/zh-cn/3/using/index.html", "type": "article", "isFree": true },
+        { "title": "Poetry 入门指南", "url": "https://python-poetry.org/docs/", "type": "article", "isFree": true }
+      ]
+    },
+    {
+      "id": "ai-tools",
+      "title": "AI 开发工具了解",
+      "description": "了解 ChatGPT、Claude、DeepSeek、Cursor 等 AI 辅助开发工具，学会如何高效利用 AI 提升开发效率。",
+      "difficulty": "beginner",
+      "estimatedHours": 3,
+      "resources": [
+        { "title": "OpenAI Platform", "url": "https://platform.openai.com/", "type": "article", "isFree": true },
+        { "title": "Claude API 文档", "url": "https://docs.anthropic.com/", "type": "article", "isFree": true },
+        { "title": "DeepSeek 开放平台", "url": "https://platform.deepseek.com/", "type": "article", "isFree": true }
+      ]
+    },
+    {
+      "id": "first-ai-api",
+      "title": "实践：第一个 AI API 调用",
+      "description": "编写第一个 Python 程序，通过 API 调用大语言模型，验证开发环境并建立对 AI 开发的第一印象。",
+      "difficulty": "beginner",
+      "estimatedHours": 4,
+      "prerequisites": ["python-env", "ai-tools"],
+      "resources": [
+        { "title": "OpenAI Python SDK", "url": "https://github.com/openai/openai-python", "type": "project", "isFree": true }
+      ]
+    }
+  ]
+}
