@@ -3,7 +3,6 @@ import type { SearchResult } from "./types";
 import { getAllBlogPosts, getAllProjects, getAllInterviewQuestions, getRoadmapIndex } from "./content";
 
 let searchIndex: Fuse<SearchResult> | null = null;
-let indexVersion = 0;
 
 function buildSearchIndex(): Fuse<SearchResult> {
   const results: SearchResult[] = [];
@@ -82,14 +81,12 @@ function buildSearchIndex(): Fuse<SearchResult> {
 export function getSearchIndex(): Fuse<SearchResult> {
   if (!searchIndex) {
     searchIndex = buildSearchIndex();
-    indexVersion = 1;
   }
   return searchIndex;
 }
 
 export function refreshSearchIndex(): void {
   searchIndex = buildSearchIndex();
-  indexVersion++;
 }
 
 export function search(query: string, limit = 20): { item: SearchResult; score: number }[] {

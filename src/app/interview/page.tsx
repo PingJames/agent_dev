@@ -31,7 +31,7 @@ export default function InterviewPage() {
         {/* Footer Note */}
         <div className="mt-12 rounded-xl border border-indigo-100 bg-indigo-50/50 p-5 dark:border-indigo-900/30 dark:bg-indigo-900/10">
           <p className="text-sm leading-relaxed text-indigo-700 dark:text-indigo-300">
-            本题库涵盖 {dimensions[0]?.count} 道基础理论题、{dimensions[1]?.count} 道工程实践题、{dimensions[2]?.count} 道场景落地题和 {dimensions[3]?.count} 道前沿趋势题。按照大模型应用开发面试中"技术深度"与"业务敏感度"并重的评估原则，工程实践类题目权重最高（约25%），建议优先掌握。
+            本题库涵盖 {dimensions[0]?.count} 道基础理论题、{dimensions[1]?.count} 道工程实践题、{dimensions[2]?.count} 道场景落地题和 {dimensions[3]?.count} 道前沿趋势题。按照大模型应用开发面试中&ldquo;技术深度&rdquo;与&ldquo;业务敏感度&rdquo;并重的评估原则，工程实践类题目权重最高（约25%），建议优先掌握。
           </p>
         </div>
       </div>

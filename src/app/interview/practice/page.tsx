@@ -38,7 +38,7 @@ export default function PracticePage() {
         {/* Tip banner */}
         <div className="mb-6 rounded-lg border border-orange-200 bg-orange-50 p-4 dark:border-orange-900/30 dark:bg-orange-900/10">
           <p className="text-sm text-orange-700 dark:text-orange-300">
-            💡 场景落地类题目考察"技术理解 + 业务敏感度"的综合能力，回答时需要结合真实业务场景分析，展示从技术到价值的完整闭环思考。
+            💡 场景落地类题目考察&ldquo;技术理解 + 业务敏感度&rdquo;的综合能力，回答时需要结合真实业务场景分析，展示从技术到价值的完整闭环思考。
           </p>
         </div>
 

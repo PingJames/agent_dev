@@ -23,7 +23,7 @@ export default async function RoadmapPreview() {
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {previewTopics.map((topic, index) => (
+          {previewTopics.map((topic) => (
             <Link
               key={topic.slug}
               href={`/roadmap/${topic.slug}`}

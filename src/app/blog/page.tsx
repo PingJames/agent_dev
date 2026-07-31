@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getAllBlogPosts, getBlogCategories, getAllTags, getAllBlogSlugs } from "@/lib/content";
+import { getAllBlogPosts, getBlogCategories, getAllTags } from "@/lib/content";
 import BlogCard from "@/components/blog/BlogCard";
 import BlogSidebar from "@/components/blog/BlogSidebar";
 import Pagination from "@/components/blog/Pagination";

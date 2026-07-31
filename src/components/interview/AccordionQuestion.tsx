@@ -4,7 +4,6 @@ import { useState } from "react";
 import { ChevronDown, Tag, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import type { InterviewQuestionItem } from "@/lib/types";
-import { DIMENSION_LABEL_MAP } from "@/lib/interview-dimensions";
 
 interface Props {
   question: InterviewQuestionItem;
@@ -106,7 +105,7 @@ export default function AccordionQuestion({ question, defaultOpen = false }: Pro
 
 /** 简易 Markdown → HTML 渲染（处理代码块、列表、加粗等） */
 function renderMarkdown(md: string): string {
-  let html = md
+  const html = md
     // Bold
     .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
     // Backtick code

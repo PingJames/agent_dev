@@ -73,7 +73,8 @@ export function getAllBlogPosts(): BlogListItem[] {
     .map((slug) => {
       const post = getBlogPost(slug);
       if (!post) return null;
-      const { content: _, ...rest } = post;
+      const { content: _content, ...rest } = post;
+      void _content;
       return rest;
     })
     .filter((p): p is BlogListItem => p !== null) as BlogListItem[];

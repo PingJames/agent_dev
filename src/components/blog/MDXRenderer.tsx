@@ -1,6 +1,6 @@
 "use client";
 
-import { MDXRemote, MDXRemoteProps } from "next-mdx-remote";
+import { MDXRemote } from "next-mdx-remote";
 import type { BlogFrontmatter } from "@/lib/types";
 
 interface Props {
@@ -80,7 +80,7 @@ const components = {
   ),
 };
 
-export default function MDXRenderer({ content, frontmatter }: Props) {
+export default function MDXRenderer({ content }: Props) {
   if (!content) {
     return (
       <div className="prose-custom">

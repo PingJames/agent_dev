@@ -152,7 +152,7 @@ export default function InterviewDetailPage({ params }: Props) {
 
 /** 完整 Markdown → HTML 渲染 */
 function renderFullMarkdown(md: string): string {
-  let html = md
+  const html = md
     // Code blocks
     .replace(/```(\w*)\n([\s\S]*?)```/g, (_: string, lang: string, code: string) => {
       return `<pre class="rounded-lg bg-slate-900 p-4 overflow-x-auto"><code class="text-sm text-slate-100">${escapeHtml(code.trim())}</code></pre>`;
