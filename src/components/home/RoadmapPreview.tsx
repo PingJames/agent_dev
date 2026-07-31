@@ -31,7 +31,7 @@ export default async function RoadmapPreview() {
             >
               <div className="flex items-center gap-3 mb-4">
                 <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-600 text-white text-lg font-bold">
-                  {topic.order + 1}
+                  {(topic.order ?? 0) + 1}
                 </span>
                 <h3 className="text-lg font-semibold text-slate-900 dark:text-white group-hover:text-primary-600 transition-colors">
                   {topic.title.replace(/^阶段\d+：/, "")}
