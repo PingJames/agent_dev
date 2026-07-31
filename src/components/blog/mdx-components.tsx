@@ -16,7 +16,7 @@ export const mdxComponents = {
   ul: (props: React.HTMLProps<HTMLUListElement>) => (
     <ul className="my-4 list-disc pl-6 text-slate-700 dark:text-slate-300 space-y-1" {...props} />
   ),
-  ol: (props: React.HTMLProps<HTMLOListElement>) => (
+  ol: (props: React.OlHTMLAttributes<HTMLOListElement>) => (
     <ol className="my-4 list-decimal pl-6 text-slate-700 dark:text-slate-300 space-y-1" {...props} />
   ),
   li: (props: React.HTMLProps<HTMLLIElement>) => (
