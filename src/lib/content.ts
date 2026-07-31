@@ -193,6 +193,8 @@ export function getInterviewQuestion(slug: string): InterviewQuestion | null {
     tags: data.tags || [],
     difficulty: data.difficulty || "easy",
     order: data.order || 0,
+    dimension: data.dimension || "basics",
+    qNumber: data.qNumber || 0,
   };
 
   return { slug, frontmatter, content };
