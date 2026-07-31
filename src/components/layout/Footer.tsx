@@ -13,10 +13,6 @@ const footerLinks = {
     { label: "AI Agent", href: "/blog/categories/agent" },
     { label: "Prompt Engineering", href: "/blog/categories/prompt-engineering" },
   ],
-  关于: [
-    { label: "关于本站", href: "/blog/about" },
-    { label: "搜索内容", href: "/search" },
-  ],
 };
 
 export default function Footer() {
@@ -25,7 +21,7 @@ export default function Footer() {
       <div className="container-custom py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
-          <div className="md:col-span-1">
+          <div className="md:col-span-2">
             <Link href="/" className="flex items-center gap-2 font-bold text-xl text-primary-600 mb-4">
               <svg className="h-7 w-7" viewBox="0 0 32 32" fill="none">
                 <rect width="32" height="32" rx="8" fill="#4F46E5" />
@@ -36,11 +32,20 @@ export default function Footer() {
               </svg>
               <span>AI 工程师之路</span>
             </Link>
-            <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
-              从零到一，系统化学习 AI 应用开发。
-              涵盖 LLM、RAG、Agent 等前沿技术，
-              帮助你成长为专业的 AI 应用工程师。
+            <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed max-w-md">
+              从零到一，系统化学习 AI 应用开发。涵盖 LLM、RAG、Agent 等前沿技术，帮助你成长为专业的 AI 应用工程师。
             </p>
+            <div className="mt-5 flex flex-wrap gap-3">
+              <Link href="/roadmap" className="btn-primary px-5 py-2.5 text-sm">
+                开始学习之旅
+                <svg className="ml-1.5 h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                </svg>
+              </Link>
+              <Link href="/blog" className="btn-secondary px-5 py-2.5 text-sm">
+                浏览技术博客
+              </Link>
+            </div>
           </div>
 
           {/* Link Columns */}
@@ -71,9 +76,37 @@ export default function Footer() {
             <p className="text-sm text-slate-400 dark:text-slate-500">
               &copy; {new Date().getFullYear()} AI 工程师之路. All rights reserved.
             </p>
-            <p className="text-sm text-slate-400 dark:text-slate-500">
-              Built with Next.js & TailwindCSS
-            </p>
+            <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
+              <Link
+                href="/about"
+                className="text-sm text-slate-400 hover:text-primary-600 transition-colors dark:text-slate-500 dark:hover:text-primary-400"
+              >
+                关于我们
+              </Link>
+              <span className="hidden sm:inline text-slate-300 dark:text-slate-600">|</span>
+              <Link
+                href="/privacy"
+                className="text-sm text-slate-400 hover:text-primary-600 transition-colors dark:text-slate-500 dark:hover:text-primary-400"
+              >
+                隐私政策
+              </Link>
+              <span className="hidden sm:inline text-slate-300 dark:text-slate-600">|</span>
+              <Link
+                href="/terms"
+                className="text-sm text-slate-400 hover:text-primary-600 transition-colors dark:text-slate-500 dark:hover:text-primary-400"
+              >
+                使用条款
+              </Link>
+              <span className="hidden sm:inline text-slate-300 dark:text-slate-600">|</span>
+              <a
+                href="https://beian.miit.gov.cn/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-slate-400 hover:text-primary-600 transition-colors dark:text-slate-500 dark:hover:text-primary-400"
+              >
+                ICP备案号：粤ICP备2023124211号
+              </a>
+            </div>
           </div>
         </div>
       </div>
