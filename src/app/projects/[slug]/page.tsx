@@ -4,8 +4,12 @@ import { notFound } from "next/navigation";
 import { format } from "date-fns";
 import { zhCN } from "date-fns/locale";
 import Link from "next/link";
-import MDXRenderer from "@/components/blog/MDXRenderer";
-import type { BlogFrontmatter } from "@/lib/types";
+import { compileMDX } from "next-mdx-remote/rsc";
+import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
+import rehypeHighlight from "rehype-highlight";
+import { mdxComponents } from "@/components/blog/mdx-components";
 
 interface Props {
   params: { slug: string };
@@ -26,23 +30,23 @@ const difficultyLabels: Record<string, string> = {
   advanced: "高级",
 };
 
-export default function ProjectDetailPage({ params }: Props) {
+export default async function ProjectDetailPage({ params }: Props) {
   const project = getProject(params.slug);
   if (!project) notFound();
 
   const { frontmatter, content } = project;
 
-  const blogFrontmatter: BlogFrontmatter = {
-    title: frontmatter.title,
-    description: frontmatter.description,
-    date: frontmatter.date,
-    category: frontmatter.category,
-    tags: frontmatter.tags,
-    author: "AI Engineer Roadmap",
-    readingTime: 5,
-    draft: false,
-    difficulty: frontmatter.difficulty as BlogFrontmatter["difficulty"],
-  };
+  const compiled = await compileMDX({
+    source: content,
+    options: {
+      mdxOptions: {
+        remarkPlugins: [remarkGfm, remarkMath],
+        rehypePlugins: [rehypeHighlight, rehypeKatex],
+      },
+      parseFrontmatter: false,
+    },
+    components: mdxComponents,
+  });
 
   return (
     <div className="section-padding">
@@ -132,7 +136,7 @@ export default function ProjectDetailPage({ params }: Props) {
 
           {/* Content */}
           <div className="prose-custom">
-            <MDXRenderer content={content} frontmatter={blogFrontmatter} />
+            {compiled.content}
           </div>
 
           {/* Back */}
