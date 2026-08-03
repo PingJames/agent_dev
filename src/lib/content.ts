@@ -113,12 +113,15 @@ export function getAllTags(): CategoryInfo[] {
   const tagMap = new Map<string, number>();
 
   posts.forEach((p) => {
-    p.frontmatter.tags.forEach((tag) => {
+    // 使用 Set 在单篇文章内去重，避免同一标签在一篇文章中被重复计数
+    const uniqueTags = new Set(p.frontmatter.tags);
+    uniqueTags.forEach((tag) => {
       tagMap.set(tag, (tagMap.get(tag) || 0) + 1);
     });
   });
 
   return Array.from(tagMap.entries())
+    .filter(([, count]) => count > 0)
     .map(([slug, count]) => ({
       slug,
       name: slug,

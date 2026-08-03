@@ -62,7 +62,10 @@ export default function BlogSidebar({ categories, tags, currentCategory, current
           热门标签
         </h3>
         <div className="flex flex-wrap gap-2">
-          {tags.slice(0, 20).map((tag) => (
+          {tags
+            .filter((tag) => tag.count > 0)
+            .slice(0, 20)
+            .map((tag) => (
             <Link
               key={tag.slug}
               href={`/blog/tags/${tag.slug}`}
