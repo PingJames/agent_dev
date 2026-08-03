@@ -38,7 +38,7 @@ export const mdxComponents = {
     const isInline = !className || !className.includes("language-");
     if (isInline) {
       return (
-        <code className="rounded bg-slate-100 px-1.5 py-0.5 text-sm font-mono text-primary-700 dark:bg-slate-800 dark:text-primary-300" {...rest}>
+        <code className="rounded px-1.5 py-0.5 text-sm font-mono text-primary-700 dark:text-primary-300" {...rest}>
           {children}
         </code>
       );
@@ -54,7 +54,7 @@ export const mdxComponents = {
     return (
       <div className="my-6 relative">
         <pre
-          className={`overflow-x-auto rounded-lg bg-slate-900 p-4 text-sm text-slate-100 dark:bg-slate-950 ${className || ""}`}
+          className={`overflow-x-auto rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm leading-relaxed text-slate-800 shadow-sm dark:border-slate-700 dark:bg-slate-800/60 dark:text-slate-100 ${className || ""}`}
           {...rest}
         />
       </div>

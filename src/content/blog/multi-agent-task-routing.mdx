@@ -124,9 +124,7 @@ Phase 1 - 规划（Planner）：
      - aftersales_agent: 判断退货资格（依赖 order_info）
      - emotion_agent: 生成安抚话术（依赖 intent_json.sentiment）
   4. merge_agent: 合并结果，生成最终回复
-```
 
-```
 Phase 2 - 执行（Executor）：
   按 DAG 拓扑序调度 Agent，处理依赖和并行
 ```
