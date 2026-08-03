@@ -16,7 +16,7 @@ export async function GET(request: Request) {
     // 拉取 sitemap
     const sitemapRes = await fetch('https://agentdev.starchentech.com/sitemap.xml');
     const xml = await sitemapRes.text();
-    const urls = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
+    const urls = Array.from(xml.matchAll(/<loc>([^<]+)<\/loc>/g), (m) => m[1]);
 
     if (!urls.length) {
       return NextResponse.json({ error: 'No URLs found' }, { status: 400 });
