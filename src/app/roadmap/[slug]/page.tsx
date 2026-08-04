@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
-import { getRoadmapTopic } from "@/lib/content";
+import { getRoadmapTopic, getRoadmapNodeContent } from "@/lib/content";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { compileMDX } from "next-mdx-remote/rsc";
+import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
+import rehypeHighlight from "rehype-highlight";
+import { mdxComponents } from "@/components/blog/mdx-components";
 
 interface Props {
   params: { slug: string };
@@ -16,9 +21,37 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default function RoadmapTopicPage({ params }: Props) {
+async function renderNodeContent(content: string) {
+  const compiled = await compileMDX({
+    source: content,
+    options: {
+      mdxOptions: {
+        remarkPlugins: [remarkGfm, remarkMath],
+        rehypePlugins: [rehypeHighlight],
+      },
+      parseFrontmatter: false,
+    },
+    components: mdxComponents,
+  });
+  return compiled.content;
+}
+
+export default async function RoadmapTopicPage({ params }: Props) {
   const topic = getRoadmapTopic(params.slug);
   if (!topic) notFound();
+
+  // Pre-load and compile MDX content for nodes that have contentPath
+  const nodeContents = new Map<string, React.ReactNode | null>();
+  for (const node of topic.nodes) {
+    if (node.contentPath) {
+      const rawContent = getRoadmapNodeContent(node.contentPath);
+      if (rawContent) {
+        nodeContents.set(node.id, await renderNodeContent(rawContent));
+      } else {
+        nodeContents.set(node.id, null);
+      }
+    }
+  }
 
   return (
     <div className="section-padding">
@@ -78,6 +111,23 @@ export default function RoadmapTopicPage({ params }: Props) {
                       </span>
                     )}
                   </div>
+
+                  {/* Learning Content (Rendered MDX) */}
+                  {node.contentPath && nodeContents.get(node.id) && (
+                    <div className="mt-6">
+                      <div className="mb-3 flex items-center gap-2">
+                        <h3 className="text-sm font-semibold text-slate-900 dark:text-white">
+                          学习内容
+                        </h3>
+                        <span className="tag text-xs bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
+                          新
+                        </span>
+                      </div>
+                      <div className="prose-custom rounded-lg border border-slate-100 bg-white p-6 dark:border-slate-700 dark:bg-slate-800">
+                        {nodeContents.get(node.id)}
+                      </div>
+                    </div>
+                  )}
 
                   {/* Resources */}
                   {node.resources && node.resources.length > 0 && (

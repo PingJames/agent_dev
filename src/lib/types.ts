@@ -40,6 +40,11 @@ export interface RoadmapNode {
   difficulty: "beginner" | "intermediate" | "advanced";
   estimatedHours: number;
   prerequisites?: string[];
+  contentPath?: string;
+}
+
+export interface RoadmapNodeWithContent extends RoadmapNode {
+  content?: string;
 }
 
 export interface Resource {

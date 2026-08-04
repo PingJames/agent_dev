@@ -11,25 +11,9 @@
       "description": "掌握 Python 的基本数据类型、控制流、函数定义、模块导入等核心语法。",
       "difficulty": "beginner",
       "estimatedHours": 10,
+      "contentPath": "python-basics",
       "resources": [
         { "title": "Python 官方教程", "url": "https://docs.python.org/zh-cn/3/tutorial/", "type": "article", "isFree": true }
-      ],
-      "children": [
-        {
-          "id": "python-data-types",
-          "title": "数据类型与变量",
-          "description": "数值、字符串、列表、元组、字典、集合等内置数据结构的用法。"
-        },
-        {
-          "id": "python-control-flow",
-          "title": "控制流与循环",
-          "description": "if/else 条件判断、for/while 循环、列表推导式等。"
-        },
-        {
-          "id": "python-functions",
-          "title": "函数与模块",
-          "description": "函数定义、参数传递、lambda 表达式、模块导入与包管理。"
-        }
       ]
     },
     {
@@ -39,6 +23,7 @@
       "difficulty": "beginner",
       "estimatedHours": 8,
       "prerequisites": ["python-basics"],
+      "contentPath": "python-oop",
       "resources": [
         { "title": "Real Python OOP 教程", "url": "https://realpython.com/python3-object-oriented-programming/", "type": "article", "isFree": true }
       ]
@@ -50,6 +35,7 @@
       "difficulty": "intermediate",
       "estimatedHours": 10,
       "prerequisites": ["python-oop"],
+      "contentPath": "python-advanced",
       "resources": [
         { "title": "Python 进阶教程", "url": "https://docs.python.org/zh-cn/3/howto/", "type": "article", "isFree": true }
       ]
@@ -61,6 +47,7 @@
       "difficulty": "intermediate",
       "estimatedHours": 12,
       "prerequisites": ["python-advanced"],
+      "contentPath": "python-data-libs",
       "resources": [
         { "title": "NumPy 官方文档", "url": "https://numpy.org/doc/", "type": "article", "isFree": true },
         { "title": "Pandas 入门教程", "url": "https://pandas.pydata.org/docs/getting_started/", "type": "article", "isFree": true }

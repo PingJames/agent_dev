@@ -12,6 +12,7 @@ import type {
   InterviewFrontmatter,
   CategoryInfo,
   RoadmapTopic,
+  RoadmapNodeWithContent,
 } from "./types";
 
 // ============================================================
@@ -236,4 +237,29 @@ export function getRoadmapTopic(slug: string): RoadmapTopic | null {
   } catch {
     return null;
   }
+}
+
+export function getRoadmapNodeContent(contentPath: string): string | null {
+  const filePath = path.join(getContentPath("roadmap"), `${contentPath}.md`);
+  if (!fs.existsSync(filePath)) return null;
+  try {
+    return fs.readFileSync(filePath, "utf-8");
+  } catch {
+    return null;
+  }
+}
+
+export function getRoadmapTopicWithContent(slug: string): RoadmapTopic | null {
+  const topic = getRoadmapTopic(slug);
+  if (!topic) return null;
+
+  const nodesWithContent = topic.nodes.map((node) => {
+    if (node.contentPath) {
+      const content = getRoadmapNodeContent(node.contentPath);
+      (node as RoadmapNodeWithContent).content = content ?? undefined;
+    }
+    return node;
+  });
+
+  return { ...topic, nodes: nodesWithContent };
 }
