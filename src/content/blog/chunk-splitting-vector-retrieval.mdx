@@ -135,7 +135,7 @@ Overlap（重叠区域）的设计初衷很直观：**防止关键信息刚好�
 
 在实际评测中（基于公开数据集如 Natural Questions、MS MARCO 的观察），存在一个大致规律：
 
-- **Chunk 过小（{'<128'} token）**：语义碎片化严重，recall 下降明显。一个问题需要多个 chunk 才能回答完整，但 embedding 匹配很难同时召回所有相关片段。
+- **Chunk 过小（\<128 token）**：语义碎片化严重，recall 下降明显。一个问题需要多个 chunk 才能回答完整，但 embedding 匹配很难同时召回所有相关片段。
 - **Chunk 适中（256-512 token）**：recall 通常达到峰值。既能保留足够的上下文，又不会因 chunk 过大而引入过多噪音。
 - **Chunk 过大（>1024 token）**：虽然信息完整，但噪音增加，embedding 的区分度下降。向量表示被"稀释"，导致精准匹配的能力变弱。
 
