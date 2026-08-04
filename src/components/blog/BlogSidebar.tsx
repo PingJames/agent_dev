@@ -68,7 +68,7 @@ export default function BlogSidebar({ categories, tags, currentCategory, current
             .map((tag) => (
             <Link
               key={tag.slug}
-              href={`/blog/tags/${tag.slug}`}
+              href={`/blog/tags/${encodeURIComponent(tag.slug)}`}
               className={`tag text-xs ${
                 currentTag === tag.slug
                   ? "bg-primary-600 text-white dark:bg-primary-500"

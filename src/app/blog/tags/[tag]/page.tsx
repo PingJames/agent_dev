@@ -10,16 +10,17 @@ interface Props {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const tag = decodeURIComponent(params.tag);
   return {
-    title: `#${params.tag} - 技术博客`,
-    description: `浏览标签 ${params.tag} 下的所有 AI 应用开发相关技术文章。`,
+    title: `#${tag} - 技术博客`,
+    description: `浏览标签 ${tag} 下的所有 AI 应用开发相关技术文章。`,
   };
 }
 
 const POSTS_PER_PAGE = 9;
 
 export default function BlogTagPage({ params }: Props) {
-  const { tag } = params;
+  const tag = decodeURIComponent(params.tag);
   const allPosts = getAllBlogPosts();
   const categories = getBlogCategories();
   const tags = getAllTags();
@@ -57,7 +58,7 @@ export default function BlogTagPage({ params }: Props) {
             <Pagination
               currentPage={1}
               totalPages={totalPages}
-              basePath={`/blog/tags/${tag}`}
+              basePath={`/blog/tags/${encodeURIComponent(tag)}`}
             />
           </div>
 

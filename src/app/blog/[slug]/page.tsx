@@ -135,7 +135,7 @@ export default async function BlogDetailPage({ params }: Props) {
             {frontmatter.tags.length > 0 && (
               <div className="mt-4 flex flex-wrap gap-2">
                 {frontmatter.tags.map((tag) => (
-                  <Link key={tag} href={`/blog/tags/${tag}`} className="tag text-xs">
+                  <Link key={tag} href={`/blog/tags/${encodeURIComponent(tag)}`} className="tag text-xs">
                     {tag}
                   </Link>
                 ))}
