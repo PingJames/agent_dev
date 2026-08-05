@@ -1,7 +1,7 @@
 {
   "slug": "engineering",
   "title": "阶段8：AI 应用工程化",
-  "order": 8,
+  "order": 7,
   "description": "企业级区别点。掌握 AI 应用架构设计、性能优化、成本控制、安全防护等工程化能力，将 Demo 变为生产级系统。",
   "icon": "🚀",
   "nodes": [

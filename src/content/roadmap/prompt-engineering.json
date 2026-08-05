@@ -1,7 +1,7 @@
 {
   "slug": "prompt-engineering",
   "title": "阶段4：Prompt Engineering",
-  "order": 4,
+  "order": 3,
   "description": "系统提升 AI 应用的输出效果。掌握 Prompt 基础四要素和 Few Shot、Chain of Thought、ReAct 等高级技巧，完成 AI 代码助手项目。",
   "icon": "✍️",
   "nodes": [

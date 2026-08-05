@@ -1,7 +1,7 @@
 {
   "slug": "llm-application",
   "title": "大模型应用开发实战",
-  "order": 3.5,
+  "order": 2.5,
   "description": "将大模型能力落地为实际应用。涵盖 API 调用优化、流式输出、上下文管理、多模态应用、模型部署与监控等工程实践。",
   "icon": "🚀",
   "nodes": [

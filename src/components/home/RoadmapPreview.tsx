@@ -18,7 +18,7 @@ export default async function RoadmapPreview() {
             学习路线预览
           </h2>
           <p className="mt-4 text-lg text-slate-600 dark:text-slate-300">
-            11 个阶段循序渐进，从 Python Web 开发到企业级 AI 应用实战
+            10 个阶段循序渐进，从 Python Web 开发到企业级 AI 应用实战
           </p>
         </div>
 

@@ -1,7 +1,7 @@
 {
   "slug": "agent",
   "title": "阶段7：Agent 智能体开发",
-  "order": 7,
+  "order": 6,
   "description": "开发能自动执行任务的 AI。掌握 Agent 四大组件、Tool Calling 工具集成、Workflow Agent 工作流设计、Multi Agent 多智能体协作。",
   "icon": "🎯",
   "nodes": [

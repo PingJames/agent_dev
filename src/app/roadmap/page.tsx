@@ -23,7 +23,7 @@ export default function RoadmapPage() {
             你不是来学习如何训练大模型，而是学习如何利用大模型解决企业问题。
           </p>
           <p className="mt-3 text-base text-slate-500 dark:text-slate-400">
-            从环境搭建到企业级项目实战，11 个阶段循序渐进，工程实践优先，成为真正的 AI 应用工程师。
+            从环境搭建到企业级项目实战，10 个阶段循序渐进，工程实践优先，成为真正的 AI 应用工程师。
           </p>
 
           {/* Learning Ratio Bar */}
@@ -32,7 +32,7 @@ export default function RoadmapPage() {
               学习内容比例
             </h3>
             <div className="flex h-6 rounded-full overflow-hidden shadow-inner">
-              <div className="bg-emerald-400 flex items-center justify-center text-xs text-white font-medium" style={{ width: "15%" }} title="Python Web 开发">Web 15%</div>
+              <div className="bg-emerald-400 flex items-center justify-center text-xs text-white font-medium" style={{ width: "15%" }} title="环境与Python Web基础">Web 15%</div>
               <div className="bg-blue-300 flex items-center justify-center text-xs text-white font-medium" style={{ width: "5%" }} title="LLM 基础">基础</div>
               <div className="bg-blue-500 flex items-center justify-center text-xs text-white font-medium" style={{ width: "20%" }} title="LLM 应用开发">LLM 20%</div>
               <div className="bg-purple-400 flex items-center justify-center text-xs text-white font-medium" style={{ width: "10%" }} title="Prompt">Prompt 10%</div>
@@ -42,7 +42,7 @@ export default function RoadmapPage() {
               <div className="bg-amber-400 flex items-center justify-center text-xs text-white font-medium" style={{ width: "5%" }} title="面试">面试</div>
             </div>
             <div className="mt-2 flex flex-wrap justify-center gap-x-4 gap-y-1 text-xs text-slate-400 dark:text-slate-500">
-              <span>🟢 Python Web 15%</span>
+              <span>🟢 环境 Web 15%</span>
               <span>🔵 LLM 应用 20%</span>
               <span>🟣 Prompt 10%</span>
               <span>🟠 RAG 20%</span>

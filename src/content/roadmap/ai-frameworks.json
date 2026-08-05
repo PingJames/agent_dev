@@ -1,7 +1,7 @@
 {
   "slug": "ai-frameworks",
   "title": "阶段5：AI 应用开发框架",
-  "order": 5,
+  "order": 4,
   "description": "不要重复造轮子。掌握 LangChain、LangGraph、LlamaIndex 三大主流框架，了解 Dify/Coze 低代码 AI 平台，大幅提升开发效率。",
   "icon": "🏗️",
   "nodes": [

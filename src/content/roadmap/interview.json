@@ -1,7 +1,7 @@
 {
   "slug": "interview",
   "title": "阶段10：AI 应用工程师面试",
-  "order": 10,
+  "order": 9,
   "description": "重点不是背算法，而是展示企业应用设计能力。梳理 LLM、RAG、Agent、系统设计四大面试方向的核心考点。",
   "icon": "💡",
   "nodes": [

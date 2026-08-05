@@ -1,7 +1,7 @@
 {
   "slug": "llm-development",
   "title": "阶段3：LLM 应用开发",
-  "order": 3,
+  "order": 2,
   "description": "成为真正的 AI 应用开发者。掌握各大模型 API 调用、对话系统构建、Function Calling 工具调用和 Structured Output 结构化输出。",
   "icon": "🤖",
   "nodes": [

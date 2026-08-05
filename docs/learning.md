@@ -35,247 +35,118 @@
 # 总体路线
 
 ```text
-阶段0：AI应用开发环境准备
+阶段0：开发环境与Python Web基础
 
         ↓
 
-阶段1：Python Web开发基础
+阶段1：大模型应用基础
 
         ↓
 
-阶段2：大模型应用基础
+阶段2：LLM应用开发
 
         ↓
 
-阶段3：LLM应用开发
+阶段3：Prompt Engineering
 
         ↓
 
-阶段4：Prompt Engineering
+阶段4：AI应用开发框架
 
         ↓
 
-阶段5：AI应用开发框架
+阶段5：RAG企业知识库开发
 
         ↓
 
-阶段6：RAG企业知识库开发
+阶段6：Agent智能体开发
 
         ↓
 
-阶段7：Agent智能体开发
+阶段7：AI应用工程化
 
         ↓
 
-阶段8：AI应用工程化
+阶段8：企业级AI项目实战
 
         ↓
 
-阶段9：企业级AI项目实战
-
-        ↓
-
-阶段10：AI应用工程师面试
+阶段9：AI应用工程师面试
 ```
 
 ---
 
-# 阶段0：AI应用开发环境准备
-
-目标：
-
-第一天就具备开发环境。
-
-内容：
-
-## 开发工具
-
-* VS Code
-* Cursor
-* Git
-* Docker
-
-## Python环境
-
-学习：
-
-* Python安装
-* pip
-* venv
-* poetry
-
-## AI开发工具
-
-了解：
-
-* ChatGPT
-* Claude
-* DeepSeek
-* Cursor
-
-产出：
-
-完成：
-
-> 第一个 Python 程序调用 AI API
-
----
-
-# 阶段1：Python Web开发基础（重点调整）
+# 阶段0：开发环境与Python Web基础
 
 ## 目标
 
-直接具备开发 AI 后端服务能力。
-
-不单独学习：
-
-❌ HTTP协议理论
-
-❌ REST API规范
-
-❌ 网络七层模型
-
-❌ TCP/IP
-
-这些可以在实践中理解。
+第一天具备开发环境，快速具备 AI 后端服务开发能力。
 
 ---
 
-## 1.1 Python快速入门
+## Python环境搭建
 
-只学习 AI 开发需要的部分：
+安装 Python 3.10+，使用 `venv` 创建虚拟环境，`pip` 管理依赖。
 
-### 基础语法
-
-* 变量
-* 条件
-* 循环
-* 函数
-
-### 数据结构
-
-重点：
-
-* list
-* dict
-* tuple
-
-### 面向对象
-
-了解：
-
-* class
-* object
-
-### 工程能力
-
-学习：
-
-* package
-* import
-* exception
-
----
-
-## 1.2 FastAPI开发（核心）
-
-直接进入：
-
-> 用 Python 写 AI 后端服务
-
-学习：
-
-## 项目结构
-
-```text
-app
-
-├── main.py
-
-├── routers
-
-├── services
-
-├── models
-
-└── utils
+```bash
+python -m venv venv
+source venv/bin/activate   # Linux/Mac
+venv\Scripts\activate      # Windows
 ```
 
 ---
 
-## API开发
+## Python快速入门
 
-学习：
+只学 AI 开发必需的部分：
 
-* GET接口
-* POST接口
-* 参数校验
-* JSON返回
+**基础语法**：变量、条件、循环、函数
 
-例如：
+**数据结构**：list、dict、tuple
+
+**面向对象**：class、object
+
+**工程能力**：package、import、exception
+
+---
+
+## FastAPI开发（核心）
+
+直接用 Python 写 AI 后端服务。
+
+**项目结构**：
+
+```text
+app/ ├── main.py ├── routers/ ├── services/ ├── models/ └── utils/
+```
+
+**API开发**：GET/POST 接口、参数校验、JSON 返回
 
 ```python
 @app.post("/chat")
 def chat(request):
-    return {
-      "answer":"hello"
-    }
+    return {"answer": "hello"}
 ```
 
----
+**数据处理**：Pydantic、JSON、文件上传
 
-## 数据处理
+**数据库**：SQLite + ORM（掌握 CRUD 即可）
 
-学习：
-
-* Pydantic
-* JSON
-* 文件上传
-
----
-
-## 数据库
-
-学习：
-
-* SQLite
-* PostgreSQL
-
-简单掌握：
-
-* ORM
-* CRUD
-
----
-
-## Redis
-
-了解：
-
-* 缓存
-* Session
+**Redis**：缓存、Session（了解即可）
 
 ---
 
 ## 阶段项目
 
-开发：
+开发 **AI 聊天后端服务**：
 
-### AI聊天后端服务
+> 用户输入 → 调用 LLM → 返回结果
 
-功能：
-
-* 用户输入
-* 调用LLM
-* 返回结果
-
-技术：
-
-FastAPI + OpenAI API
+技术栈：FastAPI + OpenAI API
 
 ---
 
-# 阶段2：大模型应用基础（大幅压缩）
+# 阶段1：大模型应用基础（大幅压缩）
 
 目标：
 
@@ -359,7 +230,7 @@ Token
 
 ---
 
-# 阶段3：LLM应用开发
+# 阶段2：LLM应用开发
 
 目标：
 
@@ -441,7 +312,7 @@ JSON
 
 ---
 
-# 阶段4：Prompt Engineering
+# 阶段3：Prompt Engineering
 
 目标：
 
@@ -474,7 +345,7 @@ AI代码助手。
 
 ---
 
-# 阶段5：AI应用开发框架
+# 阶段4：AI应用开发框架
 
 目标：
 
@@ -520,7 +391,7 @@ AI代码助手。
 
 ---
 
-# 阶段6：RAG企业知识库开发（核心）
+# 阶段5：RAG企业知识库开发（核心）
 
 这是招聘重点。
 
@@ -599,7 +470,7 @@ LLM回答
 
 ---
 
-# 阶段7：Agent开发
+# 阶段6：Agent开发
 
 目标：
 
@@ -650,7 +521,7 @@ AI办公助手。
 
 ---
 
-# 阶段8：AI应用工程化
+# 阶段7：AI应用工程化
 
 企业区别点。
 
@@ -713,7 +584,7 @@ LLM
 
 ---
 
-# 阶段9：企业项目实战
+# 阶段8：企业项目实战
 
 必须做完整项目。
 
@@ -765,7 +636,7 @@ AI数据分析助手
 
 ---
 
-# 阶段10：面试准备
+# 阶段9：面试准备
 
 重点：
 
@@ -808,7 +679,7 @@ AI数据分析助手
 
 | 方向           |  比例 |
 | ------------ | --: |
-| Python Web开发 | 15% |
+| 环境与Python Web | 15% |
 | LLM基础        |  5% |
 | LLM应用开发      | 20% |
 | Prompt       | 10% |
