@@ -82,26 +82,6 @@ export default function BlogSidebar({ categories, tags, currentCategory, current
         </div>
       </div>
 
-      {/* RSS */}
-      <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-800/50">
-        <h3 className="mb-2 text-sm font-semibold text-slate-900 dark:text-white">
-          订阅更新
-        </h3>
-        <p className="mb-3 text-xs text-slate-500 dark:text-slate-400">
-          通过 RSS 获取最新文章更新。
-        </p>
-        <a
-          href="/rss.xml"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 text-xs font-medium text-amber-600 hover:text-amber-700 transition-colors"
-        >
-          <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M6.18 15.64a2.18 2.18 0 0 1 2.18 2.18C8.36 19 7.38 20 6.18 20C5 20 4 19 4 17.82a2.18 2.18 0 0 1 2.18-2.18M4 4.44A15.56 15.56 0 0 1 19.56 20h-2.83A12.73 12.73 0 0 0 4 7.27V4.44m0 5.66a9.9 9.9 0 0 1 9.9 9.9h-2.83A7.07 7.07 0 0 0 4 12.93V10.1Z" />
-          </svg>
-          RSS Feed
-        </a>
-      </div>
     </aside>
   );
 }
