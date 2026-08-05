@@ -221,9 +221,15 @@ export function getRoadmapIndex(): RoadmapTopic[] {
   const files = fs.readdirSync(dirPath).filter((f) => f.endsWith(".json"));
   return files
     .map((file) => {
-      const raw = fs.readFileSync(path.join(dirPath, file), "utf-8");
-      return JSON.parse(raw) as RoadmapTopic;
+      try {
+        const raw = fs.readFileSync(path.join(dirPath, file), "utf-8");
+        if (!raw.trim()) return null; // skip empty files
+        return JSON.parse(raw) as RoadmapTopic;
+      } catch {
+        return null;
+      }
     })
+    .filter((t): t is RoadmapTopic => t !== null)
     .sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
 }
 
