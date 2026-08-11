@@ -1,0 +1,322 @@
+# Agent 跑到一半挂了，怎么断点续跑？——从一次面试翻车说起
+
+> **适合读者**：正在把 Agent 系统推向生产的工程师，以及准备 Agent 方向面试的同学  
+> **阅读时间**：约 12 分钟
+
+---
+
+## 一、一次让我脸红的面试
+
+面试官问了一个我以为很简单的问题：
+
+> **面试官**：你的 Agent 跑到一半挂了，你怎么断点续跑？
+>
+> **我**：……从头重跑吧？
+>
+> **面试官**（有点惊讶）：那你昨天跑那 137 份的时间呢？
+
+我愣住了。那一刻我意识到，我连"断点续跑"这四个字里的**断点**和**续**都没有真正理解。我以为 Agent 任务是一次"函数调用"，挂了就重新调用一次。但真实的 Agent 任务是 137 份合同审查、137 篇论文精读、137 个代码仓库分析——它们不是一次调用，而是一场耗时数小时、烧掉大量 token、产生无数外部副作用的"马拉松"。
+
+**"从头重跑"在传统后端里只是浪费一点计算时间；在 Agent 时代，它意味着把已沉淀的所有时间和钱全部归零，还要再付一遍。**
+
+这篇博客不是面试题的标准答案背诵，而是我从那次翻车之后，真正把一个 Agent 批量任务系统改造成"可断点续跑"的完整工程实践。
+
+---
+
+## 二、为什么"从头重跑"是 Agent 时代最贵的错误
+
+先算一笔账，你就明白面试官为什么惊讶了。
+
+假设你昨天用 Agent 批量处理 137 份文档，每份文档的处理流程是：读取 → 检索相关材料 → LLM 分析（约 3 次调用）→ 生成结构化结论 → 写入结果库。
+
+| 维度 | 每份任务 | 137 份合计 |
+|------|---------|-----------|
+| 耗时 | 约 5 分钟 | 约 11.4 小时 |
+| LLM token 成本 | 约 6 元（输入+输出） | 约 822 元 |
+| 外部调用次数 | 约 10 次（检索/校验/写库） | 约 1370 次 |
+
+如果跑到第 89 份时进程崩溃，然后你选择"从头重跑"：
+
+- **时间账**：11.4 小时白跑，再花 11.4 小时重跑，总耗时 22.8 小时；
+- **金钱账**：822 元的 token 费用翻倍；
+- **更隐蔽的账**：前 88 份的结果是**不可再生的**。因为 LLM 是非确定性的（temperature > 0 时，同一输入两次运行结果可能不同），重跑得到的"第 17 份结论"和昨天的可能不一致。你甚至无法判断哪份是对的。
+
+而正确做法只需要：
+
+- 前 88 份的结果**直接复用**（结果已是资产，绝不重算）；
+- 从第 89 份**接着跑**，最多损失当前这一份的 5 分钟。
+
+**核心认知转变**：Agent 任务不是"一次调用"，而是"一个带有中间状态和外部副作用的长流程"。崩溃不是"什么都没发生"，而是**状态机在某个步骤被中断**。断点续跑的本质，就是让这个状态机可持久化、可恢复、可跳过。
+
+---
+
+## 三、第一性原理：把执行变成"可恢复的状态机"
+
+任何 Agent 任务都可以建模为：
+
+```
+任务 = 一组有序步骤
+步骤 = 一个 LLM 调用 / 一次工具调用 / 一次写入操作
+```
+
+关键设计决策是：**每个步骤完成之后，立即持久化结果**，而不是等整个任务跑完再落库。这样任何时候崩溃，我们损失的只是一个"进行中的步骤"，而不是"整个任务"。
+
+```python
+# 朴素版本：把 Agent 当函数
+def process_document(doc_id: str) -> Result:
+    return agent.run(doc_id)          # 挂了 = 全部白干
+
+# 可恢复版本：把 Agent 当状态机
+def process_document(doc_id: str, store: TaskStore) -> Result:
+    task = store.load_task(doc_id)
+    if task.status == "done":
+        return task.result            # 已完成：直接复用
+    if task.status == "running":
+        task = resume(task)           # 中断过：从断点续跑
+
+    for step in task.pending_steps():
+        step_result = execute_step(step)
+        store.save_step_result(task, step, step_result)  # 每步落库
+    return task.result
+```
+
+一个任务的完整状态由三部分组成：
+
+1. **任务元数据**：任务 ID、输入参数、整体状态；
+2. **步骤执行记录**：每一步的输入、输出、状态、耗时（这是断点续跑的核心）；
+3. **中间产物**：检索结果、临时文件、上下文快照。
+
+这套模型的好处是，**恢复逻辑极其简单**：启动时扫描所有"未完成"的任务，从第一个未完成的步骤继续执行即可。
+
+---
+
+## 四、第一层：任务级断点——137 份的正确打开方式
+
+### 4.1 先拆任务，再谈续跑
+
+"137 份"这个数字本身就是答案的提示：**批量任务必须先拆分成独立单元**。每一份文档就是一个任务单元，拥有独立的状态机。这带来的直接好处是：
+
+- 单份失败只影响这一份；
+- 已完成的部分是确定性资产，重跑时直接跳过；
+- 支持并发：N 个 worker 同时处理不同单元，互不阻塞。
+
+### 4.2 任务表设计
+
+```sql
+CREATE TABLE tasks (
+    task_id       TEXT PRIMARY KEY,          -- 如 doc_00089
+    batch_id      TEXT NOT NULL,             -- 如 batch_20260810
+    input_uri     TEXT NOT NULL,             -- 源文档地址
+    status        TEXT NOT NULL DEFAULT 'pending',
+        -- pending → running → done / failed
+    attempt       INT  NOT NULL DEFAULT 0,   -- 已尝试次数
+    result_uri    TEXT,                      -- 结果产物地址
+    last_heartbeat TIMESTAMP,                -- 心跳，用于判断是否"挂掉"
+    created_at    TIMESTAMP NOT NULL,
+    updated_at    TIMESTAMP NOT NULL
+);
+
+CREATE INDEX idx_tasks_batch_status ON tasks(batch_id, status);
+```
+
+### 4.3 恢复流程：三行逻辑
+
+```python
+def recover_batch(batch_id: str):
+    # 1. 找到所有未完成任务
+    unfinished = db.query(
+        "SELECT * FROM tasks WHERE batch_id=? AND status NOT IN ('done','failed')",
+        batch_id,
+    )
+    # 2. 对每个任务：从断点续跑（内部是步骤级恢复）
+    for task in unfinished:
+        resume_task(task)
+    # 3. 已完成的任务：结果直接复用，不碰
+```
+
+### 4.4 粒度权衡：不是越细越好
+
+任务拆分的粒度需要权衡：
+
+| 粒度 | 优点 | 缺点 |
+|------|------|------|
+| **整批一个任务** | 无拆分成本 | 挂一次全废，等于没做 |
+| **每份文档一个任务**（推荐） | 失败影响面小，结果可复用 | 需处理单份内部的步骤级恢复 |
+| **每份文档内的每个步骤一个任务** | 恢复损失最小 | 任务数量爆炸，调度与存储开销大 |
+
+我们的实践结论：**以"业务语义的自然单元"为粒度**。对文档批处理，自然单元就是"一份文档"；对代码审查，自然单元就是"一个 PR"。单份内部再做步骤级 checkpoint（见下一节）。
+
+---
+
+## 五、第二层：步骤级断点——单 Agent 内部的 checkpoint
+
+任务级断点解决了"第 89 份挂了"的问题，但单份文档内部也可能挂在第 3 步。如果一份文档内部有 10 个步骤、耗时 5 分钟，步骤级 checkpoint 的意义在于：**挂掉后重跑一份文档，只损失中断的那一步，而不是整份 5 分钟。**
+
+### 5.1 步骤状态机
+
+```
+pending → running → succeeded
+                  ↘ failed（可重试，重试后回到 pending）
+```
+
+每一步执行前，先把状态置为 `running` 并落库；执行成功后，把**输入和输出都写入步骤表**，再置为 `succeeded`。
+
+```sql
+CREATE TABLE task_steps (
+    task_id     TEXT NOT NULL,
+    step_id     TEXT NOT NULL,           -- 如 step_3_summarize
+    step_type   TEXT NOT NULL,           -- llm_call / tool_call / write
+    status      TEXT NOT NULL DEFAULT 'pending',
+    input_json  TEXT,                    -- 步骤输入（含 prompt）
+    output_json TEXT,                    -- 步骤输出（LLM 回复 / 工具结果）
+    created_at  TIMESTAMP NOT NULL,
+    PRIMARY KEY (task_id, step_id)
+);
+```
+
+### 5.2 执行引擎的恢复逻辑
+
+```python
+def execute_agent(task, steps):
+    for step in steps:
+        # 1. 已完成的步骤：直接跳过（关键！）
+        record = store.load_step(task.id, step.id)
+        if record and record.status == "succeeded":
+            continue
+        # 2. 标记 running，先落库再执行
+        store.mark_step(task.id, step.id, "running")
+        try:
+            output = run_step(step)          # LLM 调用 / 工具调用
+        except Exception as e:
+            store.mark_step(task.id, step.id, "failed", error=str(e))
+            raise
+        # 3. 成功后立即落库
+        store.save_step_output(task.id, step.id, output)
+        store.mark_step(task.id, step.id, "succeeded")
+```
+
+这套思路和 LangGraph 的 **Checkpoint / Thread 持久化** 是同一件事：把 `AgentState`（消息历史、工具结果、上下文）在每个节点执行后序列化到存储（内存、SQLite、Postgres），崩溃后从最新 checkpoint 恢复继续执行。
+
+---
+
+## 六、第三层：调用级重放——连 LLM 的返回都记录下来
+
+你可能已经发现一个隐患：**步骤级 checkpoint 只保证了"步骤执行过"，但恢复重跑一个步骤时，LLM 的输出可能和上次不一样**（非确定性）。
+
+举一个真实踩过的坑：某 Agent 在第 3 步"生成 SQL"时崩溃，恢复后重跑，LLM 这次生成了不同的 SQL——虽然都正确，但后续步骤基于新的 SQL 重新执行，导致整份结果的语义发生了偏移，而我们却以为它和第一次一致。
+
+解法：**把每次 LLM 调用、工具调用的请求与响应都记录下来，恢复时直接重放（replay）已记录的结果，而不是重新调用。**
+
+```python
+def llm_call(prompt, *, trace_id, step_id):
+    # 1. 查缓存：这一步调用过吗？
+    cached = call_cache.get(trace_id, step_id, hash(prompt))
+    if cached is not None:
+        return cached                     # 确定性重放
+    # 2. 没调用过：真的调用，并把结果记下来
+    response = openai.chat.completions.create(...)
+    call_cache.put(trace_id, step_id, hash(prompt), response)
+    return response
+```
+
+调用级记录与步骤级 checkpoint 的组合，构成了三层断点续跑的完整体系：
+
+| 层次 | 恢复粒度 | 恢复损失 | 实现成本 |
+|------|---------|---------|---------|
+| **任务级** | 整份文档 | 一份任务的执行时间 | 低（任务表 + 状态机） |
+| **步骤级** | 单个步骤 | 一步的执行时间 | 中（步骤表 + checkpoint） |
+| **调用级** | 单次 LLM/工具调用 | 几乎为零 | 中高（调用日志 + 缓存重放） |
+
+注意：调用级重放并非永远正确。如果工具返回的**外部数据变了**（比如你重放了 2 小时前的网络搜索结果），重放旧结果反而是错的。我们的取舍是：**对纯 LLM 调用做重放（输入输出自洽），对强外部依赖的工具调用（搜索、数据库、HTTP）记录结果但标记"陈旧"，由业务决定是否重新执行**。
+
+---
+
+## 七、幂等性：续跑的地基
+
+三层断点续跑都依赖一个隐含前提：**同一个步骤执行两次，副作用不能发生两次**。
+
+如果第 5 步是"调用合同系统的审批接口"，执行成功后写库的那一瞬间进程崩溃——恢复后你会重跑第 5 步，那么审批接口被调用了两次，可能创建了两张工单。这是断点续跑系统最常见的生产事故。
+
+解法是**幂等键（Idempotency Key）**：每次工具调用带一个全局唯一的 `operation_id`，服务端据此去重。
+
+```python
+def call_tool_with_idempotency(tool, args, operation_id):
+    # 先查"这笔操作是否已经执行过"
+    if op_store.exists(operation_id):
+        return op_store.get_result(operation_id)
+    # 没执行过：执行，并保证"记录结果"和"调用工具"的原子性
+    result = tool(**args, idempotency_key=operation_id)
+    op_store.record(operation_id, result)
+    return result
+```
+
+工程上的两条铁律：
+
+1. **先记后做（Write-Ahead）**：把"将要执行的操作"先写入日志，再执行副作用。崩溃后扫描日志，就能知道"哪些操作可能已经生效但没记录结果"，从而做补偿；
+2. **副作用与状态写入必须原子**：要么用同一个事务，要么依赖工具侧的去重（`idempotency_key`）。做不到原子时，宁可"先做后记 + 幂等键兜底"，也不要"先记后做但副作用不可重放"。
+
+---
+
+## 八、崩溃一致性：怎么判断"挂了"，而不是"还在跑"
+
+断点续跑还面临一个工程问题：**进程崩溃后重启，你怎么知道哪些任务"真的挂了"、哪些只是"还在跑"？** 如果贸然把 running 中的任务全部重跑，可能造成重复副作用。
+
+我们的方案是**心跳 + 租约（Lease）**：
+
+```python
+# worker 每 30 秒更新一次心跳
+def heartbeat_loop(task_id: str):
+    while True:
+        db.update("UPDATE tasks SET last_heartbeat=? WHERE task_id=?", now, task_id)
+        time.sleep(30)
+
+# 恢复时：心跳超时（如 5 分钟）才判定为"僵尸任务"
+def find_zombie_tasks():
+    cutoff = now - timedelta(minutes=5)
+    return db.query(
+        "SELECT * FROM tasks WHERE status='running' AND last_heartbeat < ?",
+        cutoff,
+    )
+```
+
+判断准则：
+
+- `status = running` 且**心跳新鲜** → 还在跑，不干预；
+- `status = running` 且**心跳超时** → 僵尸任务，接管（先把状态改回 `pending` 再重新调度）；
+- `status = pending` → 从未开始，正常调度；
+- `status = done` → 结果复用。
+
+另外一个容易忽略的细节：**恢复时先加锁（或租约）再续跑**。如果原进程其实还活着（比如只是网络分区），两个进程同时处理同一个任务会互相踩踏。租约机制的"抢锁"天然解决了这个问题——谁抢到锁谁续跑。
+
+---
+
+## 九、回到面试：现在我会这样回答
+
+如果现在面试官再问我"你的 Agent 跑到一半挂了，怎么断点续跑"，我会这样组织回答：
+
+> **先给结论**：断点续跑不是"重跑"，而是"从最近的可信状态恢复"。我会按三个层次设计：
+>
+> **第一层，任务级**。批量任务按业务单元拆分（137 份文档 = 137 个独立任务单元），每份有独立状态机，已完成的结果直接复用。昨天跑到第 89 份挂了，恢复后前 88 份结果原样保留，从第 89 份继续，损失不超过一份的执行时间。
+>
+> **第二层，步骤级**。单个 Agent 内部按步骤持久化 checkpoint，每个 LLM 调用 / 工具调用完成后立即落库，恢复时跳过已完成步骤。
+>
+> **第三层，调用级**。记录每次 LLM 调用的输入输出，恢复时重放已记录结果，避免非确定性导致的结果漂移。
+>
+> **两个地基**：一是幂等性，所有外部副作用带幂等键，保证重复执行不产生重复副作用；二是崩溃一致性，用心跳 + 租约判断任务是真挂了还是还在跑，恢复时先抢锁再续跑。
+
+面试官真正想听的，不是你会不会写一个 `resume()` 函数，而是：**你有没有把"不可靠执行"当作 Agent 系统设计的默认假设。** 一个把执行当作"函数调用"的工程师，和把执行当作"可恢复状态机"的工程师，面对同一个事故会做出完全不同的系统。
+
+---
+
+## 十、结语：断点续跑是一种设计哲学
+
+回到开头的面试，其实面试官的惊讶不是针对"答错了"，而是针对**思维方式**：在 LLM 时代，执行成本高、结果不可再生、副作用无处不在，我们不能再把"重试"当作兜底。
+
+断点续跑也不是一个事后打补丁的功能，而是一套从第一天就要刻进架构的原则：
+
+- **设计任务时**，就按业务单元拆分，让它天然可恢复；
+- **设计执行引擎时**，每一步都持久化，让它天然可续跑；
+- **设计工具调用时**，就带上幂等键，让它天然可重放；
+- **设计恢复流程时**，用心跳和租约，让它天然可判定。
+
+Agent 工程的核心，不是让"不确定性"消失——那是做不到的。而是**把不确定性装进一个确定性的壳里**：确定的执行框架、确定的状态模型、确定的恢复语义。这样，无论 Agent 内部多么随机、外部环境多么动荡，你的批量任务永远是"137 份里完成了多少份，就有多少份是安全的"。
