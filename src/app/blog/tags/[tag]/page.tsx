@@ -50,7 +50,7 @@ export default function BlogTagPage({ params }: Props) {
 
         <div className="lg:grid lg:grid-cols-4 lg:gap-12">
           <div className="lg:col-span-3">
-            <div className="grid gap-8 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="space-y-4">
               {paginatedPosts.map((post) => (
                 <BlogCard key={post.slug} post={post} />
               ))}

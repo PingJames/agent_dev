@@ -37,7 +37,7 @@ export default function BlogPage() {
           <div className="lg:col-span-3">
             {paginatedPosts.length > 0 ? (
               <>
-                <div className="grid gap-8 sm:grid-cols-2 xl:grid-cols-3">
+                <div className="space-y-4">
                   {paginatedPosts.map((post) => (
                     <BlogCard key={post.slug} post={post} />
                   ))}
