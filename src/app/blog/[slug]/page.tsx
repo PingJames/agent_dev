@@ -82,7 +82,7 @@ export default async function BlogDetailPage({ params }: Props) {
               <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
             </svg>
             <Link
-              href={`/blog/categories/${frontmatter.category}`}
+              href={`/blog/categories/${encodeURIComponent(frontmatter.category)}`}
               className="hover:text-primary-600 transition-colors"
             >
               {frontmatter.category}

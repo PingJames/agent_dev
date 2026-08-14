@@ -40,7 +40,7 @@ export default function BlogSidebar({ categories, tags, currentCategory, current
           {categories.map((cat) => (
             <Link
               key={cat.slug}
-              href={`/blog/categories/${cat.slug}`}
+              href={`/blog/categories/${encodeURIComponent(cat.slug)}`}
               className={`flex items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors ${
                 currentCategory === cat.slug
                   ? "bg-primary-50 text-primary-700 dark:bg-primary-900/20 dark:text-primary-300"

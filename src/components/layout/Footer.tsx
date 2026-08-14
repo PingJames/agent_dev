@@ -8,11 +8,15 @@ const footerLinks = {
     { label: "面试题库", href: "/interview" },
   ],
   技术领域: [
-    { label: "LLM 基础", href: "/blog/categories/llm" },
-    { label: "RAG 技术", href: "/blog/categories/rag" },
-    { label: "AI Agent", href: "/blog/categories/agent" },
-    { label: "Prompt Engineering", href: "/blog/categories/prompt-engineering" },
-  ],
+    { label: "LLM 基础", slug: "LLM 基础" },
+    { label: "RAG 技术", slug: "rag" },
+    { label: "AI Agent", slug: "agent" },
+    { label: "Prompt Engineering", slug: "prompt-engineering" },
+  ].map(({ label, slug }) => ({
+    label,
+    // 分类名可能含空格/中文，必须 URL 编码，否则动态路由参数无法匹配
+    href: `/blog/categories/${encodeURIComponent(slug)}`,
+  })),
 };
 
 export default function Footer() {

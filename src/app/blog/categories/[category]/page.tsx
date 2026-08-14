@@ -9,17 +9,28 @@ interface Props {
   params: { category: string };
 }
 
+// App Router 的动态路由参数是未解码的（例如 "LLM%20%E5%9F%BA%E7%A1%80"），
+// 需要手动 decodeURIComponent 后才能与 frontmatter 中的分类名比较。
+function decodeParam(value: string): string {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const category = decodeParam(params.category);
   return {
-    title: `${params.category} - 技术博客`,
-    description: `浏览 ${params.category} 分类下的所有 AI 应用开发相关技术文章。`,
+    title: `${category} - 技术博客`,
+    description: `浏览 ${category} 分类下的所有 AI 应用开发相关技术文章。`,
   };
 }
 
 const POSTS_PER_PAGE = 9;
 
 export default function BlogCategoryPage({ params }: Props) {
-  const { category } = params;
+  const category = decodeParam(params.category);
   const allPosts = getAllBlogPosts();
   const categories = getBlogCategories();
   const tags = getAllTags();
@@ -57,7 +68,7 @@ export default function BlogCategoryPage({ params }: Props) {
             <Pagination
               currentPage={1}
               totalPages={totalPages}
-              basePath={`/blog/categories/${category}`}
+              basePath={`/blog/categories/${encodeURIComponent(category)}`}
             />
           </div>
 
