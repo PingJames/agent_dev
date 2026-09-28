@@ -21,6 +21,11 @@ const ASSETS = [
     file: "Agent面试知识全景-学习手册.html",
     slug: "interview-handbook",
   },
+  {
+    dir: "Agent面试知识全景",
+    file: "Agent面试知识全景-思维导图.html",
+    slug: "interview-mindmap",
+  },
 ];
 
 fs.mkdirSync(outDir, { recursive: true });

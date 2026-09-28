@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getLearnCollections, getLearnFileStats } from "@/lib/learn";
+import { getLearnCollections } from "@/lib/learn";
 import DownloadCard from "@/components/learn/DownloadCard";
-import LearnFileList from "@/components/learn/LearnFileList";
 
 export const metadata: Metadata = {
   title: "快速学习",
@@ -51,13 +50,11 @@ export default function LearnPage() {
 
         {/* Collections */}
         <div className="mt-16 space-y-12">
-          {collections.map((collection) => {
-            const files = getLearnFileStats(collection);
-            return (
-              <section
-                key={collection.id}
-                className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800/40"
-              >
+          {collections.map((collection) => (
+            <section
+              key={collection.id}
+              className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800/40"
+            >
                 <div className="border-b border-slate-200 p-6 sm:p-8 dark:border-slate-700">
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
                     <CollectionIcon gradient={collection.gradient} />
@@ -122,9 +119,6 @@ export default function LearnPage() {
                       ))}
                     </div>
 
-                    <div className="mt-6">
-                      <LearnFileList files={files} />
-                    </div>
                   </div>
 
                   {/* 网盘下载 */}
@@ -136,8 +130,7 @@ export default function LearnPage() {
                   </div>
                 </div>
               </section>
-            );
-          })}
+          ))}
         </div>
 
         {/* 说明与引导 */}

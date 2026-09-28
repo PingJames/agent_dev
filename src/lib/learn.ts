@@ -103,6 +103,7 @@ export const LEARN_COLLECTIONS: LearnCollection[] = [
       "Agent面试知识全景-学习手册.md",
       "Agent面试知识全景-学习手册.html",
       "Agent面试知识全景-学习手册.pdf",
+      "Agent面试知识全景-思维导图.html",
     ],
     pan: {
       title: "Agent面试知识全景",
@@ -120,6 +121,16 @@ export const LEARN_COLLECTIONS: LearnCollection[] = [
         sourceFile: "Agent面试知识全景-学习手册.html",
         assetPath: "/learn/interview-handbook.html",
         summary: "排版好的学习手册网页版，按章节组织，适合循序渐进地读。",
+      },
+      {
+        slug: "interview-mindmap",
+        title: "Agent 面试知识全景 · 思维导图",
+        kind: "html",
+        collectionId: "interview",
+        sourceFile: "Agent面试知识全景-思维导图.html",
+        assetPath: "/learn/interview-mindmap.html",
+        summary: "可交互思维导图，支持展开/折叠节点、缩放，用来快速建立面试知识框架。",
+        interactive: true,
       },
       {
         slug: "interview-handbook-md",
