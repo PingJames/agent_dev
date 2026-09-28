@@ -94,6 +94,19 @@
   .skeleton {
     @apply animate-pulse rounded-md bg-slate-200 dark:bg-slate-700;
   }
+
+  /* 快速学习 · Markdown 阅读容器（MDX 组件已带样式，这里只做首行与嵌套列表微调） */
+  .learn-doc-content > :first-child {
+    margin-top: 0;
+  }
+
+  .learn-doc-content ul ul,
+  .learn-doc-content ol ol,
+  .learn-doc-content ul ol,
+  .learn-doc-content ol ul {
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+  }
 }
 
 /* Code block highlighting: use light theme tokens, transparent bg so <pre> bg shows */

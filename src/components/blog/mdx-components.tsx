@@ -10,6 +10,15 @@ export const mdxComponents = {
   h3: (props: React.HTMLProps<HTMLHeadingElement>) => (
     <h3 className="mt-6 mb-3 text-xl font-semibold text-slate-900 dark:text-white" {...props} />
   ),
+  h4: (props: React.HTMLProps<HTMLHeadingElement>) => (
+    <h4 className="mt-6 mb-2 text-lg font-semibold text-slate-900 dark:text-white" {...props} />
+  ),
+  h5: (props: React.HTMLProps<HTMLHeadingElement>) => (
+    <h5 className="mt-4 mb-2 text-base font-semibold text-slate-900 dark:text-white" {...props} />
+  ),
+  h6: (props: React.HTMLProps<HTMLHeadingElement>) => (
+    <h6 className="mt-4 mb-2 text-sm font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-400" {...props} />
+  ),
   p: (props: React.HTMLProps<HTMLParagraphElement>) => (
     <p className="my-4 leading-relaxed text-slate-700 dark:text-slate-300" {...props} />
   ),

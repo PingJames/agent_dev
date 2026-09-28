@@ -1,0 +1,1647 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Agent 面试知识全景 · 学习手册</title>
+<style>
+:root{
+  --ink:#111827; --ink2:#374151; --ink3:#6b7280; --ink4:#9ca3af;
+  --primary:#1d4ed8; --primary-2:#3b82f6; --primary-soft:#eef3ff;
+  --accent:#b45309; --accent-soft:#fff7ea;
+  --danger:#b91c1c; --danger-soft:#fef2f2;
+  --ok:#047857; --ok-soft:#ecfdf5;
+  --purple:#6d28d9; --purple-soft:#f5f0ff;
+  --line:#e5e7eb; --line2:#d1d5db; --soft:#f8fafc;
+}
+*{box-sizing:border-box;}
+html{-webkit-print-color-adjust:exact; print-color-adjust:exact;}
+body{
+  margin:0; color:var(--ink);
+  font-family:"Microsoft YaHei","PingFang SC","Hiragino Sans GB","Source Han Sans SC","Noto Sans CJK SC",sans-serif;
+  font-size:10.5pt; line-height:1.72; background:#fff;
+}
+@page{ size:A4; margin:14mm 12mm 15mm; }
+
+/* ============ 封面 ============ */
+.cover{
+  height:262mm; display:flex; flex-direction:column; justify-content:center;
+  background:linear-gradient(150deg,#f2f6ff 0%,#ffffff 45%,#fff8ef 100%);
+  border:1px solid var(--line); border-radius:8px; padding:0 22mm; position:relative;
+  page-break-after:always;
+}
+.cover::before{
+  content:""; position:absolute; left:0; top:0; width:100%; height:6px;
+  background:linear-gradient(90deg,#1d4ed8,#6d28d9,#b45309);
+  border-radius:8px 8px 0 0;
+}
+.cover .kicker{font-size:11pt; letter-spacing:.32em; color:var(--primary); font-weight:700; margin-bottom:8mm;}
+.cover h1{font-size:38pt; line-height:1.22; margin:0 0 6mm; letter-spacing:-.5px;}
+.cover h1 em{font-style:normal; color:var(--primary);}
+.cover .sub{font-size:13pt; color:var(--ink2); margin-bottom:14mm; line-height:1.8;}
+.cover .meta{border-top:2px solid var(--line2); padding-top:7mm; font-size:10.5pt; color:var(--ink3); line-height:2.05;}
+.cover .meta b{color:var(--ink);}
+.cover .chips{margin:0 0 12mm; display:flex; flex-wrap:wrap; gap:6px;}
+.chip{
+  font-size:9pt; padding:3px 11px; border-radius:20px;
+  background:#fff; border:1px solid var(--line2); color:var(--ink2);
+}
+.chip.hi{background:var(--primary-soft); border-color:#c7d7ff; color:var(--primary); font-weight:700;}
+
+/* ============ 结构 ============ */
+.chapter{page-break-before:always;}
+.chapter:first-of-type{page-break-before:auto;}
+h1.sec{
+  font-size:19pt; margin:0 0 5mm; padding:0 0 3mm 12px; border-left:6px solid var(--primary);
+  letter-spacing:-.3px; line-height:1.35;
+}
+h1.sec .no{color:var(--primary); font-weight:800; margin-right:8px;}
+h2.sub{
+  font-size:13.5pt; margin:8mm 0 3mm; padding-left:10px; border-left:4px solid var(--primary-2);
+  line-height:1.4;
+}
+h3.item{font-size:11.5pt; margin:5.5mm 0 2mm; color:var(--ink);}
+h3.item::before{content:"▍"; color:var(--accent); margin-right:5px; font-size:9pt;}
+p{margin:0 0 2.6mm;}
+ul,ol{margin:0 0 3mm; padding-left:5.2mm;}
+li{margin:0 0 1.3mm;}
+li>ul,li>ol{margin-top:1.3mm;}
+code{
+  font-family:"Cascadia Mono",Consolas,"Courier New",monospace; font-size:9.3pt;
+  background:#f1f5f9; border:1px solid #e2e8f0; border-radius:3px; padding:1px 4px; color:#0f172a;
+}
+b,strong{color:#0b1220;}
+.hl{background:linear-gradient(transparent 58%,#ffe9a8 58%); font-weight:700; padding:0 1px;}
+.kw{color:var(--primary); font-weight:700;}
+
+/* ============ 表格 ============ */
+.tw{margin:3mm 0 4.5mm; break-inside:avoid; page-break-inside:avoid;}
+table{width:100%; border-collapse:collapse; font-size:9.6pt; line-height:1.6;}
+th{
+  background:var(--primary-soft); color:#16307a; font-weight:700; text-align:left;
+  padding:5px 8px; border:1px solid #d6e0f7; font-size:9.5pt;
+}
+td{padding:5px 8px; border:1px solid var(--line); vertical-align:top; color:var(--ink2);}
+tbody tr:nth-child(even) td{background:#fbfcfe;}
+td strong{color:#0b1220;}
+caption{caption-side:top; text-align:left; font-size:9.3pt; color:var(--ink3); padding:0 0 2px;}
+
+/* ============ 卡片 / 提示 ============ */
+.card{
+  border:1px solid var(--line); border-radius:6px; padding:3.5mm 4.5mm; margin:3mm 0 4.5mm;
+  background:#fff; break-inside:avoid; page-break-inside:avoid;
+}
+.card>.ct{font-weight:800; font-size:10.5pt; margin-bottom:1.6mm; color:var(--ink);}
+.grid2{display:grid; grid-template-columns:1fr 1fr; gap:3mm;}
+.grid3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:3mm;}
+@media print{.grid2,.grid3{display:grid;}}
+
+.callout{
+  border-radius:6px; padding:3.2mm 4.2mm; margin:3mm 0 4.5mm; font-size:10pt;
+  break-inside:avoid; page-break-inside:avoid;
+}
+.callout .t{font-weight:800; margin-bottom:1.4mm;}
+.kp{background:var(--primary-soft); border-left:4px solid var(--primary); }
+.kp .t{color:var(--primary);}
+.trap{background:var(--danger-soft); border-left:4px solid var(--danger);}
+.trap .t{color:var(--danger);}
+.memo{background:var(--ok-soft); border-left:4px solid var(--ok);}
+.memo .t{color:var(--ok);}
+.qa{background:var(--accent-soft); border-left:4px solid var(--accent);}
+.qa .t{color:var(--accent);}
+.fw{background:var(--purple-soft); border-left:4px solid var(--purple);}
+.fw .t{color:var(--purple);}
+
+/* 口诀大字 */
+.formula{
+  text-align:center; font-size:11.5pt; font-weight:800; letter-spacing:.02em;
+  background:#0f172a; color:#fff; border-radius:6px; padding:4mm; margin:3.5mm 0 5mm;
+  break-inside:avoid;
+}
+.formula small{display:block; font-weight:400; color:#c7d2fe; font-size:9pt; margin-top:1.5mm; letter-spacing:0;}
+
+/* 流程链 */
+.flow{display:flex; flex-wrap:wrap; align-items:center; gap:2mm; margin:3mm 0 4.5mm; break-inside:avoid;}
+.flow .n{
+  background:#fff; border:1.5px solid var(--primary); color:#16307a; border-radius:5px;
+  padding:2mm 3mm; font-size:9.5pt; font-weight:700;
+}
+.flow .a{color:var(--primary-2); font-weight:800;}
+.step-num{
+  display:inline-block; width:17px; height:17px; line-height:17px; text-align:center; border-radius:50%;
+  background:var(--primary); color:#fff; font-size:8.6pt; font-weight:700; margin-right:4px;
+}
+.tag{
+  display:inline-block; font-size:8.4pt; font-weight:700; padding:1px 7px; border-radius:10px;
+  border:1px solid var(--line2); color:var(--ink3); margin-right:4px; vertical-align:1px;
+}
+.tag.hot{background:#fee2e2; border-color:#fecaca; color:#b91c1c;}
+.tag.star{background:#fef3c7; border-color:#fde68a; color:#b45309;}
+
+/* 目录 */
+.toc{page-break-after:always;}
+.toc h2{font-size:16pt; border-bottom:2px solid var(--primary); padding-bottom:2.5mm; margin:0 0 5mm;}
+.toc ol{list-style:none; padding:0; counter-reset:t;}
+.toc>ol>li{
+  counter-increment:t; margin:0 0 3.2mm; font-size:11pt; font-weight:700; color:var(--ink);
+  border-bottom:1px dashed var(--line); padding-bottom:2.2mm;
+}
+.toc>ol>li::before{
+  content:"0" counter(t); color:var(--primary); font-weight:800; margin-right:8px; font-size:11pt;
+}
+.toc .d{display:block; font-weight:400; font-size:9.3pt; color:var(--ink3); margin-top:1mm; padding-left:26px;}
+
+/* 页脚 */
+.note{font-size:9pt; color:var(--ink4); text-align:center; margin-top:6mm;}
+.hr{height:1px; background:var(--line); margin:6mm 0;}
+.avoid{break-inside:avoid; page-break-inside:avoid;}
+.lead{
+  font-size:10.8pt; color:var(--ink2); background:var(--soft); border:1px dashed var(--line2);
+  border-radius:6px; padding:3.2mm 4.2mm; margin:0 0 5mm;
+}
+.lead b{color:var(--primary);}
+.mini{font-size:9.2pt; color:var(--ink3);}
+</style>
+</head>
+<body>
+
+<!-- ================= 封面 ================= -->
+<section class="cover">
+  <div class="kicker">AGENT ENGINEERING · 系统学习手册</div>
+  <h1>Agent 面试<br><em>知识全景</em>学习手册</h1>
+  <div class="sub">
+    八大板块 · 一条主线 · 全部高频考点<br>
+    从「LLM 怎么调工具」到「生产级 Agent 怎么跑得稳」的完整脉络
+  </div>
+  <div class="chips">
+    <span class="chip hi">基础概念</span><span class="chip hi">协议体系</span>
+    <span class="chip">记忆与状态</span><span class="chip">可靠性与安全</span>
+    <span class="chip hi">Harness 工程</span><span class="chip hi">Loop / Graph</span>
+    <span class="chip">多 Agent</span><span class="chip">可观测与成本</span>
+    <span class="chip hi">系统设计答法</span>
+  </div>
+  <div class="meta">
+    <div><b>适用</b>　Agent / 大模型应用岗 面试冲刺 · 系统性查漏补缺</div>
+    <div><b>用法</b>　先读「知识地图」建立骨架 → 逐板块精读 → 附录速查表考前自测</div>
+    <div><b>配套</b>　《Agent 面试知识全景 - 思维导图》（可折叠交互版）</div>
+    <div><b>核心主线</b>　LLM 只负责生成 → Agent 让它动起来 → Harness 让它跑得稳</div>
+  </div>
+</section>
+
+<!-- ================= 目录 ================= -->
+<section class="toc">
+  <h2>目录</h2>
+  <ol>
+    <li>知识地图与学习路径<span class="d">一张图看清 8 大板块的因果与递进关系，明确「先学什么、重点是什么」</span></li>
+    <li>基础概念与工作模式<span class="d">LLM vs Agent · Agent vs Workflow · 四大工作模式 · 死循环防控　<span class="tag hot">最高频</span></span></li>
+    <li>协议体系<span class="d">Function Calling · MCP · A2A · Skills · 四层协作关系　<span class="tag hot">最高频</span></span></li>
+    <li>记忆与状态系统<span class="d">上下文 vs 外部记忆 · 压缩三策略 · State 三层 · Memory 两类 · 遗忘与读写</span></li>
+    <li>可靠性与安全<span class="d">四大威胁 · 幻觉五类与四层防线 · 上下文漂移 · 工具调用幻觉　<span class="tag hot">最高频</span></span></li>
+    <li>生产级工程体系<span class="d">Prompt → Context → Harness → Loop → Graph · 三种 Harness 实现对比　<span class="tag star">拉开差距</span></span></li>
+    <li>多 Agent 架构与 Harness 治理<span class="d">编排四模式 · Tool vs Agent-as-Tool · 七层治理</span></li>
+    <li>可观测性与成本优化<span class="d">Agent Trace 两层设计 · 漂移检测 · 成本六招 · 混合路由</span></li>
+    <li>生产级系统设计与面试答法<span class="d">五层架构 · 六个转换 · 评估四层 · 五阶段落地 · 答题框架</span></li>
+    <li>附录：高频面试题速查 · 记忆口诀 · 关键数字 · 术语表<span class="d">考前 30 分钟的最佳材料</span></li>
+  </ol>
+</section>
+
+<!-- ================= 1 知识地图 ================= -->
+<section class="chapter">
+<h1 class="sec"><span class="no">01</span>知识地图与学习路径</h1>
+
+<div class="lead">
+本手册的全部内容，可以用一句话串起来：<b>LLM 只能生成文本，Agent 通过「工具 + 记忆 + 规划 + 循环」让它动起来，而 Harness 工程让它从「能跑通一次」变成「能稳定跑很多次」。</b>
+八大板块不是并列的知识点堆，而是层层递进的因果链。
+</div>
+
+<h2 class="sub">1.1 总览：八大板块的递进关系</h2>
+<div class="flow">
+  <span class="n">① 基础概念</span><span class="a">→</span>
+  <span class="n">② 协议体系</span><span class="a">→</span>
+  <span class="n">③ 记忆与状态</span><span class="a">→</span>
+  <span class="n">④ 可靠性与安全</span><span class="a">→</span>
+  <span class="n">⑤ 工程体系</span><span class="a">→</span>
+  <span class="n">⑥ 多 Agent</span><span class="a">→</span>
+  <span class="n">⑦ 可观测与成本</span><span class="a">→</span>
+  <span class="n">⑧ 系统设计</span>
+</div>
+<div class="mini" style="margin-bottom:4mm">读法：① 解决「Agent 是什么」；② 解决「Agent 怎么接到外部能力」；③ 解决「Agent 怎么记住」；④ 解决「Agent 怎么不出事」；⑤ 解决「循环本身怎么设计」；⑥ 解决「多个 Agent 怎么协作」；⑦ 解决「线上怎么看清、怎么省钱」；⑧ 把前面全部收进一套可交付的架构与答法。</div>
+
+<div class="tw">
+<table>
+<thead><tr><th style="width:14%">板块</th><th style="width:24%">回答的核心问题</th><th style="width:34%">一句话抓住</th><th>面试价值</th></tr></thead>
+<tbody>
+<tr><td><strong>① 基础概念</strong></td><td>Agent 是什么？和 LLM、Workflow 差在哪？</td><td>控制权归谁：代码（Workflow）还是 LLM（Agent）</td><td>开场必问，答不好直接掉档</td></tr>
+<tr><td><strong>② 协议体系</strong></td><td>Agent 靠什么调用外部世界？</td><td>FC 是机制，MCP 是标准，A2A 是横向协作，Skills 是领域知识</td><td>区分「看过文章」和「真懂」的分水岭</td></tr>
+<tr><td><strong>③ 记忆与状态</strong></td><td>Agent 怎么不失忆、不串味？</td><td>State 管当前任务，Memory 管跨任务经验，两者必须分开</td><td>中高级岗必问</td></tr>
+<tr><td><strong>④ 可靠性与安全</strong></td><td>Agent 胡说、越权、死循环怎么办？</td><td>幻觉四层防线：Prompt → 工具 → 证据 → 输出校验</td><td>高频追问，能讲透就赢一半</td></tr>
+<tr><td><strong>⑤ 工程体系</strong></td><td>怎么让长链路稳定跑？</td><td>Prompt ⊂ Context ⊂ Harness；Loop 是 Harness 的心脏</td><td>拉开与普通候选人的差距</td></tr>
+<tr><td><strong>⑥ 多 Agent</strong></td><td>什么时候该拆多个 Agent？</td><td>Agent 负责局部智能，Harness 负责全局控制</td><td>架构岗重点</td></tr>
+<tr><td><strong>⑦ 可观测与成本</strong></td><td>线上不稳、账单爆炸怎么治？</td><td>没有 Trace 就没有优化；80% 的任务用不着大模型</td><td>落地能力证明</td></tr>
+<tr><td><strong>⑧ 系统设计</strong></td><td>你能否设计一个生产级 Agent？</td><td>目标 → 架构 → Harness → 治理 → 组织</td><td>终面压轴</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2 class="sub">1.2 三条贯穿全书的主线（考前必记）</h2>
+<div class="grid3">
+  <div class="card"><div class="ct">主线一：从「说」到「做」</div><div class="mini">LLM 只会生成 token → Function Calling 让它输出调用指令 → MCP 把接入标准化 → Agent 循环把一次调用变成多步任务。这条线回答「Agent  почему能干活」。</div></div>
+  <div class="card"><div class="ct">主线二：从「能跑」到「跑得稳」</div><div class="mini">Prompt → Context → Harness → Loop → Graph。控制的粒度越来越粗：从一句话，到一个循环，再到一张显式控制图。这条线回答「生产级差在哪」。</div></div>
+  <div class="card"><div class="ct">主线三：从「单点」到「系统」</div><div class="mini">单 Agent → 多 Agent → 平台化。每一步都要求：状态外化、权限治理、评估与观测。这条线回答「架构怎么演进」。</div></div>
+</div>
+
+<div class="callout kp">
+  <div class="t">学习路径建议（按面试性价比排序）</div>
+  <b>第 1 遍（2 小时）</b>：读第 2、3 章 —— 基础概念 + 协议体系，这两块是 100% 会问的地基。<br>
+  <b>第 2 遍（3 小时）</b>：读第 5、6、7 章 —— 可靠性、工程体系、系统设计，这是拉开档次的关键。<br>
+  <b>第 3 遍（1 小时）</b>：读第 4、8 章 —— 记忆状态、可观测成本，补齐细节。<br>
+  <b>考前 30 分钟</b>：只看第 10 章附录速查表 + 每章的「核心考点」绿框。
+</div>
+
+<div class="callout memo">
+  <div class="t">全书最强记忆锚点</div>
+  <code>Agent = Model + Harness</code>　（Harness = Agent − Model）<br>
+  所有工程话题都可以归结为一句话：<span class="hl">模型不变，把 Harness 做厚</span>。
+</div>
+</section>
+
+<!-- ================= 2 基础概念 ================= -->
+<section class="chapter">
+<h1 class="sec"><span class="no">02</span>基础概念与工作模式 <span class="tag hot">最高频</span></h1>
+
+<div class="lead">本章回答面试的第一组问题：<b>Agent 到底是什么？它和 LLM、和 Workflow 有什么区别？它是怎么循环的？</b>这部分答不清，后面再深也没用。</div>
+
+<h2 class="sub">2.1 LLM vs Agent</h2>
+
+<h3 class="item">LLM 的本质</h3>
+<p>LLM 是一个<span class="kw">条件概率模型</span>：<code>P(token_n | token_1..n-1)</code>，本质是<span class="hl">无状态的函数</span>——给一段输入，输出下一个 token 的分布，仅此而已。它不记得你上一次问过什么，也不能改变任何外部状态。</p>
+
+<h3 class="item">LLM 的四大天花板（考点：为什么需要 Agent）</h3>
+<div class="tw">
+<table>
+<thead><tr><th style="width:18%">天花板</th><th style="width:38%">具体表现</th><th>Agent 的补法</th></tr></thead>
+<tbody>
+<tr><td><strong>只会说不会做</strong></td><td>不能操作外部世界，不能查库、不能发邮件、不能改文件</td><td>工具模块（Tool / Function Calling）</td></tr>
+<tr><td><strong>没有记忆</strong></td><td>上下文窗口一满就“失忆”，跨会话完全不认识你</td><td>记忆模块（短期上下文 + 长期外部记忆）</td></tr>
+<tr><td><strong>知识截止</strong></td><td>不知道昨天发生的事，也无法访问内部私有数据</td><td>检索 / 工具调用实时取数</td></tr>
+<tr><td><strong>不会规划</strong></td><td>只会线性作答，无法把复杂目标拆成多步并调整</td><td>规划模块 + 执行循环</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3 class="item">Agent 的构成：LLM + 工具 + 记忆 + 规划</h3>
+<div class="grid2">
+  <div class="card"><div class="ct">LLM（大脑）</div><div class="mini">理解意图、推理判断、生成决策。它是唯一的“思考者”，但本身不执行任何动作。</div></div>
+  <div class="card"><div class="ct">规划模块</div><div class="mini">任务拆解、步骤排序、必要时重新规划。把“一个目标”变成“一串可执行步骤”。</div></div>
+  <div class="card"><div class="ct">记忆模块</div><div class="mini">短期：当前上下文；长期：向量库 / 关系库 / KV。解决跨步、跨会话的信息保持。</div></div>
+  <div class="card"><div class="ct">工具模块（手和脚）</div><div class="mini">外部 API、数据库、代码执行器、文件系统。Agent 与真实世界唯一的接口。</div></div>
+</div>
+
+<div class="callout kp">
+  <div class="t">核心考点：一句话讲清区别</div>
+  <b>LLM 告诉你怎么做，Agent 直接帮你做完。</b><br>
+  更技术化的表述：LLM 输出的是「文本」，Agent 输出的是「状态变化」。Agent 在 LLM 之上增加了<span class="hl">工具（能动作）、记忆（能累积）、规划（能拆解）和循环（能迭代）</span>四个能力。
+</div>
+
+<h2 class="sub">2.2 Agent vs Workflow</h2>
+<p>这是最容易被追问、也最容易答偏的一组对比。关键只有一句：<span class="hl">控制权在代码，还是在 LLM。</span></p>
+
+<div class="tw">
+<table>
+<thead><tr><th style="width:18%">维度</th><th style="width:41%">Workflow（工作流）</th><th>Agent（智能体）</th></tr></thead>
+<tbody>
+<tr><td><strong>控制权</strong></td><td>流程写死在代码里，每一步由代码决定</td><td>LLM 接收目标后自主规划执行路径</td></tr>
+<tr><td><strong>LLM 的角色</strong></td><td>只是某个节点的“处理器”</td><td>是决策者，决定下一步做什么</td></tr>
+<tr><td><strong>Token 消耗</strong></td><td>约 <strong>1x</strong></td><td>约 <strong>4–8x</strong></td></tr>
+<tr><td><strong>可预测性</strong></td><td>高 —— 路径固定</td><td>低 —— 每次可能不同</td></tr>
+<tr><td><strong>灵活性</strong></td><td>低 —— 只能处理预设分支</td><td>高 —— 能应对开放式目标</td></tr>
+<tr><td><strong>调试难度</strong></td><td>易 —— 有明确执行路径</td><td>难 —— 需要 Trace 才能还原</td></tr>
+<tr><td><strong>适合任务</strong></td><td>固定流程、强一致性、延迟敏感</td><td>开放式目标、需要判断与调整</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="callout memo">
+  <div class="t">必答的加分观点</div>
+  生产里<span class="hl">混合架构最常见</span>：用 Workflow 提供稳定骨架（确定性的流程、校验、权限节点），把 Agent 放在需要判断和应对异常的环节。<br>
+  结论话术：“不是二选一，而是<strong>外层确定性 Workflow + 内层有限自治 Agent</strong>。”
+</div>
+
+<h2 class="sub">2.3 四大工作模式 <span class="tag star">必背</span></h2>
+
+<h3 class="item">① ReAct（Reasoning + Acting）</h3>
+<p>最基础、最主流的范式，本质是一场 <span class="hl">Thought → Action → Observation</span> 的循环，直到模型认为可以给出答案。</p>
+<div class="flow">
+  <span class="n">Thought 思考</span><span class="a">→</span>
+  <span class="n">Action 动作</span><span class="a">→</span>
+  <span class="n">Observation 观察</span><span class="a">→</span>
+  <span class="n">…回到 Thought</span>
+</div>
+<div class="tw">
+<table>
+<thead><tr><th style="width:16%">优点</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>透明可审计</td><td>每一步思考与动作都在文本里，人能看懂它在干嘛</td></tr>
+<tr><td>灵活适应</td><td>根据观察结果动态调整下一步，不依赖预设分支</td></tr>
+<tr><td>通用性强</td><td>几乎不需要为任务定制流程，LangChain / LangGraph 默认选择</td></tr>
+</tbody>
+</table>
+</div>
+<p><b>缺点：</b>Token 消耗大（每步都要把历史重新喂一遍）、可能陷入死循环、多轮往返导致延迟高。</p>
+<div class="callout trap">
+  <div class="t">最常见的误区</div>
+  ReAct <b>不是</b>一个框架，也<b>不是</b>模型能力 —— 它<span class="hl">本质是一种 Prompt 范式</span>，循环的对象自始至终是「一段不断变长的文本」。理解这一点，才能理解第 6 章为什么说“ReAct 在生产里撑不住”。
+</div>
+
+<h3 class="item">② Plan-and-Execute（先规划再执行）</h3>
+<p>两阶段：<b>Planner</b> 一次性产出完整计划 → <b>Executor</b> 逐步执行，把「规划」和「执行」彻底解耦。</p>
+<div class="tw">
+<table>
+<thead><tr><th style="width:26%">对比项</th><th>ReAct</th><th>Plan-and-Execute</th></tr></thead>
+<tbody>
+<tr><td><strong>相对 Token 消耗</strong></td><td>100%</td><td>约 <strong>20%</strong></td></tr>
+<tr><td>执行粒度</td><td>边想边做，每步都调 LLM</td><td>计划一次生成，执行阶段少调用</td></tr>
+<tr><td>主要风险</td><td>死循环、Token 爆炸</td><td>计划不准，一条错步步错</td></tr>
+</tbody>
+</table>
+</div>
+<div class="callout kp"><div class="t">标准解法</div>在执行过程中加 <span class="hl">「重新规划检查点」</span>：执行 N 步或遇到与预期不符的观察时，回到 Planner 重新出计划。</div>
+
+<h3 class="item">③ Reflection（自我反思）</h3>
+<p>两个角色来回迭代：<b>Writer 生成 → Reviewer 审查 → 根据意见修改</b>，直到质量达标。</p>
+<ul>
+<li><b>适用场景：</b>代码生成、法律文书、学术论文、创意写作 —— 共同点是「质量可评判、允许多轮打磨」。</li>
+<li><b>进阶用法：</b>可用于<span class="kw">“验证反思”</span>，让 Reviewer 去核对事实，从而校正幻觉。</li>
+<li><b>代价：</b>Token 与延迟都会成倍增加，所以只在「质量优先、成本不敏感」的场景使用。</li>
+</ul>
+
+<h3 class="item">④ Multi-Agent（多智能体协作）</h3>
+<p>结构：<b>Orchestrator</b> 协调 <b>Research / Coder / Reviewer</b> 等专职 Agent 并行工作。</p>
+<div class="tw">
+<table>
+<thead><tr><th style="width:50%">优点</th><th>缺点</th></tr></thead>
+<tbody>
+<tr><td>专业化：每个 Agent 有自己的系统提示词与工具权限</td><td>协调复杂度高：任务分解、上下文传递、结果冲突都要额外设计</td></tr>
+<tr><td>并行化：独立子任务可同时跑，缩短总时长</td><td>成本高：每次子 Agent 都是一次独立模型调用</td></tr>
+<tr><td>上下文隔离：互不干扰，避免污染</td><td>调试难：跨 Agent 的日志追踪难一个量级</td></tr>
+</tbody>
+</table>
+</div>
+<div class="callout trap">
+  <div class="t">必须说出的话</div>
+  <b>不要过早引入 Multi-Agent。</b>单 Agent + 好工具能解决绝大多数问题；只有当出现「上下文互扰、需要独立规划、需要并行加速、需要专业分工」时才拆。多 Agent 的复杂度是乘性的，不是加性的。
+</div>
+
+<h2 class="sub">2.4 死循环防控（高频追问）</h2>
+<p>ReAct 循环最大的工程风险就是转不出来。三种最有效的防线：</p>
+<div class="tw">
+<table>
+<thead><tr><th style="width:24%">手段</th><th style="width:32%">典型阈值</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td><strong>最大步数限制</strong></td><td>通常 <strong>15 步</strong>；Loop 类场景 15–50</td><td>超过硬上限直接终止并返回当前最好结果</td></tr>
+<tr><td><strong>重复动作检测</strong></td><td>连续 <strong>3 次</strong>相同工具 + 相同参数</td><td>判定为原地打转，立即退出或强制换策略</td></tr>
+<tr><td><strong>超时控制</strong></td><td>整个任务级最大执行时间</td><td>与步数限制互补，防止单步卡死拖垮整体</td></tr>
+</tbody>
+</table>
+</div>
+<div class="callout memo"><div class="t">补充加分</div>还可以加：预算上限（Token / 成本）、终止信号结构化校验（要求模型输出明确的 done 字段）、外部校验器判定任务是否真的完成。</div>
+
+<h2 class="sub">2.5 Agent 自身的演进（递进脉络）</h2>
+<div class="flow">
+  <span class="n">聊天机器人<br><small class="mini">只会聊</small></span><span class="a">→</span>
+  <span class="n">接检索与工具<br><small class="mini">能查、能算</small></span><span class="a">→</span>
+  <span class="n">自主 Agent<br><small class="mini">自主规划、多步执行</small></span><span class="a">→</span>
+  <span class="n">自进化 Agent<br><small class="mini">沉淀经验、越干越强</small></span>
+</div>
+<div class="callout kp"><div class="t">本章核心考点</div>
+① Agent 与 LLM 的本质区别是「有无工具/记忆/规划/循环」；② Agent 与 Workflow 的分界是「控制权归谁」；③ 四大模式要能各自说出适用场景和代价；④ 死循环三件套：步数、重复检测、超时。
+</div>
+</section>
+
+<!-- ================= 3 协议体系 ================= -->
+<section class="chapter">
+<h1 class="sec"><span class="no">03</span>协议体系 <span class="tag hot">最高频</span></h1>
+
+<div class="lead">本章四层协议是面试最容易「一问就露馅」的地方。记住它们的<span class="hl">分工</span>，比记住定义重要得多：<b>FC 是机制，MCP 是标准，A2A 是横向协作，Skills 是领域知识。</b></div>
+
+<h2 class="sub">3.1 Function Calling（工具调用的底层机制）</h2>
+<p>本质：LLM 输出一段<span class="hl">结构化的 JSON 调用指令</span>，<b>模型自己不执行任何东西</b>。</p>
+<div class="callout kp">
+  <div class="t">关键认知（一定要说这句）</div>
+  模型只决定<span class="kw">「调哪个工具、传什么参数」</span>，真正的执行发生在<b>应用侧代码</b>里。模型输出的是「调用意图」，不是「调用结果」。
+</div>
+
+<h3 class="item">四步流程</h3>
+<div class="tw">
+<table>
+<thead><tr><th style="width:8%">#</th><th style="width:26%">步骤</th><th>发生了什么</th></tr></thead>
+<tbody>
+<tr><td><span class="step-num">1</span></td><td><strong>定义工具</strong></td><td>在请求里带上 <code>tools</code>：name / description / parameters（JSON Schema）</td></tr>
+<tr><td><span class="step-num">2</span></td><td><strong>LLM 生成 tool_calls</strong></td><td>模型判断需要调用，输出结构化 JSON（工具名 + 参数）</td></tr>
+<tr><td><span class="step-num">3</span></td><td><strong>应用执行</strong></td><td>你的代码解析 tool_calls，真正去调 API / 查库 / 跑代码</td></tr>
+<tr><td><span class="step-num">4</span></td><td><strong>结果回传</strong></td><td>以 <code>role: tool</code>（或 <code>tool_result</code>）把结果喂回，模型生成最终回答</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3 class="item">并行调用 Parallel Function Call</h3>
+<p>一次响应里返回多个 <code>tool_calls</code>，应用可以并发执行：</p>
+<div class="formula">串行 T1 + T2 + T3　→　并行 max(T1, T2, T3)<small>延迟优化的关键手段，前提是多个调用之间没有数据依赖</small></div>
+
+<h3 class="item">厂商格式差异（细节考点）</h3>
+<div class="tw">
+<table>
+<thead><tr><th style="width:16%">厂商</th><th style="width:30%">工具定义</th><th style="width:26%">调用返回</th><th>结果回传</th></tr></thead>
+<tbody>
+<tr><td><strong>OpenAI</strong></td><td><code>tools</code> 数组</td><td><code>tool_calls</code> 数组</td><td><code>role: "tool"</code></td></tr>
+<tr><td><strong>Claude</strong></td><td><code>input_schema</code></td><td><code>tool_use</code> block</td><td><code>tool_result</code> block</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="callout memo">
+  <div class="t">为什么说 FC 是整套体系的基石</div>
+  它解决了两个最根本的问题：<span class="kw">何时调</span>（模型自己判断）与<span class="kw">传什么参数</span>（模型按 Schema 生成）。<br>
+  更关键的是：<b>Agent 的 ReAct 循环，本质就是 Function Calling 的循环编排</b> —— Thought 是模型输出，Action 是 tool_calls，Observation 是 tool 结果。
+</div>
+
+<h2 class="sub">3.2 MCP（Model Context Protocol）</h2>
+<p>解决的根本问题：工具集成的<span class="hl">N×M 爆炸</span>。N 个 AI 应用 × M 个工具服务，若两两对接需要 N×M 个适配器；有了统一协议后，只需 <b>N + M</b>。</p>
+
+<h3 class="item">三个角色</h3>
+<div class="grid3">
+  <div class="card"><div class="ct">MCP Host</div><div class="mini">AI 应用本身：Claude Desktop、Cursor、自研 Agent。它是用户直接交互的对象。</div></div>
+  <div class="card"><div class="ct">MCP Client</div><div class="mini">住在 Host 内部，负责与 MCP Server 建立连接、收发消息。一个 Host 可以有多个 Client。</div></div>
+  <div class="card"><div class="ct">MCP Server</div><div class="mini">对外暴露工具能力的服务端，把某个系统（数据库/GitHub/文件）包装成标准能力。</div></div>
+</div>
+
+<h3 class="item">三类资源（并列）</h3>
+<div class="tw">
+<table>
+<thead><tr><th style="width:16%">类型</th><th style="width:32%">是什么</th><th>例子</th></tr></thead>
+<tbody>
+<tr><td><strong>Tools</strong></td><td>可执行操作（会改变状态）</td><td>发消息、查数据、写文件</td></tr>
+<tr><td><strong>Resources</strong></td><td>可读数据源（只读）</td><td>文档、代码库、数据库内容</td></tr>
+<tr><td><strong>Prompts</strong></td><td>预设提示词模板</td><td>代码审查模板、报告生成模板</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3 class="item">工具发现机制（考点）</h3>
+<p>启动时 Host 向每个 Server 发 <code>tools/list</code>，把返回的工具清单注入 LLM 上下文。这意味着 Agent 可以<span class="hl">运行时动态发现新能力，无需重新部署</span>。这是 MCP 相比硬编码工具的最大价值之一。</p>
+
+<h3 class="item">三层安全（递进）</h3>
+<div class="flow">
+  <span class="n">能力声明<br><small class="mini">只能调用 Server 声明的工具</small></span><span class="a">→</span>
+  <span class="n">授权控制<br><small class="mini">敏感操作要求人工确认</small></span><span class="a">→</span>
+  <span class="n">审计追踪<br><small class="mini">所有调用留日志</small></span>
+</div>
+
+<h3 class="item">底层协议与生态</h3>
+<ul>
+<li><b>传输：</b>本地用 <code>stdio</code>，远程用 <code>HTTP + SSE</code>。</li>
+<li><b>消息格式：</b><code>JSON-RPC 2.0</code>。</li>
+<li><b>生态现状：</b>已成事实标准，生态最丰富。</li>
+</ul>
+<div class="callout trap"><div class="t">容易答错的点</div>MCP <b>只解决工具接入</b>，<b>不解决</b> Agent 之间的协作，也<b>不解决</b>权限治理。标准化 ≠ 安全 —— 它提供能力，治理必须由 Harness 承担（见第 6 章第 6 层）。</div>
+
+<h2 class="sub">3.3 A2A（Agent-to-Agent）</h2>
+<p>解决：<span class="kw">Agent ↔ Agent 的横向协作</span>。为什么 MCP 解决不了？因为 <b>MCP 的设计目标就是「工具」，不是「Agent」</b> —— 工具是被动执行体，Agent 是有自己规划能力的协作方。</p>
+
+<div class="tw">
+<table>
+<thead><tr><th style="width:20%">核心概念</th><th style="width:30%">是什么</th><th>作用</th></tr></thead>
+<tbody>
+<tr><td><strong>Agent Card</strong></td><td>智能体名片</td><td>声明名称 / 能力 / 端点 / 认证方式，供对方发现与调用</td></tr>
+<tr><td><strong>Task</strong></td><td>标准任务对象</td><td>状态机：<code>CREATED → PROCESSING → COMPLETED / FAILED</code></td></tr>
+<tr><td><strong>Message &amp; Artifact</strong></td><td>过程沟通 / 最终成果</td><td>Message 用于多轮沟通，Artifact 是交付物</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="callout kp">
+  <div class="t">MCP vs A2A（标准答法）</div>
+  <b>MCP 解决纵向：Agent ↔ 工具；A2A 解决横向：Agent ↔ Agent。</b>两者<span class="hl">互补而非替代</span>，一个 Agent 完全可以同时是 MCP Client 和 A2A Server。
+</div>
+<p><b>技术基础：</b>HTTP + JSON + SSE，<span class="kw">无需新基础设施</span>。<b>生态现状：</b>Google + 50 多家伙伴，处于早期快速发展阶段。</p>
+
+<h2 class="sub">3.4 Skills（能力模块）</h2>
+<p>定义：<span class="hl">跨任务复用的可执行能力模块</span>。两个关键词：<b>可复用</b>、<b>能力模块</b>。它<b>不是</b>“更长的 Prompt”。</p>
+
+<div class="tw">
+<table>
+<thead><tr><th style="width:18%">对比</th><th style="width:38%">左边是什么</th><th>Skill 是什么</th></tr></thead>
+<tbody>
+<tr><td><strong>vs Prompt</strong></td><td>解决单次任务的表达</td><td>解决跨任务的复用</td></tr>
+<tr><td><strong>vs Few-shot</strong></td><td>教格式（照着这个长这样）</td><td>教方法论（这类问题该怎么想、怎么做）</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3 class="item">九大构成要素</h3>
+<div class="grid3">
+  <div class="card"><div class="mini">① 适用场景<br>② 不适用场景<br>③ 输入要求</div></div>
+  <div class="card"><div class="mini">④ 操作步骤<br>⑤ 工具使用原则<br>⑥ 输出格式</div></div>
+  <div class="card"><div class="mini">⑦ 质量标准<br>⑧ 失败处理<br>⑨ 安全边界</div></div>
+</div>
+<p><b>文件结构：</b>身份定位 + 工作流程 + 注意事项 + 输出规范。</p>
+<div class="callout trap">
+  <div class="t">必须点明的边界</div>
+  <b>Skill 是软约束</b> —— 它写在自然语言里，模型可能不遵守。<span class="hl">权限与审批必须在工程层强制执行</span>（IAM、Schema、审批流），不能指望 Skill 文件管住高风险动作。
+</div>
+
+<h2 class="sub">3.5 四层协议的协作关系（递进）</h2>
+<div class="tw">
+<table>
+<thead><tr><th style="width:16%">层次</th><th style="width:22%">解决什么</th><th>一句话</th></tr></thead>
+<tbody>
+<tr><td><strong>Function Call</strong></td><td>调用工具的基础机制</td><td>怎么调</td></tr>
+<tr><td><strong>MCP</strong></td><td>工具接入的标准化</td><td>用什么（工具从哪来）</td></tr>
+<tr><td><strong>A2A</strong></td><td>Agent 间协作</td><td>和谁协作</td></tr>
+<tr><td><strong>Skills</strong></td><td>领域知识编码</td><td>怎么想（方法论）</td></tr>
+</tbody>
+</table>
+</div>
+<div class="formula">Skills 决定「怎么想」 → MCP 决定「用什么」 → FC 决定「怎么调」<small>A2A 负责把这些能力在多个 Agent 之间横向连起来</small></div>
+</section>
+
+<!-- ================= 4 记忆与状态 ================= -->
+<section class="chapter">
+<h1 class="sec"><span class="no">04</span>记忆与状态系统</h1>
+
+<div class="lead">Agent 的两个“失忆症”：<b>上下文一满就忘</b>、<b>跨会话不认识你</b>。本章解决的就是“怎么记、记多少、什么时候忘、什么时候读”。</div>
+
+<h2 class="sub">4.1 两个层次：上下文记忆 vs 外部记忆</h2>
+<div class="tw">
+<table>
+<thead><tr><th style="width:20%">层次</th><th style="width:34%">特点</th><th>存什么</th></tr></thead>
+<tbody>
+<tr><td><strong>上下文窗口<br>In-Context</strong></td><td>速度最快；容量有限（通常约 <strong>128K tokens</strong>）；任务结束即消失</td><td>当前对话、任务状态、加载的 Skill、工具调用历史</td></tr>
+<tr><td><strong>外部记忆<br>External</strong></td><td>容量近乎无限；需要一次检索往返；可跨会话持久</td><td>见下方三种存储分工</td></tr>
+</tbody>
+</table>
+</div>
+<div class="tw">
+<table>
+<thead><tr><th style="width:20%">存储类型</th><th style="width:34%">存什么</th><th>检索特性</th></tr></thead>
+<tbody>
+<tr><td><strong>向量数据库</strong></td><td>用户偏好、历史经验、文档切片</td><td>语义检索、模糊匹配（“意思相近”也能找到）</td></tr>
+<tr><td><strong>关系数据库</strong></td><td>结构化事实、用户档案</td><td>精确查询（按字段、按条件）</td></tr>
+<tr><td><strong>KV 存储（Redis）</strong></td><td>任务状态、中间结果</td><td>极快读写，适合高频短生命周期数据</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2 class="sub">4.2 记忆压缩三策略（并列）</h2>
+<div class="tw">
+<table>
+<thead><tr><th style="width:18%">策略</th><th style="width:40%">做法</th><th>取舍</th></tr></thead>
+<tbody>
+<tr><td><strong>滑动窗口</strong></td><td>丢弃最旧消息，只保留最近 N 条</td><td>简单、快；但会丢掉早期关键信息</td></tr>
+<tr><td><strong>摘要压缩</strong></td><td>用 LLM 把旧对话总结成一段</td><td>Token 大幅缩减；有一次额外模型调用成本</td></tr>
+<tr><td><strong>重要性过滤</strong></td><td>只保留关键信息，丢弃过程细节</td><td>信息密度高；判断“什么是关键”本身较难</td></tr>
+</tbody>
+</table>
+</div>
+<div class="callout memo"><div class="t">配合使用</div>压缩后的内容应当<span class="kw">归档到外部记忆</span>，需要时再检索回来 —— 即“压缩不是删除，而是降级存储”。</div>
+
+<h2 class="sub">4.3 State vs Memory（必须分清）</h2>
+<div class="tw">
+<table>
+<thead><tr><th style="width:16%"></th><th style="width:34%">State（状态）</th><th>Memory（记忆）</th></tr></thead>
+<tbody>
+<tr><td><strong>是什么</strong></td><td>当前任务的运行数据</td><td>跨任务复用的经验</td></tr>
+<tr><td><strong>生命周期</strong></td><td>短（任务结束即清理）</td><td>长（持续累积）</td></tr>
+<tr><td><strong>核心关心</strong></td><td>一致性（不能前后矛盾）</td><td>相关性（检索出来的经验要管用）</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3 class="item">State 三层（递进）</h3>
+<div class="tw">
+<table>
+<thead><tr><th style="width:22%">层级</th><th style="width:34%">内容</th><th>存放与生命周期</th></tr></thead>
+<tbody>
+<tr><td><strong>Working State</strong></td><td>当前步骤的临时上下文</td><td>内存中，任务结束即丢弃</td></tr>
+<tr><td><strong>Session State</strong></td><td>一次会话内多 Agent 共享的数据</td><td>Redis + TTL，会话结束过期</td></tr>
+<tr><td><strong>Execution Log</strong></td><td>不可变的执行日志</td><td>持久化，用于审计 / 回放 / 评估</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3 class="item">Memory 两类（并列）</h3>
+<div class="grid2">
+  <div class="card"><div class="ct">Episodic Memory 事件记忆</div><div class="mini">“踩过的坑、用户偏好、上次怎么处理的”。<br>回答：<b>过去发生过什么</b>。</div></div>
+  <div class="card"><div class="ct">Semantic Memory 语义记忆</div><div class="mini">领域概念、业务规则、工具约束。<br>回答：<b>这个世界是怎么运作的</b>。</div></div>
+</div>
+
+<h2 class="sub">4.4 注入时机</h2>
+<div class="tw">
+<table>
+<thead><tr><th style="width:22%">方式</th><th style="width:38%">做法</th><th>问题</th></tr></thead>
+<tbody>
+<tr><td><strong>全量前置注入</strong></td><td>任务开始就把相关记忆全部塞进上下文</td><td>简单稳定，但费 Token</td></tr>
+<tr><td><strong>按需检索</strong></td><td>给 Agent 一个 <code>memory_search</code> 工具，需要时才查</td><td>省钱，但 Agent 可能忘记调用</td></tr>
+<tr><td><strong>混合（推荐）</strong></td><td>前置注入少量高置信记忆 + 按需检索补充</td><td>兼顾成本与可靠性，工程最常用</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2 class="sub">4.5 遗忘机制与读写时机</h2>
+<p><b>保留分数</b>（决定一条记忆的存亡）：</p>
+<div class="formula">保留分数 = 访问频次 + 创建时间 + 重要性 + 最近使用 + 是否仍有效</div>
+<div class="tw">
+<table>
+<thead><tr><th style="width:20%">分数区间</th><th>处理方式</th></tr></thead>
+<tbody>
+<tr><td><strong>低分</strong></td><td>直接删除</td></tr>
+<tr><td><strong>中分</strong></td><td>压缩成摘要保留</td></tr>
+<tr><td><strong>高分</strong></td><td>保留原文</td></tr>
+</tbody>
+</table>
+</div>
+<div class="grid2">
+  <div class="card"><div class="ct">写入时机</div><div class="mini">任务完成存结果 · 用户给信息存偏好 · 发现新知识更新 · 出错存失败原因</div></div>
+  <div class="card"><div class="ct">读取时机</div><div class="mini">任务开始加载偏好 · 遇陌生问题检索经验 · 事实核查检索已知</div></div>
+</div>
+<div class="callout kp"><div class="t">本章核心考点</div>① State 与 Memory 的区别（一致性 vs 相关性）；② 压缩三策略；③ 混合注入是工程最优；④ 记忆必须会“遗忘”，否则噪声会淹没信号。</div>
+</section>
+
+<!-- ================= 5 可靠性与安全 ================= -->
+<section class="chapter">
+<h1 class="sec"><span class="no">05</span>可靠性与安全 <span class="tag hot">最高频</span></h1>
+
+<div class="lead">Agent 的四大事故类型：<b>被注入、越权、泄密、烧钱</b>。本章给出威胁清单、防御手段、幻觉治理的四层防线，以及上下文漂移的检测与解法。</div>
+
+<h2 class="sub">5.1 四大安全威胁（并列）</h2>
+<div class="tw">
+<table>
+<thead><tr><th style="width:22%">威胁</th><th style="width:40%">场景</th><th>后果</th></tr></thead>
+<tbody>
+<tr><td><strong>Prompt Injection</strong></td><td>网页 / 文档内容里藏了恶意指令，模型照做了</td><td>被诱导执行未授权操作</td></tr>
+<tr><td><strong>权限越界</strong></td><td>原本只该读数据，被诱导去删数据</td><td>数据被破坏</td></tr>
+<tr><td><strong>数据泄露</strong></td><td>通过工具调用把敏感信息发给第三方</td><td>合规事故</td></tr>
+<tr><td><strong>资源滥用</strong></td><td>陷入死循环，疯狂调用 API</td><td>费用爆炸</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2 class="sub">5.2 核心防御</h2>
+<h3 class="item">① 最小权限原则</h3>
+<ul>
+<li>读任务只给 <code>SELECT</code>，绝不给 <code>DELETE</code>。</li>
+<li>生产 / 测试使用不同凭证，避免误操作打穿生产。</li>
+<li>权限<span class="hl">跟着动作走，不跟着 Agent 名字走</span>。</li>
+</ul>
+
+<h3 class="item">② Human in the Loop（人在回路）</h3>
+<p>高风险操作前暂停，请求人类确认。<b>必须有审批清单：</b></p>
+<div class="tw">
+<table>
+<thead><tr><th style="width:34%">必须审批的动作</th><th>原因</th></tr></thead>
+<tbody>
+<tr><td>删除数据</td><td>不可逆</td></tr>
+<tr><td>发送外部邮件 / 消息</td><td>对外不可撤回</td></tr>
+<tr><td>修改权限配置</td><td>可能扩大攻击面</td></tr>
+<tr><td>超过阈值的资金操作</td><td>直接经济损失</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3 class="item">③ Prompt Injection 防御四手段</h3>
+<div class="grid2">
+  <div class="card"><div class="ct">数据 / 指令分离</div><div class="mini">外部内容只能作为“数据”，不能作为“指令”被解释</div></div>
+  <div class="card"><div class="ct">输入过滤</div><div class="mini">检测“忽略之前指令”“你现在是……”类可疑内容</div></div>
+  <div class="card"><div class="ct">Prompt 模板隔离</div><div class="mini">用户输入不直接拼进系统提示词，改用模板占位</div></div>
+  <div class="card"><div class="ct">上下文标记</div><div class="mini">明确标注哪段是外部数据、哪段是系统指令</div></div>
+</div>
+
+<h2 class="sub">5.3 可靠性设计四件套（并列）</h2>
+<div class="tw">
+<table>
+<thead><tr><th style="width:18%">手段</th><th style="width:38%">定义</th><th>解决什么</th></tr></thead>
+<tbody>
+<tr><td><strong>幂等性</strong></td><td>同一操作执行多次结果相同</td><td>重试导致的重复提交（如重复下单）</td></tr>
+<tr><td><strong>回滚机制</strong></td><td>重要操作前先备份，支持撤销</td><td>错误动作无法挽回</td></tr>
+<tr><td><strong>超时控制</strong></td><td>每个工具调用设超时，整体任务设最大时间</td><td>卡死拖垮整个任务</td></tr>
+<tr><td><strong>降级策略</strong></td><td>工具失败有备用方案，不盲目重试</td><td>失败后被无限重试放大成本</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2 class="sub">5.4 幻觉治理：五类幻觉与四层防线 <span class="tag star">高分项</span></h2>
+
+<h3 class="item">Agent 幻觉的五种类型</h3>
+<div class="tw">
+<table>
+<thead><tr><th style="width:18%">类型</th><th style="width:38%">表现</th><th>危险度</th></tr></thead>
+<tbody>
+<tr><td><strong>知识幻觉</strong></td><td>编造不存在的事实</td><td>中</td></tr>
+<tr><td><strong>工具幻觉</strong></td><td>调用不存在的工具</td><td>中（可拦截）</td></tr>
+<tr><td><strong>参数幻觉</strong></td><td>参数不符合 schema</td><td>中（可校验）</td></tr>
+<tr><td><strong>证据幻觉</strong></td><td>无来源却说“根据文档可知”</td><td>高（难被发现）</td></tr>
+<tr><td><strong>行动幻觉</strong></td><td>该审批没审批、只读变写入</td><td><span class="hl">最危险</span></td></tr>
+</tbody>
+</table>
+</div>
+
+<h3 class="item">四层防线（递进，必须按顺序讲）</h3>
+<div class="flow">
+  <span class="n">第1层<br>Prompt 约束</span><span class="a">→</span>
+  <span class="n">第2层<br>工具约束</span><span class="a">→</span>
+  <span class="n">第3层<br>证据约束</span><span class="a">→</span>
+  <span class="n">第4层<br>输出校验</span>
+</div>
+
+<div class="card">
+  <div class="ct">第 1 层 · Prompt 约束</div>
+  <b>能做：</b>声明规则 —— 不知道就说不知道、只基于证据回答、高风险操作先确认。<br>
+  <b>边界（关键）：</b>自然语言约束只是「<span class="hl">希望遵守</span>」，<b>不是强制执行</b>。所以它只是第一层，绝不能是唯一一层。
+</div>
+
+<div class="card">
+  <div class="ct">第 2 层 · 工具约束</div>
+  <ul>
+  <li><b>工具白名单：</b>只暴露当前任务真正需要的工具，减少选错空间。</li>
+  <li><b>描述写清能力边界：</b>明确标注“只读”“不能做什么”。</li>
+  <li><b>参数必须有 JSON Schema：</b>类型、枚举、必填、格式，让错误在调用前被拦。</li>
+  <li><b>Observation 必须来自真实工具结果</b>，不允许模型自编（直接掐断工具幻觉）。</li>
+  <li><b>高风险工具：</b>二次确认 + 权限校验 + 阈值 + 审批 + 幂等回滚，五件套齐上。</li>
+  </ul>
+</div>
+
+<div class="card">
+  <div class="ct">第 3 层 · 证据约束</div>
+  <ul>
+  <li><b>先检索再回答</b>，不让模型凭记忆答业务事实。</li>
+  <li><b>强制引用来源</b>，把结论和证据绑定（可追溯才能被验证）。</li>
+  <li><b>检索不到就拒答</b>——“当前资料中未提及”，拒答比编造好一万倍。</li>
+  <li><b>Rerank 降低噪声</b>，只把最相关的证据给模型。</li>
+  <li><b>答案与证据一致性校验</b>：规则 or LLM-as-Judge。</li>
+  </ul>
+</div>
+
+<div class="card">
+  <div class="ct">第 4 层 · 输出校验</div>
+  <ul>
+  <li><b>结构化输出校验：</b>字段 / 枚举 / 置信度阈值。</li>
+  <li><b>业务规则校验：</b>用确定性代码兜底，不让概率模型拍脑袋。</li>
+  <li><b>敏感内容校验：</b>隐私、越权建议、把建议说成事实。</li>
+  <li><b>双阶段审查：</b>Generator + Reviewer（仅高风险场景才上，因为贵）。</li>
+  </ul>
+</div>
+
+<div class="callout kp">
+  <div class="t">追问：「约束都加了还是幻觉怎么办？」</div>
+  <b>先拦截：</b>无证据 / 低置信 / 校验失败 / 参数非法 / 高风险未确认 → 一律拦下。<br>
+  <b>再降级：</b>换强模型 → 只返回原始证据 → 让用户补充 → 转人工 → 写操作直接停止。<br>
+  <b>高风险动作：</b>审批流 + 幂等 + 回滚 + 操作日志 + 权限隔离，全部到位。<br>
+  <b>必须记 Trace：</b>Prompt / 检索文档 / 工具参数与返回 / 最终输出 / 失败原因。
+</div>
+
+<div class="callout memo">
+  <div class="t">长期治理四件事（组织视角，加分项）</div>
+  ① <b>归因分类</b>：定位到 Prompt / 工具描述 / Schema / 召回 / Rerank / 输出校验；<br>
+  ② <b>事故样本进 Eval</b>，每次改动跑回归；<br>
+  ③ <b>建监控指标</b>：无证据回答率、工具失败率、参数校验失败率、人工接管率；<br>
+  ④ <b>分场景设安全等级</b>：闲聊轻、业务咨询要证据、写操作要审批。
+</div>
+
+<h2 class="sub">5.5 上下文漂移</h2>
+<h3 class="item">根因（从注意力机制理解）</h3>
+<ul>
+<li><b>近因效应：</b>模型倾向于给最近的 Token 更高权重，越早的信息越被忽略。</li>
+<li><b>中间结果抢焦点：</b>上下文越长，干扰信号越多，原始目标被淹没。</li>
+<li><b>本质：</b>原始目标在注意力分配中<span class="hl">逐渐失焦</span>。</li>
+</ul>
+
+<h3 class="item">三种漂移模式（并列）</h3>
+<div class="tw">
+<table>
+<thead><tr><th style="width:20%">模式</th><th style="width:40%">表现</th><th>特点</th></tr></thead>
+<tbody>
+<tr><td><strong>目标漂移</strong></td><td>从任务 A 滑到任务 B</td><td>最容易察觉</td></tr>
+<tr><td><strong>优先级漂移</strong></td><td>支线挤占主线，主次倒置</td><td>中等</td></tr>
+<tr><td><strong>风格漂移</strong></td><td>输出格式悄悄改变</td><td><span class="hl">最隐蔽</span></td></tr>
+</tbody>
+</table>
+</div>
+
+<h3 class="item">五个检测信号</h3>
+<div class="grid2">
+  <div class="card"><div class="mini">① 当前动作与原始目标关联度下降<br>② 步骤重复率升高<br>③ 目标完成进度长期为 0</div></div>
+  <div class="card"><div class="mini">④ 目标表述发生变化<br>⑤ 关键证据未被使用</div></div>
+</div>
+
+<h3 class="item">解法三层（递进）+ 终极解药</h3>
+<div class="flow">
+  <span class="n">任务分解 + 子目标检查点<br><small class="mini">最简单最有效</small></span><span class="a">→</span>
+  <span class="n">上下文压缩<br><small class="mini">控制干扰信号量</small></span><span class="a">→</span>
+  <span class="n">定期 Re-Planning<br><small class="mini">航向校正</small></span>
+</div>
+<div class="callout fw">
+  <div class="t">Context Reset（终极解药）</div>
+  直接把旧上下文窗口整个丢掉，换一个干净窗口接手任务。<br>
+  <b>前提：</b>状态必须全部外化到文件系统，否则一重启就全丢。<br>
+  <b>原则：</b><span class="hl">重启胜过修补，状态沉到文件里。</span>
+</div>
+
+<h2 class="sub">5.6 工具调用幻觉</h2>
+<p><b>根因（一句话）：</b>模型选工具<span class="hl">不是查表，而是在概率预测“下一个最可能的工具名”</span>。这个理解是解题关键。</p>
+<div class="tw">
+<table>
+<thead><tr><th style="width:22%">类型</th><th style="width:36%">根因</th><th>解法</th></tr></thead>
+<tbody>
+<tr><td><strong>调用不存在的工具</strong></td><td>工具描述与任务描述之间存在语义缝隙</td><td>工具描述结构化 + Few-shot + 注册表校验工具名</td></tr>
+<tr><td><strong>参数类型 / 格式错误</strong></td><td>类型与格式约束未声明，模型按自然语言习惯填</td><td>JSON Schema + 结构化输出 + 调用前类型检查</td></tr>
+<tr><td><strong>无意义的工具调用</strong></td><td>模型有“工具使用倾向”，被训练得过于积极</td><td>加“无需调用”选项 + 调用必要性判断 + 频率阈值</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3 class="item">通用防线：三段式校验（递进）</h3>
+<div class="tw">
+<table>
+<thead><tr><th style="width:16%">阶段</th><th>做什么</th></tr></thead>
+<tbody>
+<tr><td><strong>调用前</strong></td><td>校验工具名 / 参数 Schema / 调用必要性</td></tr>
+<tr><td><strong>调用中</strong></td><td>超时与异常捕获，错误结构化后再回传模型</td></tr>
+<tr><td><strong>调用后</strong></td><td>校验返回格式，重试 2–3 次后降级处理</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="callout qa">
+  <div class="t">工具调用故障排查五步（必背顺序）</div>
+  <b>工具是否存在 → 权限是否允许 → 参数是否通过 Schema → 工具服务是否成功 → 模型是否正确理解返回结果</b><br>
+  <span class="mini">顺序本身就是答案：从最确定、最便宜的地方开始排除。</span>
+</div>
+</section>
+
+<!-- ================= 6 工程体系 ================= -->
+<section class="chapter">
+<h1 class="sec"><span class="no">06</span>生产级工程体系 <span class="tag star">拉开差距</span></h1>
+
+<div class="lead">这是整套知识里最能体现深度的一章。<b>三次重心转移 + 四个 Engineering 概念</b>，把「让模型听懂」推进到「让循环跑得稳」。</div>
+
+<h2 class="sub">6.1 三次重心转移（递进）</h2>
+<div class="tw">
+<table>
+<thead><tr><th style="width:22%">阶段</th><th style="width:26%">解决什么</th><th>一句话</th></tr></thead>
+<tbody>
+<tr><td><strong>Prompt Engineering</strong></td><td>“怎么说”</td><td>让模型听懂你想干啥</td></tr>
+<tr><td><strong>Context Engineering</strong></td><td>“给什么信息”</td><td>让模型知道该用什么</td></tr>
+<tr><td><strong>Harness Engineering</strong></td><td>“能不能持续做对”</td><td>把环境做对，让错误永不再犯</td></tr>
+<tr><td><strong>Learning Loop</strong>（第四层）</td><td>“越干越强”</td><td>让系统从每次执行中自我改进</td></tr>
+</tbody>
+</table>
+</div>
+<div class="callout kp">
+  <div class="t">核心认知：包含而非替代</div>
+  <code>Prompt ⊂ Context ⊂ Harness</code>　—— 后者包含前者，不是取代前者。<br>
+  <b>分水岭判断：</b>单轮对话靠 Prompt；需要外部知识靠 Context；<span class="hl">长链路、低容错靠 Harness</span>。
+</div>
+
+<h2 class="sub">6.2 Harness Engineering</h2>
+<h3 class="item">概念来源与核心定义</h3>
+<ul>
+<li>来源：Mitchell Hashimoto《My AI Adoption Journey》第 5 步 “Engineer the Harness”。</li>
+<li>核心定义（务必逐字理解）：<span class="hl">Agent 每犯一次错，就把修复沉淀到环境里，让它永不再犯。</span></li>
+<li>官方背书：OpenAI 官方博客《Harness engineering: leveraging Codex》。</li>
+</ul>
+<div class="formula">Agent = Model + Harness<small>即 Harness = Agent − Model：除了模型本身，其余一切都是 Harness</small></div>
+
+<h3 class="item">六层核心组件（并列）</h3>
+<div class="tw">
+<table>
+<thead><tr><th style="width:18%">侧</th><th style="width:26%">组件</th><th>要点</th></tr></thead>
+<tbody>
+<tr><td rowspan="2"><strong>输入侧</strong></td><td>上下文精细化</td><td>钉死角色与目标、动态筛选（just-in-time retrieval）、结构化组织</td></tr>
+<tr><td>记忆与状态</td><td>状态外化到文件系统，分层存（任务状态 / 会话中间结果 / 长期记忆）</td></tr>
+<tr><td rowspan="2"><strong>动作侧</strong></td><td>工具系统</td><td>只给真正需要的、该查才查、结果先提炼再喂回</td></tr>
+<tr><td>执行编排</td><td>循环工程化，给模型明确的工作轨道</td></tr>
+<tr><td rowspan="2"><strong>校验侧</strong></td><td>评估与观测</td><td>Eval 集 + Trace，把调试从“猜”变成“看”</td></tr>
+<tr><td>约束与恢复</td><td>约束硬编码、每步校验、失败有预案</td></tr>
+</tbody>
+</table>
+</div>
+<div class="formula">看得准（输入） → 做得对（动作） → 错了能兜底（校验）</div>
+
+<h3 class="item">五个真实难题与工程原则（面试最爱追问）</h3>
+<div class="tw">
+<table>
+<thead><tr><th style="width:26%">难题</th><th style="width:26%">根因</th><th>工程解法</th></tr></thead>
+<tbody>
+<tr><td>跑久了越走越偏</td><td>上下文焦虑</td><td><b>Context Reset</b> —— 重启胜过修补</td></tr>
+<tr><td>自评总是偏乐观</td><td>自己评自己没有约束</td><td><b>三角分工</b>：Planner / Generator / Evaluator，生产验收必须分离</td></tr>
+<tr><td>反复失败怎么破</td><td>环境不提供反馈信号</td><td><b>别催模型，补环境</b>（lint / 单测 / 运行环境）</td></tr>
+<tr><td>规范文件越长越糊涂</td><td>信息过载</td><td><b>渐进式披露</b>，AGENTS.md 约 <strong>100 行</strong>的目录页</td></tr>
+<tr><td>技术债越堆越烂（AI slop）</td><td>只加功能不还债</td><td><b>Golden Principles</b> + 后台 Agent 天天自动还</td></tr>
+</tbody>
+</table>
+</div>
+<div class="callout memo"><div class="t">与 MLOps 的区别</div>MLOps 管“<b>怎么把模型搞上线</b>”；Harness 管“<b>上线后怎么跑得稳</b>”。两者是接力关系，不是同一件事。</div>
+
+<h2 class="sub">6.3 Loop Engineering</h2>
+<p><b>起源：</b>ReAct 是 2022 年的 Prompt 范式，在生产环境撑不住。</p>
+
+<h3 class="item">ReAct 的五个裂缝（并列）</h3>
+<div class="tw">
+<table>
+<thead><tr><th style="width:26%">裂缝</th><th>后果</th></tr></thead>
+<tbody>
+<tr><td>上下文越滚越长</td><td>Token 涨 + 注意力稀释</td></tr>
+<tr><td>状态全靠上下文记</td><td>截断即丢，是任务漂移的源头</td></tr>
+<tr><td>死循环</td><td>模型“看不见”自己在重复</td></tr>
+<tr><td>终止判断不可靠</td><td>模型说停就停（偷懒）或停不下来</td></tr>
+<tr><td>不可观测</td><td>出问题只能人肉从文本里扒</td></tr>
+</tbody>
+</table>
+</div>
+<div class="callout kp"><div class="t">核心定义</div><b>Loop Engineering = 把循环本身当作需要设计、控制、观测的工程系统。</b></div>
+
+<h3 class="item">Agent 到底在循环什么：五个变量（必背）</h3>
+<div class="tw">
+<table>
+<thead><tr><th style="width:20%">变量</th><th>工程要点</th></tr></thead>
+<tbody>
+<tr><td><strong>上下文</strong></td><td>要选、要压、要截（超阈值 Auto-Compact）</td></tr>
+<tr><td><strong>状态与记忆</strong></td><td>独立存、跨圈传递、单独钉住原始目标</td></tr>
+<tr><td><strong>预算</strong></td><td>步数 / Token 成本 / 时间，多重上限，触顶优雅退出</td></tr>
+<tr><td><strong>可用工具集</strong></td><td>按阶段动态收放，危险工具加权限门</td></tr>
+<tr><td><strong>终止与收敛</strong></td><td>结构化完成信号 + 外部校验 + 硬兜底，三层叠加</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3 class="item">ReAct vs Loop（对比）</h3>
+<div class="tw">
+<table>
+<thead><tr><th style="width:20%">维度</th><th style="width:38%">ReAct</th><th>Loop Engineering</th></tr></thead>
+<tbody>
+<tr><td>循环对象</td><td>一段不断变长的文本</td><td>上下文 + 状态 + 预算 + 工具 + 终止的系统状态</td></tr>
+<tr><td>工程重心</td><td>调 Prompt</td><td>设计循环每个环节怎么转、怎么收敛</td></tr>
+<tr><td>预算概念</td><td>没有</td><td>多重上限</td></tr>
+<tr><td>可观测</td><td>一坨文本靠人肉扒</td><td>每圈结构化记录，可回放</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3 class="item">与其他 Engineering 的关系（嵌套）</h3>
+<div class="tw">
+<table>
+<thead><tr><th style="width:26%">概念</th><th>职责</th></tr></thead>
+<tbody>
+<tr><td><strong>Context Engineering</strong></td><td>管往循环里喂什么</td></tr>
+<tr><td><strong>Loop Engineering</strong></td><td>管循环这个控制结构本身怎么转、怎么收敛</td></tr>
+<tr><td><strong>Harness Engineering</strong></td><td>把循环 + 上下文 + 工具 + 记忆 + 安全 + 可观测全包住的外壳</td></tr>
+</tbody>
+</table>
+</div>
+<div class="callout fw"><div class="t">关系一句话</div>它们是<span class="hl">嵌套关系</span>：Harness 是外壳，<b>Loop 是 Harness 的心脏</b>。</div>
+
+<h2 class="sub">6.4 Graph Engineering</h2>
+<p><b>定义：</b>把 Agent 系统设计成一张<span class="kw">显式的控制图</span>，而不是把决策都塞进一个隐式的 while 循环。</p>
+
+<h3 class="item">三主角（并列）</h3>
+<div class="grid3">
+  <div class="card"><div class="ct">节点 Node</div><div class="mini">能独立完成、独立测试的能力单元。<span class="hl">越“无聊”越好</span> —— 职责单一才可测。</div></div>
+  <div class="card"><div class="ct">边 Edge</div><div class="mini">下一步的规则：确定边 / 条件边 / 模型边。</div></div>
+  <div class="card"><div class="ct">状态 State</div><div class="mini">随边传递的结构化数据 + 检查点 Checkpoint。</div></div>
+</div>
+
+<div class="callout kp">
+  <div class="t">为什么 Loop 会长成图</div>
+  因为出现这些需求：<b>并行、分工、校验、人工确认、断点恢复</b>。<br>
+  <b>关键表述（面试可直接用）：</b><span class="hl">「Loop 没死，它被降到节点内部了。」</span>
+</div>
+
+<h3 class="item">生产里真正值钱的五个能力（并列）</h3>
+<div class="tw">
+<table>
+<thead><tr><th style="width:24%">能力</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td><strong>并行与汇合</strong></td><td>fan-out 拆分 + fan-in 汇总</td></tr>
+<tr><td><strong>失败隔离与恢复</strong></td><td>坏一个节点只重试一个节点（前提：幂等与可重试）</td></tr>
+<tr><td><strong>人在回路</strong></td><td>人作为节点：有输入边、等待、批准 / 拒绝两条输出边</td></tr>
+<tr><td><strong>预算与安全</strong></td><td>闸门放在边上，阻止边被跨越</td></tr>
+<tr><td><strong>轨迹评估</strong></td><td>看经过哪些节点、为何选这条路、耗时成本、是否走过关键校验</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3 class="item">概念区分（极易混淆，务必分清）</h3>
+<div class="tw">
+<table>
+<thead><tr><th style="width:24%">概念</th><th>管什么</th></tr></thead>
+<tbody>
+<tr><td><strong>Graph Engineering</strong></td><td>控制图 —— 管任务下一步怎么走</td></tr>
+<tr><td><strong>GraphRAG</strong></td><td>知识图谱 —— 管知识怎么找、怎么关联</td></tr>
+<tr><td><strong>工作流编排</strong></td><td>确定业务流程（ETL / 订单 / CI-CD）</td></tr>
+<tr><td><strong>Harness Engineering</strong></td><td>给 Agent 提供完整的运行外壳</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="grid2">
+  <div class="card"><div class="ct">何时该用图</div><div class="mini">有真并行 / 有明确分支 / 有独立校验 / 有长时间等待 / 有高风险操作 / 有高失败成本</div></div>
+  <div class="card"><div class="ct">何时不该用</div><div class="mini">路径短且开放的问答类任务，先用一个治理好的 Loop 就够。<br><b>图多一条边，就多一条要测试、监控、恢复的路径。</b></div></div>
+</div>
+
+<h2 class="sub">6.5 三种 Harness 实现对比（横向视野加分项）</h2>
+<div class="tw">
+<table>
+<thead><tr><th style="width:14%">维度</th><th style="width:28%">OpenClaw（小龙虾）</th><th style="width:29%">Hermes Agent（爱马仕）</th><th>Claude Code</th></tr></thead>
+<tbody>
+<tr><td><strong>定位</strong></td><td>全平台个人 AI 助手，消息优先、本地优先</td><td>自进化 Agent，“The agent that grows with you”</td><td>产品级编程 Agent，工程化极致、安全最完善</td></tr>
+<tr><td><strong>技术栈</strong></td><td>TypeScript；一个网关打通 25+ 消息平台</td><td>Python；核心差异化是学习闭环</td><td><code>while</code> 循环 + Explore / Plan / General-purpose 三种子 Agent</td></tr>
+<tr><td><strong>上下文</strong></td><td>AGENTS.md / SOUL.md / TOOLS.md 全量注入</td><td>just-in-time retrieval + 分层注入（始终 / 按需 / 动态替换）</td><td>200K 窗口 + 三层压缩 + Context Reset</td></tr>
+<tr><td><strong>记忆</strong></td><td>本地文件持久化，<b>无跨会话记忆</b>（每次都是“新手”）</td><td>最深：持久化 + Honcho 用户建模 + FTS5 跨会话搜索 + 自我督促</td><td>CLAUDE.md 分层注入 + <code>.claude/</code> 状态外化 + <code>~/.claude/</code> 长期记忆</td></tr>
+<tr><td><strong>工具</strong></td><td>MCP + ClawHub 社区技能市场；沙箱 Docker / SSH</td><td>MCP + 自生成技能 + 动态白名单；6 种终端后端 + cron</td><td>MCP + Hook 机制；23 层顺序检查</td></tr>
+<tr><td><strong>安全</strong></td><td>沙箱隔离，粒度粗（全有或全无）</td><td>动态白名单 + 自生成技能需审查</td><td><code>deny &gt; ask &gt; allow</code> 优先级</td></tr>
+</tbody>
+</table>
+</div>
+<div class="callout memo">
+  <div class="t">三个必须记住的细节</div>
+  ① <b>Hermes 的学习闭环：</b>执行任务 → 总结经验 → 生成 skill → 存入记忆 → 下次复用。<br>
+  ② <b>Claude Code 的设计巧思：</b>CLAUDE.md 作为「用户消息」注入而非 System Prompt，<span class="hl">防止把安全规则覆盖掉</span>。<br>
+  ③ <b>Hook 四事件：</b>PreToolUse / PostToolUse / Notification / Stop。
+</div>
+<div class="tw">
+<table>
+<thead><tr><th style="width:34%">共性</th><th>演进主线</th></tr></thead>
+<tbody>
+<tr><td>都是 Harness Engineering 的具体实现，都基于 ReAct 循环 + MCP 工具</td><td>能干活（OpenClaw）→ 越干越强（Hermes）→ 干得稳（Claude Code）</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<!-- ================= 7 多 Agent ================= -->
+<section class="chapter">
+<h1 class="sec"><span class="no">07</span>多 Agent 架构与 Harness 治理</h1>
+
+<div class="lead">本章回答：<b>什么时候该拆多个 Agent、怎么拆、拆完怎么治理。</b>核心原则一句话：<span class="hl">Agent 负责局部智能，Harness 负责全局控制。</span></div>
+
+<h2 class="sub">7.1 主 Agent 与子 Agent 的本质</h2>
+<div class="callout kp">
+  <div class="t">最重要的认知</div>
+  子 Agent <b>不是主 Agent 的“手”</b>，而是有独立大脑的<b>协作者</b>。它具备「<span class="kw">三个独立</span>」：<br>
+  独立上下文窗口 · 独立系统提示词 · 独立工具权限。
+</div>
+
+<h2 class="sub">7.2 通信链路四步（递进）</h2>
+<div class="flow">
+  <span class="n">任务分解</span><span class="a">→</span>
+  <span class="n">上下文传递</span><span class="a">→</span>
+  <span class="n">子 Agent 独立执行</span><span class="a">→</span>
+  <span class="n">结果回传与汇总</span>
+</div>
+
+<h3 class="item">① 任务分解</h3>
+<p><b>三种策略：</b>按功能域 / 按执行步骤 / 按专业能力。</p>
+<div class="callout memo"><div class="t">分解原则</div>强耦合的步骤留在同一个 Agent；只有<b>可独立、可并行、上下文互扰</b>的部分才拆出去。</div>
+
+<h3 class="item">② 上下文传递（发“任务包”）</h3>
+<div class="tw">
+<table>
+<thead><tr><th style="width:26%">任务包字段</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>任务描述</td><td>要做什么，验收标准是什么</td></tr>
+<tr><td>必要上下文</td><td>完成这个子任务真正需要的信息</td></tr>
+<tr><td>工具权限</td><td>允许用哪些工具（最小权限）</td></tr>
+<tr><td>输出 schema</td><td>结果必须是可解析的结构</td></tr>
+<tr><td>约束</td><td>不能做什么、边界在哪</td></tr>
+<tr><td>trace_id</td><td>全链路追踪标识</td></tr>
+</tbody>
+</table>
+</div>
+<div class="callout trap"><div class="t">关键在“度”</div>传太少 → 子 Agent 不理解任务；传太多 → 浪费 Token 还引入噪声。<span class="hl">够用即止</span>是唯一标准。</div>
+
+<h3 class="item">③ 子 Agent 独立执行</h3>
+<p>自主规划、多步推理、中途调整策略 —— 这是它与 Tool 的<b>根本区别</b>。主 Agent 不干预过程，只控制<span class="kw">目标、边界、最终验收</span>。</p>
+
+<h3 class="item">④ 结果回传与汇总</h3>
+<div class="grid2">
+  <div class="card"><div class="ct">子 Agent 返回</div><div class="mini">执行结果 + 执行摘要 + 证据来源 + 置信度 + 失败原因</div></div>
+  <div class="card"><div class="ct">主 Agent 处理</div><div class="mini">结果冲突裁决 / 格式统一 / 质量过滤 / 证据校验</div></div>
+</div>
+
+<h2 class="sub">7.3 四种编排模式（并列）</h2>
+<div class="tw">
+<table>
+<thead><tr><th style="width:18%">模式</th><th style="width:34%">结构</th><th>注意点</th></tr></thead>
+<tbody>
+<tr><td><strong>顺序管道</strong></td><td>子 Agent 依次执行，前一个输出是后一个输入</td><td>像流水线，适合有明确依赖的流程</td></tr>
+<tr><td><strong>Map-Reduce</strong></td><td>并行派发 + 全部完成后汇总</td><td>最怕 <span class="hl">“Reduce 写得太弱”</span>，汇总没做好等于白干</td></tr>
+<tr><td><strong>层级嵌套</strong></td><td>子 Agent 再拆孙任务</td><td>层数越多成本指数上升，<b>必须限制深度</b></td></tr>
+<tr><td><strong>路由分发</strong></td><td>主 Agent 判类型派给专家 Agent，自己当调度员</td><td>主 Agent 只做判断，不干活</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2 class="sub">7.4 Tool vs 多 Agent（对比）</h2>
+<div class="tw">
+<table>
+<thead><tr><th style="width:20%">维度</th><th style="width:38%">Tool</th><th>Multi-Agent</th></tr></thead>
+<tbody>
+<tr><td>执行能力</td><td>单次调用返回结果</td><td>独立规划、多步推理</td></tr>
+<tr><td>上下文</td><td>结果回到主 Agent 的窗口</td><td>子 Agent 独立上下文</td></tr>
+<tr><td>自主性</td><td>被动执行</td><td>主动规划、调整策略</td></tr>
+<tr><td>并行性</td><td>由外层代码决定</td><td>天然适合并行拆分</td></tr>
+<tr><td>容错</td><td>需主 Agent 额外处理</td><td>可按子任务重试 / 降级</td></tr>
+<tr><td>协调开销</td><td>低</td><td>高（通信、汇总、冲突处理）</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3 class="item">Agent-as-Tool（中间态）</h3>
+<p><b>机制：</b>主 Agent 通过 Function Calling 调一个“工具”，但这个工具内部其实是一个完整的 Agent。</p>
+<div class="tw">
+<table>
+<thead><tr><th style="width:34%">好处</th><th>局限</th></tr></thead>
+<tbody>
+<tr><td>兼顾 Tool 的简单性与 Agent 的自主性</td><td>主 Agent 控制力弱，无法中途纠正</td></tr>
+</tbody>
+</table>
+</div>
+<div class="callout memo"><div class="t">前提条件</div>必须框好四件事：<b>输入边界 / 工具权限 / 输出 schema / 超时预算</b>。Claude Code 的 Task 工具就是典型落地。</div>
+
+<h3 class="item">选型判断（对比）</h3>
+<div class="grid2">
+  <div class="card"><div class="ct">Tool 够用</div><div class="mini">步骤固定 · 子任务强依赖 · 延迟敏感 · 需强一致</div></div>
+  <div class="card"><div class="ct">需要多 Agent</div><div class="mini">需独立规划 · 上下文互扰 · 需并行加速 · 需专业分工 · 需隔离风险</div></div>
+</div>
+
+<h3 class="item">多 Agent 的代价（必须主动说）</h3>
+<div class="tw">
+<table>
+<thead><tr><th style="width:22%">代价</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td><strong>成本与延迟</strong></td><td>每个子 Agent 都是独立模型调用，API 量可能 ×3</td></tr>
+<tr><td><strong>协调复杂度</strong></td><td>任务分解质量 + 上下文粒度 + 冲突处理</td></tr>
+<tr><td><strong>调试困难</strong></td><td>跨 Agent 日志追踪，难度高一个量级</td></tr>
+<tr><td><strong>一致性风险</strong></td><td>结论冲突不能简单投票，要做「证据优先级」裁决</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3 class="item">真实框架通信（对比）</h3>
+<div class="tw">
+<table>
+<thead><tr><th style="width:18%">框架</th><th style="width:34%">机制</th><th>适合</th></tr></thead>
+<tbody>
+<tr><td><strong>CrewAI</strong></td><td>任务链 / Manager 分配</td><td>偏流程编排，流程明确</td></tr>
+<tr><td><strong>AutoGen</strong></td><td>Agent 间多轮对话，偏协商</td><td>需要讨论达成共识，须限最大轮次</td></tr>
+<tr><td><strong>Claude Code</strong></td><td>主 Agent 通过 Task 调子 Agent</td><td>Agent-as-Tool 的工程落地</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2 class="sub">7.5 Multi-Agent Harness 七层治理 <span class="tag star">架构岗必答</span></h2>
+<div class="callout kp">
+  <div class="t">核心原则与类比</div>
+  <b>Agent 负责局部智能，Harness 负责全局控制。</b><br>
+  类比记忆：<b>Prompt 是台词，Agent 是演员，Tool 是道具，Harness 是导演 + 调度台 + 安全规章 + 预算中心。</b>
+</div>
+
+<div class="tw">
+<table>
+<thead><tr><th style="width:6%">层</th><th style="width:20%">名称</th><th>要点</th></tr></thead>
+<tbody>
+<tr><td><span class="step-num">1</span></td><td><strong>架构编排</strong></td><td>Planner 输出声明式计划，Orchestrator 统一裁决；五类决策权：任务生命周期 / 计划裁决 / Agent 路由 / 失败处理 / 硬终止。<br><b>硬闸（代码级强制）：</b><code>max_steps</code>、<code>max_tokens</code>、<code>max_duration</code>、<code>max_tool_calls</code>、<code>max_retries</code><br><b>口诀：别让 Agent 开车，让 Agent 当导航。</b></td></tr>
+<tr><td><span class="step-num">2</span></td><td><strong>工具治理</strong></td><td>所有工具调用都过 Tool Registry。登记项：名称 / 描述 / 输入 Schema / 允许的 Agent / 超时限速 / 风险等级 / 是否人工确认 / 输出结构 / 审计策略。<br><b>原则：给 Agent 一个工具，就是给它一把权限钥匙；哪怕只有 3 个工具也先立规矩。</b></td></tr>
+<tr><td><span class="step-num">3</span></td><td><strong>状态与记忆</strong></td><td>分清 State（当前任务运行数据）与 Memory（跨任务复用经验）。常见四个坑：<b>记得太少 / 记得太多 / 不分层 / 不遗忘</b>。记忆要有保留分数与修剪机制。</td></tr>
+<tr><td><span class="step-num">4</span></td><td><strong>评估体系</strong></td><td>四层：Component ｜ <b>Trajectory（Multi-Agent 重点）</b>｜ Task Completion ｜ End-to-End。<br>LLM-as-Judge 不是万能药，事实正确性优先用确定性检查。<br><b>Eval 必须进 CI：Prompts 即代码，Trace 即日志，Eval 即测试。</b></td></tr>
+<tr><td><span class="step-num">5</span></td><td><strong>成本控制</strong></td><td>Model Routing（简单用小模型、复杂用强模型）；Context Compression（保留最近原文 + 早历史结构化摘要）；预算分级降级。<br>关键指标：单任务 Token、单 Agent 占比、工具结果占比、重试占比、熔断次数。</td></tr>
+<tr><td><span class="step-num">6</span></td><td><strong>MCP 接入</strong></td><td><b>MCP 提供能力，Harness 提供治理；标准化 ≠ 安全。</b><br>五条最佳实践：Server 不直连 Agent（先过 Harness 过滤）／工具白名单按 Agent 授权／每个 Server 独立配额／高风险动作走 HITL／全链路 Trace。</td></tr>
+<tr><td><span class="step-num">7</span></td><td><strong>可观测与落地路线</strong></td><td>记录：用户输入 / 计划 / 每步输入输出 / 工具参数与结果 / 记忆 / 路由 / Token / 失败与重试 / 降级熔断 / 最终评估。<br>三阶段落地：<b>Phase1 MVP → Phase2 Hardening → Phase3 Scale</b>（提醒：别一开始就进 Phase 3）。</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="callout memo">
+  <div class="t">预算分级降级（第 5 层细节）</div>
+  绿区正常 → 黄区压缩 → 红区切小模型 → 熔断区强制收束。
+</div>
+</section>
+
+<!-- ================= 8 可观测与成本 ================= -->
+<section class="chapter">
+<h1 class="sec"><span class="no">08</span>可观测性与成本优化</h1>
+
+<div class="lead">本章解决两个线上最痛的问题：<b>为什么 Demo 能跑通、生产却不稳</b>，以及<b>账单为什么爆炸</b>。</div>
+
+<h2 class="sub">8.1 为什么生产里还是不稳</h2>
+<ul>
+<li><b>根因不是某一个 Prompt，而是长链路执行过程不可见。</b></li>
+<li>Agent 的错误会沿执行链路<b>传播</b>：第一步偏 → 全偏。</li>
+<li>Demo 问的是「能不能跑通一次」；生产问的是「能不能稳定跑很多次」。</li>
+</ul>
+
+<h2 class="sub">8.2 可观测性是什么</h2>
+<div class="callout kp">
+  <div class="t">定义</div>
+  对<span class="kw">目标 / 计划 / 上下文 / 工具 / 状态 / 成本 / 风险 / 结果质量</span>的全链路记录、度量、回放、评估。<br>
+  <b>本质：在 Harness 里给 Agent 装眼睛。</b><br>
+  目的不是事后甩锅，而是让每次执行都变成<b>可分析、可复现、可改进</b>的工程数据。
+</div>
+<div class="tw">
+<table>
+<thead><tr><th style="width:22%"></th><th style="width:38%">普通日志</th><th>Agent 可观测</th></tr></thead>
+<tbody>
+<tr><td><strong>记录什么</strong></td><td>“发生了什么”（接口、参数、状态码、耗时、异常）</td><td>还要解释“<b>它为什么这么做</b>”</td></tr>
+<tr><td><strong>典型场景</strong></td><td colspan="2">HTTP 全是 200，但任务已经偏了 —— 这就是普通日志看不见、必须上 Agent 可观测的原因</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3 class="item">观测七类对象（并列）</h3>
+<div class="grid3">
+  <div class="card"><div class="mini">① 目标（有无被改写）<br>② 计划<br>③ 上下文（来源、是否过期污染）</div></div>
+  <div class="card"><div class="mini">④ 工具（调了什么、参数、返回、耗时）<br>⑤ 状态变化</div></div>
+  <div class="card"><div class="mini">⑥ 成本<br>⑦ 评估</div></div>
+</div>
+
+<h2 class="sub">8.3 Agent Trace 两层设计（核心技能）</h2>
+<h3 class="item">任务级 Trace</h3>
+<div class="tw">
+<table>
+<thead><tr><th style="width:44%">字段</th><th>含义</th></tr></thead>
+<tbody>
+<tr><td><code>trace_id</code></td><td>全链路唯一标识</td></tr>
+<tr><td><code>user_goal</code> / <code>normalized_goal</code></td><td>用户原始目标 / 归一化后的目标（用于检测目标漂移）</td></tr>
+<tr><td><code>agent_version</code> / <code>model_version</code> / <code>policy_version</code></td><td>三个版本号，保证可复现</td></tr>
+<tr><td><code>start_time</code> / <code>end_time</code> / <code>final_status</code></td><td>起止时间与最终状态</td></tr>
+<tr><td><code>total_tokens</code> / <code>total_cost</code> / <code>final_eval</code></td><td>总成本与最终评估</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3 class="item">步骤级 Step</h3>
+<div class="tw">
+<table>
+<thead><tr><th style="width:34%">字段</th><th>含义</th></tr></thead>
+<tbody>
+<tr><td><code>step_id</code> / <code>step_type</code></td><td>步骤标识与类型（规划 / 工具 / 观察 / 总结 / 评估）</td></tr>
+<tr><td><code>current_goal</code> / <code>context_refs</code></td><td>当前子目标 / 引用了哪些上下文</td></tr>
+<tr><td><code>model_input_summary</code> / <code>model_output_summary</code></td><td>模型输入输出摘要</td></tr>
+<tr><td><code>tool_name</code> / <code>tool_args</code> / <code>tool_result_summary</code></td><td>工具调用三要素</td></tr>
+<tr><td><code>state_before</code> / <code>state_after</code></td><td>状态变化前后</td></tr>
+<tr><td><code>latency_ms</code> / <code>tokens</code> / <code>risk_level</code> / <code>eval_result</code></td><td>性能、成本、风险等级、本步评估</td></tr>
+</tbody>
+</table>
+</div>
+<div class="callout memo"><div class="t">三个关键字段（面试常问）</div><code>context_refs</code>（用了什么上下文，查污染）、<code>state_before/after</code>（状态怎么变的，查一致性）、<code>eval_result</code>（每步质量，查退化点）。</div>
+
+<h2 class="sub">8.4 长链路漂移检测</h2>
+<div class="grid2">
+  <div class="card"><div class="ct">五信号</div><div class="mini">相关度下降 · 子任务超预算 · 重复步骤增多 · 目标表述变化 · 关键证据未被引用</div></div>
+  <div class="card"><div class="ct">三机制</div><div class="mini">目标锚点 · 检查点评估 · 漂移告警</div></div>
+</div>
+<div class="callout kp"><div class="t">节奏（工程细节，加分）</div>不必每步自省，<b>每 3–5 步或异常触发时</b>做一次轻量检测 —— 兼顾成本与灵敏度。</div>
+
+<h2 class="sub">8.5 工具调用故障五类归因（并列）</h2>
+<div class="tw">
+<table>
+<thead><tr><th style="width:30%">故障类型</th><th>修什么</th></tr></thead>
+<tbody>
+<tr><td><strong>工具选择错误</strong></td><td>修工具描述、路由策略、候选集</td></tr>
+<tr><td><strong>参数生成错误</strong></td><td>修 JSON Schema、参数校验、错误反馈、示例</td></tr>
+<tr><td><strong>权限边界错误</strong></td><td>修 Tool Registry、权限策略、高风险审批</td></tr>
+<tr><td><strong>工具服务异常</strong></td><td>重试、熔断、降级、告警</td></tr>
+<tr><td><strong>结果理解错误</strong></td><td>记录返回摘要、证据引用、输出校验</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2 class="sub">8.6 成本监控与优化</h2>
+<h3 class="item">成本监控七类指标（并列）</h3>
+<div class="grid2">
+  <div class="card"><div class="mini">① 总 Token 与单步 Token（总看贵不贵，单步看贵在哪）<br>② 上下文长度<br>③ 工具重试次数<br>④ 重复规划次数</div></div>
+  <div class="card"><div class="mini">⑤ 无效步骤占比<br>⑥ 模型路由成本<br>⑦ 端到端延迟</div></div>
+</div>
+
+<h3 class="item">成本优化六招（由易到难）</h3>
+<div class="tw">
+<table>
+<thead><tr><th style="width:8%">序</th><th style="width:26%">手段</th><th>效果</th></tr></thead>
+<tbody>
+<tr><td><span class="step-num">1</span></td><td><strong>工具选择优化</strong></td><td>只给真正需要的工具，动态加载工具子集</td></tr>
+<tr><td><span class="step-num">2</span></td><td><strong>模式选择</strong></td><td>简单任务用 Workflow 代替 Agent（<b>省约 4 倍 Token</b>）</td></tr>
+<tr><td><span class="step-num">3</span></td><td><strong>上下文压缩</strong></td><td>摘要压缩历史，中间结果只留关键</td></tr>
+<tr><td><span class="step-num">4</span></td><td><strong>模型路由</strong></td><td>简单子任务用小模型</td></tr>
+<tr><td><span class="step-num">5</span></td><td><strong>缓存</strong></td><td>工具调用结果缓存 + Prompt 缓存</td></tr>
+<tr><td><span class="step-num">6</span></td><td><strong>预算分层</strong></td><td>简单低预算 / 复杂中预算 / 高价值才高预算</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3 class="item">混合路由优化（深度加分）</h3>
+<div class="grid2">
+  <div class="card"><div class="ct">为什么需要</div><div class="mini">① 任务难度呈长尾分布，约 <b>80% 是简单任务</b>；② 质量提升与成本投入非线性，简单任务小模型几乎不差；③ 一刀切用大模型 = 浪费模型溢价。</div></div>
+  <div class="card"><div class="ct">三种路由策略（递进）</div><div class="mini"><b>规则路由：</b>零成本零延迟、完全可控；但规则维护爆炸、处理不了“伪简单”。<br><b>模型路由：</b>自适应、覆盖长尾；但需训练数据、本身会误判。<br><b>混合路由（工程最优）：</b>规则拦确定简单 + 模型判模糊中间 + 大模型兜底。</div></div>
+</div>
+
+<h3 class="item">路由模型怎么训练</h3>
+<ul>
+<li><b>数据来源：</b>历史调用日志置信度 / 人工标注 / 主动探索（5% 双跑对比）。</li>
+<li><b>分类器 vs 评分器：</b>分类器预测“模型档位”；<span class="hl">评分器预测“难度分”更推荐</span> —— 新增模型只需调阈值。</li>
+<li><b>冷启动：</b>先全走大模型并记录置信度 → 训初版 → 只放行高置信请求 → 渐进降阈值。</li>
+<li><b>原则：</b>冷启动宁可多花钱，<span class="kw">质量是底线</span>。</li>
+</ul>
+
+<h3 class="item">级联降级（对比）</h3>
+<div class="tw">
+<table>
+<thead><tr><th style="width:34%">要点</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td><strong>流程</strong></td><td>小模型先试 → 判置信度 → 够高直接用，不够升级大模型</td></tr>
+<tr><td><strong>成本算账</strong></td><td>一刀切 <strong>100</strong> ｜ 级联 <strong>50</strong> ｜ 理想路由 <strong>40</strong></td></tr>
+<tr><td><strong>三个坑</strong></td><td>双倍延迟 / 阈值难选 / 错误传播</td></tr>
+<tr><td><strong>适用</strong></td><td>成本极敏感、能容忍延迟；否则混合路由更优</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2 class="sub">8.7 失败样本沉淀四类资产（并列）</h2>
+<div class="tw">
+<table>
+<thead><tr><th style="width:24%">资产</th><th>做法</th></tr></thead>
+<tbody>
+<tr><td><strong>失败归因</strong></td><td>定位到目标 / 上下文 / 工具 / 权限 / 状态 / 成本 / 评估</td></tr>
+<tr><td><strong>评测样本</strong></td><td>变成固定测试用例，改动就跑</td></tr>
+<tr><td><strong>Harness 规则</strong></td><td>结构性错误补到规则里（如高风险必审批）</td></tr>
+<tr><td><strong>监控指标</strong></td><td>把早期信号变成告警</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2 class="sub">8.8 生产级可观测系统六层架构（递进）</h2>
+<div class="tw">
+<table>
+<thead><tr><th style="width:6%">层</th><th style="width:24%">名称</th><th>职责</th></tr></thead>
+<tbody>
+<tr><td><span class="step-num">1</span></td><td><strong>Trace 采集层</strong></td><td>在 Harness 关键节点打点，而非散落在 Prompt 里</td></tr>
+<tr><td><span class="step-num">2</span></td><td><strong>事件存储层</strong></td><td>结构化存储，原文脱敏</td></tr>
+<tr><td><span class="step-num">3</span></td><td><strong>指标计算层</strong></td><td>成功率 / 平均步骤 / 平均 Token / 工具失败率 / 漂移率 / 接管率</td></tr>
+<tr><td><span class="step-num">4</span></td><td><strong>可视化与告警层</strong></td><td>研发看回放、业务看成功率与成本、运维看延迟失败率</td></tr>
+<tr><td><span class="step-num">5</span></td><td><strong>回放与评测层</strong></td><td>一键回放，固定输入判断新版本是否修好旧问题</td></tr>
+<tr><td><span class="step-num">6</span></td><td><strong>改进闭环层</strong></td><td>沉淀到 Prompt / 工具描述 / 权限策略 / 上下文策略 / 评测集 / Harness 规则</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<!-- ================= 9 系统设计与答法 ================= -->
+<section class="chapter">
+<h1 class="sec"><span class="no">09</span>生产级系统设计与面试答法</h1>
+
+<div class="lead">本章是终面压轴题的标准答案库：<b>怎么判断一个 Agent 达到生产级、五层架构怎么搭、评估怎么做、从 0 到 1 怎么走、答题怎么组织。</b></div>
+
+<h2 class="sub">9.1 生产级的标准：不是“成功过一次”</h2>
+<div class="callout kp">
+  <div class="t">第一句话就要说对</div>
+  <b>Agent 的结果不能由 Agent 自己宣布，必须由外部环境验证。</b>“模型说做完了”不等于“任务真的完成了”。
+</div>
+<div class="tw">
+<table>
+<thead><tr><th style="width:20%">五道门槛</th><th>具体看什么</th></tr></thead>
+<tbody>
+<tr><td><strong>任务效果</strong></td><td>是否真的完成业务目标（不是技术动作完成）</td></tr>
+<tr><td><strong>稳定性</strong></td><td>模糊输入、工具失败、长链路下结果是否可接受</td></tr>
+<tr><td><strong>安全性</strong></td><td>能看到什么数据、调什么工具、哪些动作必须人批准</td></tr>
+<tr><td><strong>可运营性</strong></td><td>延迟 / Token / 成本 / 并发 / 人工接管比例能否长期承受</td></tr>
+<tr><td><strong>可改进性</strong></td><td>失败能否定位、复现，并进入下一轮修复</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2 class="sub">9.2 生产级架构五层（递进）</h2>
+<div class="tw">
+<table>
+<thead><tr><th style="width:6%">层</th><th style="width:26%">名称</th><th>职责</th></tr></thead>
+<tbody>
+<tr><td><span class="step-num">1</span></td><td><strong>业务入口与风险分级</strong></td><td>身份校验 / 租户隔离 / 输入安全检查 / 风险分级</td></tr>
+<tr><td><span class="step-num">2</span></td><td><strong>Agent Harness</strong></td><td>装配上下文、选模型、暴露工具、维护状态、重试、预算、停止条件、人工确认</td></tr>
+<tr><td><span class="step-num">3</span></td><td><strong>模型 / 上下文 / 状态 / 记忆</strong></td><td>四者不能混在一起</td></tr>
+<tr><td><span class="step-num">4</span></td><td><strong>工具 / 业务系统 / 执行环境</strong></td><td>参数校验、最小权限、超时重试幂等补偿、脱敏、审批、审计</td></tr>
+<tr><td><span class="step-num">5</span></td><td><strong>验证、观测与人工接管</strong></td><td>独立验证器 + 完整 Trace + HITL 三要素</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2 class="sub">9.3 Harness 工程六个转换（递进，非常好用）</h2>
+<div class="tw">
+<table>
+<thead><tr><th style="width:36%">从</th><th>到</th></tr></thead>
+<tbody>
+<tr><td>模糊目标</td><td><b>可验收任务</b></td></tr>
+<tr><td>隐性知识</td><td><b>可发现上下文</b></td></tr>
+<tr><td>口头提醒</td><td><b>可执行约束</b>（权限给 IAM、Schema、幂等键、Lint、CI、审批流）</td></tr>
+<tr><td>最终回答</td><td><b>可验证结果</b>（能用确定性程序就不用模型反思）</td></tr>
+<tr><td>偶发失败</td><td><b>可复现样本</b>（Trace + 隔离环境重放）</td></tr>
+<tr><td>一次修复</td><td><b>长期能力</b>（沉淀进规则 / 工具 / 测试 / 评估集）</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2 class="sub">9.4 生产架构的三个“必须”</h2>
+<div class="tw">
+<table>
+<thead><tr><th style="width:30%">必须</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td><strong>确定性与自治并存</strong></td><td>外层确定性 Workflow + 内层有限自治 Agent</td></tr>
+<tr><td><strong>单 Agent 优先，多 Agent 后置</strong></td><td>拆多 Agent 需满足明确条件（见第 7 章）</td></tr>
+<tr><td><strong>状态必须外化</strong></td><td>Session / Task State / Memory / Artifact / Trace 五者区分</td></tr>
+<tr><td colspan="2"><b>补充一句：</b>权限跟着动作走，不跟着 Agent 名字走。</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2 class="sub">9.5 评估四层（递进）</h2>
+<div class="tw">
+<table>
+<thead><tr><th style="width:18%">层级</th><th style="width:32%">评什么</th><th>典型指标</th></tr></thead>
+<tbody>
+<tr><td><strong>组件评估</strong></td><td>单个能力是否正确</td><td>工具选择率、参数准确率、检索召回率</td></tr>
+<tr><td><strong>轨迹评估</strong></td><td>过程是否合理</td><td>重复调用、无效步骤、越权尝试、恢复路径</td></tr>
+<tr><td><strong>结果评估</strong></td><td>外部状态是否真的变了</td><td>数据库状态、文件产物、测试结果、业务状态</td></tr>
+<tr><td><strong>系统评估</strong></td><td>整体能不能长期跑</td><td>成功率、<b>正确失败率</b>、延迟、成本、人工接管率</td></tr>
+</tbody>
+</table>
+</div>
+<div class="callout memo">
+  <div class="t">最容易被忽略但最专业的指标</div>
+  <b>正确失败率</b>：信息不足时主动问、权限不够时拒绝、故障时转人工。它衡量的是 Agent “知道自己不知道”的能力 —— 比成功率更能反映生产成熟度。<br>
+  <b>Trace 要支持三件事：</b>定位层级 / 重放失败 / 进回归评估。
+</div>
+
+<h2 class="sub">9.6 组织三层协作</h2>
+<div class="tw">
+<table>
+<thead><tr><th style="width:24%">团队</th><th style="width:34%">负责</th><th>组成 / 产出</th></tr></thead>
+<tbody>
+<tr><td><strong>场景团队</strong></td><td>对业务结果负责</td><td>产品 + 领域专家 + 应用工程师</td></tr>
+<tr><td><strong>Agent 平台团队</strong></td><td>对通用能力负责</td><td>网关 / Runtime / Session / Sandbox / Tool Registry / 权限 / Trace / 评估</td></tr>
+<tr><td><strong>安全、合规与运营</strong></td><td>对边界和持续运行负责</td><td>安全策略、合规审查、线上运营</td></tr>
+</tbody>
+</table>
+</div>
+<div class="callout kp"><div class="t">一句话点睛</div><b>交接物是版本化资产，不是会议结论。</b></div>
+
+<h2 class="sub">9.7 人才与能力要求</h2>
+<div class="grid2">
+  <div class="card"><div class="ct">三类岗位</div><div class="mini">Agent 应用工程师 · Agent 平台工程师 · Agent 产品与领域专家</div></div>
+  <div class="card"><div class="ct">六项共同能力</div><div class="mini"><b>Spec · Context · Tool · Eval · Systems · Domain</b></div></div>
+</div>
+<div class="callout memo"><div class="t">最值钱的一句话</div>稀缺的不是“最会写 Prompt 的人”，而是<b>能把组织经验变成可读、可执行、可验证资产的人</b>。</div>
+
+<h2 class="sub">9.8 企业从 0 到 1 五阶段（递进）</h2>
+<div class="tw">
+<table>
+<thead><tr><th style="width:10%">阶段</th><th style="width:26%">主题</th><th>关键动作</th></tr></thead>
+<tbody>
+<tr><td><strong>一</strong></td><td>先证明任务值得做</td><td>判断标准：非结构化信息多、规则难覆盖、可验证、失败成本可控</td></tr>
+<tr><td><strong>二</strong></td><td>做受控 MVP</td><td>单 Agent 或 Workflow + 局部 Agent；只读为主；最小 Trace + 最小评估集</td></tr>
+<tr><td><strong>三</strong></td><td>补齐 Harness</td><td>按高频失败逐个工程化</td></tr>
+<tr><td><strong>四</strong></td><td>逐级提高自治</td><td>建议 → 查询自动 → 低风险自动 + 高风险审批 → 有限自治</td></tr>
+<tr><td><strong>五</strong></td><td>平台化</td><td>多场景出现之后再做，不要提前</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2 class="sub">9.9 系统设计答题框架（背下来直接用）</h2>
+<div class="formula">目标 → 架构 → Harness → 治理 → 组织<small>五步走，每一步都能展开成一个子话题，全程不跑题</small></div>
+<div class="tw">
+<table>
+<thead><tr><th style="width:16%">步骤</th><th>说什么</th></tr></thead>
+<tbody>
+<tr><td><strong>① 目标</strong></td><td>业务目标是什么、成功标准是什么（可验收）、失败成本多大、风险等级</td></tr>
+<tr><td><strong>② 架构</strong></td><td>五层架构：入口风险分级 → Harness → 模型/上下文/状态/记忆 → 工具与执行环境 → 验证观测与接管</td></tr>
+<tr><td><strong>③ Harness</strong></td><td>六个转换 + 六层组件 + Loop 的五个变量（上下文/状态/预算/工具/终止）</td></tr>
+<tr><td><strong>④ 治理</strong></td><td>权限最小化、HITL 审批、Trace 可观测、Eval 进 CI、成本预算分级、多 Agent 七层治理</td></tr>
+<tr><td><strong>⑤ 组织</strong></td><td>场景团队 + 平台团队 + 安全合规；五阶段落地路线；版本化资产沉淀</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="callout qa">
+  <div class="t">面试心法（三句话）</div>
+  ① 别只背概念，要<span class="hl">把知识点串起来讲</span>（比如安全 → 权限 → Harness → 可观测是一条线）；<br>
+  ② 答题从「<b>工作模式选择、工具管理、记忆设计、安全防护、成本控制</b>」五维度展开，保证不漏；<br>
+  ③ 底层不变的东西只有四件：<b>LLM 怎么调工具、工具怎么标准化接入、Agent 之间怎么协作、怎么保证安全可靠</b>。
+</div>
+</section>
+
+<!-- ================= 10 附录 ================= -->
+<section class="chapter">
+<h1 class="sec"><span class="no">10</span>附录：考前速查</h1>
+
+<h2 class="sub">10.1 高频面试题速查表（14 题 · 标准答案）</h2>
+<div class="tw">
+<table>
+<thead><tr><th style="width:30%">问题</th><th>标准答案要点</th></tr></thead>
+<tbody>
+<tr><td><strong>LLM 与 Agent 的区别？</strong></td><td>LLM 只生成文本（无状态函数）；Agent 在 LLM 之上加了<b>规划 / 工具 / 记忆 / 循环</b>，能改变外部状态</td></tr>
+<tr><td><strong>Agent 与 Workflow 怎么选？</strong></td><td>看控制权在 LLM 还是代码；生产常用<b>混合架构</b>：外层确定性 Workflow + 内层有限自治 Agent</td></tr>
+<tr><td><strong>ReAct 是什么？</strong></td><td>Thought → Action → Observation 的循环；本质是 Prompt 范式，循环对象是一段文本</td></tr>
+<tr><td><strong>Function Calling 底层怎么工作？</strong></td><td>模型输出结构化 JSON 工具调用参数（工具名 + 参数），<b>由外部代码执行</b>，结果以 role:tool 回传</td></tr>
+<tr><td><strong>MCP 解决什么问题？</strong></td><td>工具接入标准化 + 动态发现，把 N×M 变成 N+M；三个角色：Host / Client / Server</td></tr>
+<tr><td><strong>A2A 是什么？</strong></td><td>Agent 间横向协作；核心概念 Agent Card + Task + Artifact；与 MCP 互补</td></tr>
+<tr><td><strong>Skills 与 Prompt 的区别？</strong></td><td>Prompt 是单次指令；Skill 是跨任务复用的能力模块（九大要素）；Skill 是软约束，权限必须工程层强制</td></tr>
+<tr><td><strong>记忆系统怎么设计？</strong></td><td>上下文窗口（快、有限）+ 向量 DB（语义）+ 关系 DB（精确）+ KV（快状态）；State 与 Memory 分开；混合注入</td></tr>
+<tr><td><strong>安全怎么保障？</strong></td><td>最小权限原则 + Human in the Loop + 数据/指令分离；Prompt Injection 四手段：分离、过滤、模板隔离、上下文标记</td></tr>
+<tr><td><strong>Token 成本怎么优化？</strong></td><td>六招：工具选择 / 模式选择 / 上下文压缩 / 模型路由 / 缓存 / 预算分层；核心是混合路由 + 级联降级</td></tr>
+<tr><td><strong>生产五大坑是什么？</strong></td><td>死循环 / 幻觉工具调用 / 上下文污染 / Token 爆炸 / Prompt Injection</td></tr>
+<tr><td><strong>怎么设计一个生产级 Agent？</strong></td><td>按五维度展开：工具管理 + 记忆状态 + 可靠性 + 可观测 + 安全；再套「目标→架构→Harness→治理→组织」框架</td></tr>
+<tr><td><strong>上下文漂移怎么解？</strong></td><td>四步：任务分解 + 子目标检查点 → 上下文压缩 → 定期 Re-Planning → Context Reset（终极解药，状态先外化）</td></tr>
+<tr><td><strong>工具调用失败怎么排查？</strong></td><td>五步顺序：<b>工具是否存在 → 权限是否允许 → 参数是否通过 Schema → 工具服务是否成功 → 模型是否正确理解返回</b></td></tr>
+</tbody>
+</table>
+</div>
+
+<h2 class="sub">10.2 记忆口诀汇总（考前 30 分钟只看这一页）</h2>
+<div class="callout memo"><div class="t">总纲</div><code>Agent = Model + Harness</code>　｜　控制的粒度演进：<b>Prompt ⊂ Context ⊂ Harness</b>（Loop 是 Harness 的心脏，Loop 降级为 Graph 的节点）</div>
+
+<div class="tw">
+<table>
+<thead><tr><th style="width:26%">主题</th><th>口诀</th></tr></thead>
+<tbody>
+<tr><td><strong>四层协议</strong></td><td>Skills 决定「怎么想」→ MCP 决定「用什么」→ FC 决定「怎么调」；A2A 负责横向连接</td></tr>
+<tr><td><strong>FC 本质</strong></td><td>模型只说「调哪个、传什么」，执行在应用代码</td></tr>
+<tr><td><strong>MCP 价值</strong></td><td>N×M → N+M；三角色 Host / Client / Server；三资源 Tools / Resources / Prompts</td></tr>
+<tr><td><strong>状态与记忆</strong></td><td>State 管一致性（短命），Memory 管相关性（长命）</td></tr>
+<tr><td><strong>幻觉四层防线</strong></td><td>Prompt 约束 → 工具约束 → 证据约束 → 输出校验</td></tr>
+<tr><td><strong>漂移终极解</strong></td><td>重启胜过修补，状态沉到文件里</td></tr>
+<tr><td><strong>Harness 三步</strong></td><td>看得准（输入）→ 做得对（动作）→ 错了能兜底（校验）</td></tr>
+<tr><td><strong>多 Agent 分工</strong></td><td>Agent 负责局部智能，Harness 负责全局控制</td></tr>
+<tr><td><strong>编排口诀</strong></td><td>别让 Agent 开车，让 Agent 当导航</td></tr>
+<tr><td><strong>工具授权</strong></td><td>给 Agent 一个工具，就是给它一把权限钥匙</td></tr>
+<tr><td><strong>图 vs 循环</strong></td><td>Loop 没死，它被降到节点内部了</td></tr>
+<tr><td><strong>评估即工程</strong></td><td>Prompts 即代码，Trace 即日志，Eval 即测试</td></tr>
+<tr><td><strong>答题框架</strong></td><td>目标 → 架构 → Harness → 治理 → 组织</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2 class="sub">10.3 关键数字速记（面试报数字最显专业）</h2>
+<div class="tw">
+<table>
+<thead><tr><th style="width:34%">数字</th><th>对应事实</th></tr></thead>
+<tbody>
+<tr><td><strong>4–8x</strong></td><td>Agent 相比 Workflow 的 Token 消耗倍数（Workflow ≈ 1x）</td></tr>
+<tr><td><strong>约 20%</strong></td><td>Plan-and-Execute 相对 ReAct 的 Token 消耗</td></tr>
+<tr><td><strong>约 4 倍</strong></td><td>简单任务用 Workflow 代替 Agent 可省的 Token</td></tr>
+<tr><td><strong>80%</strong></td><td>任务难度长尾分布中简单任务的占比（混合路由的依据）</td></tr>
+<tr><td><strong>100 / 50 / 40</strong></td><td>成本算账：一刀切 / 级联降级 / 理想路由</td></tr>
+<tr><td><strong>15 步（15–50）</strong></td><td>最大步数限制的常见阈值</td></tr>
+<tr><td><strong>连续 3 次</strong></td><td>相同工具 + 相同参数的重复动作检测阈值</td></tr>
+<tr><td><strong>128K tokens</strong></td><td>上下文窗口的常见容量量级</td></tr>
+<tr><td><strong>约 100 行</strong></td><td>AGENTS.md 建议长度（渐进式披露的目录页）</td></tr>
+<tr><td><strong>每 3–5 步</strong></td><td>长链路漂移检测的节奏</td></tr>
+<tr><td><strong>5%</strong></td><td>路由模型训练时主动探索的双跑对比比例</td></tr>
+<tr><td><strong>23 层检查</strong></td><td>Claude Code 的顺序权限检查层数</td></tr>
+<tr><td><strong>200K 窗口</strong></td><td>Claude Code 的上下文窗口 + 三层压缩</td></tr>
+<tr><td><strong>25+ 平台</strong></td><td>OpenClaw 一个网关打通的消息平台数</td></tr>
+<tr><td><strong>N + M</strong></td><td>MCP 把工具集成从 N×M 降到的复杂度</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2 class="sub">10.4 术语表</h2>
+<div class="tw">
+<table>
+<thead><tr><th style="width:24%">术语</th><th>一句话解释</th></tr></thead>
+<tbody>
+<tr><td><strong>ReAct</strong></td><td>Thought-Action-Observation 循环的 Prompt 范式</td></tr>
+<tr><td><strong>Function Calling</strong></td><td>模型输出结构化工具调用指令的机制</td></tr>
+<tr><td><strong>MCP</strong></td><td>工具接入标准化协议（Host / Client / Server）</td></tr>
+<tr><td><strong>A2A</strong></td><td>Agent 间横向协作协议（Agent Card / Task / Artifact）</td></tr>
+<tr><td><strong>Human in the Loop</strong></td><td>高风险操作暂停等待人工审批</td></tr>
+<tr><td><strong>Context Reset</strong></td><td>丢弃旧上下文换干净窗口，唯一前提是状态已外化</td></tr>
+<tr><td><strong>Harness</strong></td><td>除模型外的一切工程外壳，Agent − Model</td></tr>
+<tr><td><strong>Auto-Compact</strong></td><td>上下文超阈值时自动压缩</td></tr>
+<tr><td><strong>Trace</strong></td><td>全链路结构化执行记录，任务级 + 步骤级两层</td></tr>
+<tr><td><strong>Eval</strong></td><td>可回归的评测集，必须进 CI</td></tr>
+<tr><td><strong>Tool Registry</strong></td><td>所有工具的统一注册与治理中心</td></tr>
+<tr><td><strong>Agent-as-Tool</strong></td><td>把完整 Agent 包装成一个工具供主 Agent 调用</td></tr>
+<tr><td><strong>Golden Principles</strong></td><td>对抗技术债的固定原则，由后台 Agent 持续执行</td></tr>
+<tr><td><strong>正确失败率</strong></td><td>信息不足主动问、权限不够拒绝、故障转人工的比例</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="hr"></div>
+<div class="callout kp">
+  <div class="t">最后一句：学习顺序的收敛点</div>
+  如果时间只够记一句话，就记这个：<br>
+  <b>LLM 只能生成；Function Calling 让它能调工具；MCP 把工具接入标准化；记忆与规划让它能坚持多步；Harness 让它能稳定地跑很多次。</b><br>
+  <span class="mini">所有细节，都挂在这条线上。</span>
+</div>
+
+<div class="note">Agent 面试知识全景 · 学习手册　|　配套：Agent 面试知识全景 - 思维导图（交互版）　|　共 10 章 · 全部知识点已覆盖</div>
+</section>
+
+</body>
+</html>
