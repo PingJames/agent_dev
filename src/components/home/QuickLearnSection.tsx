@@ -11,10 +11,10 @@ export default function QuickLearnSection() {
           <div className="max-w-2xl">
             <span className="badge-info">快速学习</span>
             <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl dark:text-white">
-              两套成体系的 Agent 知识资料
+              四套成体系的 Agent / RAG 知识资料
             </h2>
             <p className="mt-3 text-lg leading-relaxed text-slate-600 dark:text-slate-300">
-              学习手册和可交互思维导图都能直接在网页里读，不用下载；需要 PDF / 源文件时再走夸克网盘。
+              学习手册和可交互思维导图都能直接在网页里读，不用下载；需要 PDF / 源文件时再走百度网盘。
             </p>
           </div>
           <Link href="/learn" className="btn-secondary shrink-0">
@@ -82,7 +82,7 @@ export default function QuickLearnSection() {
                     rel="noopener noreferrer"
                     className="btn-primary px-5 py-2.5 text-sm"
                   >
-                    夸克网盘获取
+                    百度网盘获取
                     <svg className="ml-1.5 h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
                     </svg>
@@ -100,7 +100,7 @@ export default function QuickLearnSection() {
           <svg className="mt-0.5 h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
           </svg>
-          本站不提供文件下载，PDF / HTML / Markdown 源文件请通过夸克网盘链接获取（复制链接后打开「夸克 APP」即可保存）。
+          本站不提供文件下载，PDF / HTML 源文件请通过百度网盘链接获取（复制链接后在浏览器打开，输入提取码即可保存）。
         </p>
       </div>
     </section>

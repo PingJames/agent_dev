@@ -13,6 +13,11 @@ const outDir = path.join(root, "public", "learn");
 const ASSETS = [
   {
     dir: "AI-Agent知识体系",
+    file: "AI-Agent开发学习手册.html",
+    slug: "ai-agent-handbook",
+  },
+  {
+    dir: "AI-Agent知识体系",
     file: "AI-Agent知识体系-思维导图.html",
     slug: "ai-agent-mindmap",
   },
@@ -25,6 +30,21 @@ const ASSETS = [
     dir: "Agent面试知识全景",
     file: "Agent面试知识全景-思维导图.html",
     slug: "interview-mindmap",
+  },
+  {
+    dir: "RAG知识",
+    file: "RAG思维导图.html",
+    slug: "rag-mindmap",
+  },
+  {
+    dir: "RAG面试知识",
+    file: "RAG面试知识手册.html",
+    slug: "rag-interview-handbook",
+  },
+  {
+    dir: "RAG面试知识",
+    file: "RAG面试思维导图.html",
+    slug: "rag-interview-mindmap",
   },
 ];
 

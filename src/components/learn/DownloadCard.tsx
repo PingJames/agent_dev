@@ -44,9 +44,9 @@ function CheckIcon({ className = "" }: { className?: string }) {
 }
 
 export default function DownloadCard({ pan, collectionTitle, compact = false }: DownloadCardProps) {
-  const [copied, setCopied] = useState(false);
+  const [copied, setCopied] = useState<"" | "url">("");
 
-  const copyText = async (text: string) => {
+  const copyText = async (text: string, flag: "url") => {
     try {
       if (navigator.clipboard && window.isSecureContext) {
         await navigator.clipboard.writeText(text);
@@ -60,10 +60,10 @@ export default function DownloadCard({ pan, collectionTitle, compact = false }: 
         document.execCommand("copy");
         document.body.removeChild(textarea);
       }
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 2000);
+      setCopied(flag);
+      window.setTimeout(() => setCopied(""), 2000);
     } catch {
-      window.setTimeout(() => setCopied(false), 2000);
+      window.setTimeout(() => setCopied(""), 2000);
     }
   };
 
@@ -79,11 +79,11 @@ export default function DownloadCard({ pan, collectionTitle, compact = false }: 
         </span>
         <div className="min-w-0 flex-1">
           <h4 className="text-base font-semibold text-slate-900 dark:text-white">
-            夸克网盘 · {pan.title}
+            百度网盘 · {pan.title}
           </h4>
           {collectionTitle ? (
             <p className="mt-0.5 text-sm text-slate-600 dark:text-slate-300">
-              {collectionTitle}（PDF / HTML / Markdown 全套源文件）
+              {collectionTitle}（PDF / HTML 全套源文件）
             </p>
           ) : null}
         </div>
@@ -100,23 +100,23 @@ export default function DownloadCard({ pan, collectionTitle, compact = false }: 
 
       <div className="mt-4 flex flex-col gap-2 sm:flex-row">
         <a href={pan.url} target="_blank" rel="noopener noreferrer" className="btn-primary flex-1">
-          打开夸克网盘
+          打开百度网盘
           <svg className="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
           </svg>
         </a>
         <button
           type="button"
-          onClick={() => copyText(pan.url)}
+          onClick={() => copyText(pan.url, "url")}
           className="btn-secondary flex-1"
         >
-          {copied ? <CheckIcon className="mr-2 h-4 w-4" /> : <CopyIcon className="mr-2 h-4 w-4" />}
-          {copied ? "链接已复制" : "复制链接"}
+          {copied === "url" ? <CheckIcon className="mr-2 h-4 w-4" /> : <CopyIcon className="mr-2 h-4 w-4" />}
+          {copied === "url" ? "链接已复制" : "复制链接"}
         </button>
       </div>
 
       <p className="mt-3 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
-        本站不提供文件下载，源文件请通过上方夸克网盘链接获取：复制链接后打开「夸克 APP」即可保存。
+        本站不提供文件下载，源文件请通过上方百度网盘链接获取：复制链接后在浏览器打开，输入提取码即可保存。
       </p>
     </div>
   );

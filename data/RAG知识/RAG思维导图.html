@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAG 面试知识体系 · 思维导图</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; }
+  body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; background: #f6f8fa; color: #1f2328; display: flex; flex-direction: column; overflow: hidden; }
+  header { flex: 0 0 auto; padding: 12px 20px; background: #fff; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; z-index: 2; }
+  header h1 { font-size: 16px; font-weight: 600; color: #0f6e56; }
+  header .right { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  header .legend { font-size: 12px; color: #4b5563; display: flex; gap: 10px; flex-wrap: wrap; }
+  header .legend b { font-weight: 600; color: #185fa5; }
+  header .hint { font-size: 12px; color: #9ca3af; }
+  header button { font-size: 12px; color: #0f6e56; background: #e1f5ee; border: 1px solid #9fe1cb; border-radius: 6px; padding: 4px 10px; cursor: pointer; }
+  header button:hover { background: #cdeee2; }
+  #wrap { flex: 1 1 auto; position: relative; min-height: 0; }
+  #markmap { width: 100%; height: 100%; display: block; }
+  #markmap .markmap-foreign { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; }
+  #markmap .markmap-foreign code { background: #eef1f4; padding: 1px 5px; border-radius: 4px; font-size: 90%; color: #b4491d; }
+  #loading { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: 13px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>RAG 面试知识体系</h1>
+  <div class="right">
+    <div class="legend"><span>逻辑关系：</span><b>【递进】</b><b>【包含】</b><b>【因果】</b><b>【对比】</b></div>
+    <button id="reset">适应窗口</button>
+    <span class="hint">滚轮缩放 · 拖拽平移 · 点圆点折叠</span>
+  </div>
+</header>
+<div id="wrap">
+  <svg id="markmap"></svg>
+  <div id="loading">思维导图加载中…（首屏需联网）</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script src="https://cdn.jsdelivr.net/npm/markmap-view@0.18"></script>
+<script src="https://cdn.jsdelivr.net/npm/markmap-lib@0.18.12/dist/browser/index.iife.js"></script>
+<script>
+const MD = `# RAG 面试知识体系
+
+## 1. 为什么需要 RAG 【递进→链路】
+- 大模型四大局限 【并列】
+  - 幻觉问题：概率模型"预测下一个词"，不知道时不会说不知道，而是生成"听起来最合理"的答案；以可信方式传播错误，难以判别真假
+  - 私有知识盲区：训练数据只有公开数据；文档全塞 Prompt 会遇到 token 成本瓶颈 + 极长上下文注意力稀释（对中间内容利用率极低）
+  - 知识更新滞后：训练截止日期落后现实 6 个月～1 年；重训模型更新知识在成本/时间上不可接受
+  - 无法溯源：答案无法指出"来自哪份文档第几页"；法律/医疗/金融场景无来源引用不可接受
+- RAG 核心思路 【因果】
+  - 定义：Retrieval-Augmented Generation 检索增强生成
+  - 机制：回答前先检索知识库相关内容，作为上下文喂给模型，让模型"看着资料回答"【包含】
+- 四大局限的应对 【对比】
+  - 幻觉→原文片段做事实锚点，要求依据资料回答；幻觉概率大幅降低但【注意】不是归零
+  - 私有知识→知识库自建自维护，模型只需基于检索片段推理
+  - 知识更新→更新文档+重新向量化索引即可，与训练截止日期解耦
+  - 溯源→检索命中哪份文档哪个片段，答案附引用来源供核查
+- 适用场景 【对比】
+  - 适合：知识密集型问答（企业知识库/产品手册/法规）、内容频繁更新业务（新闻/竞品/政策）、长尾事实查询
+  - 不适合：创意生成、强推理任务、模型训练数据已良好覆盖的稳定领域（只增加延迟和成本）
+- 高频面试题
+  - RAG 能根治幻觉吗？→ 能显著缓解不能根治：检索质量差时仍会"补充生成"、可能在正确资料上错误推理
+  - RAG 本质：大模型的外置数据库/cheat sheet，不是模型能力升级
+
+## 2. 完整链路 【包含：离线+在线】
+- 离线阶段（把知识存进去）
+  - 文档加载：PDF/Word/网页/Markdown/数据库/邮件；解析质量决定系统上限【因果："垃圾进垃圾出"】
+  - 清洗预处理：去页眉页脚/格式符号/重复内容、保留标题结构、过滤表格乱码；工程量最大最易被低估
+  - 切片 Chunking：设计决策最多的环节；整篇做单元→粒度太粗或上下文太长
+  - 向量化 Embedding：chunk 转 高维浮点向量；关键约束：Query 和 chunk 必须用同一模型【因果：同一语义空间】
+  - 存元数据：来源文档/页码/创建时间；支撑"只看最近三个月"等过滤
+  - 存入向量数据库：Milvus/Weaviate/Chroma/Pinecone；核心能力 ANN 近似最近邻，毫秒级 top-K
+- 在线阶段（找出来+用起来）
+  - Query 处理（可选）：改写（口语化→检索友好、复杂问题拆子问题）、扩展（同义词扩召回）
+  - 检索 Retrieval：Query 向量化→余弦相似度→召回 top-K（K 常 3-10）；进阶：混合检索=向量+BM25 两路合并
+  - Rerank 精排：Cross-Encoder 对 (Query,Chunk) 对打分重排；最常见最有效，代价多一次推理延迟
+  - 上下文构建：chunk+元数据按格式拼 Prompt；资料与指令分离、无答案要明说
+  - 生成 Generation：Prompt 明确引导"优先依据资料、标注来源"
+- 核心认知 【并列】
+  - 每环节影响不同：Chunking 决定"能不能检索到"、Embedding 决定"语义理解"、Rerank 决定"top 结果是否真相关"、Prompt 决定"能否利用上下文"
+  - 离线在线必须一致：模型/清洗方式不一致→向量空间不同→相似度失效
+  - 检索目标是精准非全面：top-3 高质量优于 top-20 混杂【因果：上下文越长注意力越散】
+- 常见误区 【对比】
+  - "RAG=向量检索"→向量检索只是在线侧一步，还有解析/切片/选型/元数据/Rerank/Prompt 工程
+  - "模型够强随便切"→模型无法弥补检索质量缺陷
+  - "Rerank 一定要加"→有延迟成本；实时性高/文档量小可先不加
+
+## 3. 切片策略 Chunking 【包含】
+- 核心矛盾 【对比】
+  - chunk 太小：语义不完整、上下文缺失、索引膨胀检索变慢
+  - chunk 太大：信噪比低、注意力稀释、向量"平均化"语义模糊、精准度下降
+- 四种主流策略 【并列】
+  - 固定长度 Fixed-size：按字符/token 数硬切（如 512 token）；优点极简；缺点切断句子语义；只适合原型验证
+  - 递归字符 Recursive Character：按分隔符优先级递归切（\\n\\n→\\n→句号）；工程最常用默认选择；LangChain \`RecursiveCharacterTextSplitter\`
+  - 语义切分 Semantic：按句子切+计算相邻句 Embedding 相似度，相似度跌落处=话题转换处切；语义完整性最好；缺点：全文 Embedding 慢、成本高、chunk 大小不规则
+  - 结构感知 Structure-aware：按标题层级/条款编号/函数边界切；结构化文档最优、检索精准度最高；代码按函数/类边界
+- Overlap 重叠 【因果】
+  - 问题：重要信息落在 chunk 边界被割裂，两侧单独命中都是一半
+  - 做法：相邻 chunk 保留重叠（如 512+overlap 64）
+  - 效果：边界信息在两个 chunk 都有备份
+- 经验参数（非通用答案）
+  - 对话问答 256-512 token；知识库检索 512-1024；长文档摘要 1500-2000
+- 策略选择决策
+  - 有清晰结构→结构感知；普通散文→递归字符；质量要求极高话题频繁切换→语义切分；快速原型→固定长度（上线前换掉）
+- 面试答法
+  - 先说策略及原因→再说 chunk size/overlap 参数→最后说如何评估调整（例：跨段落内容召回差→调大 overlap→召回率提升）
+
+## 4. Embedding 【包含】
+- 本质 【对比：不是生成文本】
+  - 把文本映射到高维向量空间（384/768/1536 维），输出是向量不是文字
+  - 核心承诺：用空间距离表达语义相似度；语义相似→距离近
+  - 是"压缩语义"：保留语义信息，丢弃格式措辞细节；同一语义不同说法→向量接近
+- 模型选型四维度 【并列】
+  - 向量维度：越高语义越细腻但存储/检索开销大；768 维是中等业务合理起点
+  - 最大 token 限制：直接约束 chunk 上限（如 bge-small-zh 512 token）；选型前必核对
+  - 中文支持：中文场景关键依据；优选 BGE/M3E 系列；OpenAI ada-002 中文偏弱
+  - 非对称检索：短 Query 找长文档场景；BGE 支持 Query 加前缀 \`"Represent this sentence for searching relevant passages:"\` 提升效果
+- 中文 vs 通用场景 【对比】
+  - 分词边界：中文无空格分词，通用模型语义捕捉弱
+  - 专业术语：法律/医疗/金融行业词通用模型难表达
+  - 评估基准：MTEB 中文 Retrieval 子任务榜单；BGE 系列、E5 系列表现好
+  - 双语需求：\`bge-m3\` 专门优化多语言检索
+- Embedding vs Rerank 【对比，高频】
+  - Embedding=Bi-Encoder 双塔：Query 和文档各自独立编码→向量距离；文档向量可离线预计算→毫秒级百万量级召回，适合粗筛
+  - Rerank=Cross-Encoder 交叉编码：Query+文档拼接后联合输入→直接输出相关分；能看到完整交互、精度更高；无法预计算、逐对推理，只适合 top-20 内精排
+  - 流水线关系：Embedding 粗筛召回 top-K（20-50）→Rerank 精选 top-N（3-5）→进 Context
+- 常见误区
+  - 模型越大越好→不一定，轻量专用模型可能更快更准更省
+  - OpenAI 就够→英文好，中文需评测对比
+  - Embedding 和 Rerank 模型随意配→Rerank 最好与 Embedding 训练分布相近，否则评分口径不一致
+  - 换模型不用重建索引→完全错误！不同模型不同语义空间，必须全量重新 Embedding+重建索引
+
+## 5. 向量数据库 【包含】
+- 解决的核心问题 【因果】
+  - 场景：100 万 768 维向量找 top-5 相似
+  - 暴力搜索：逐一算余弦→几百 ms～几秒；线性增长，无法用于生产
+- 为什么不能用 MySQL 【对比，高频】
+  - 传统数据库：精确匹配/范围扫描，B-Tree/Hash 索引对"高维几何相似度"完全无效
+  - pgvector 等扩展：能存但大规模下全量计算 O(N)，性能远不如专用向量库
+  - 向量库：ANN 专用索引把复杂度降到近似 O(log N)
+- ANN 近似最近邻 【包含】
+  - "近似"含义：不保证绝对最近邻，实践中精度 95%+（recall@K 衡量），速度数量级提升
+  - HNSW 分层可导航小世界图：顶层少量节点"高速公路"，底层全节点"街道"；检索从顶层导航逐层下降；优点快且精度高（Milvus/Qdrant/Weaviate 默认）；缺点内存占用大
+  - IVF 倒排文件索引：先 K-Means 聚类分"货架"，检索只查最近几个货架；优点内存低适合超大规模；缺点 Query 落货架边界会漏（边界效应）
+  - 超参数权衡：M（节点最大连接数）、efConstruction（建图搜索深度）越大精度越高，内存/构建时间成比例增加
+- 附加能力 【并列】
+  - 元数据过滤：相似度搜索叠加结构化条件（时间/部门/类型）=语义相关+业务过滤
+  - 混合检索：向量+关键词两路结果用 RRF 融合；专有名词语义表示弱必须靠关键词
+  - 向量更新删除：选型考虑业务更新频率
+- 主流选型 【对比】
+  - 专用：Milvus/Qdrant/Weaviate/Pinecone——功能最全性能最优，大规模生产
+  - 传统库扩展：PostgreSQL+pgvector、ES+dense vectors——已有基础设施小规模可用
+  - 轻量级：FAISS（纯索引库非数据库，无持久化/元数据/CRUD）、Chroma（开发调试）
+  - 决策：几十万内→Chroma/pgvector；百万+要过滤混合检索→Milvus/Qdrant；云端免运维→Pinecone
+- 常见误区
+  - ANN 不精确不可靠→95-99% 精度对 RAG 完全够用
+  - 相似度高=语义相关→相似度取决于 Embedding 模型质量，模型不行相似度没意义
+
+## 6. 优化思路 【包含，先诊断后优化】
+- 优化框架 【并列】
+  - Query 侧：让问题更适合被检索
+  - 检索侧：改善召回质量
+  - Context/生成侧：改善喂给 LLM 的上下文
+- Query 侧
+  - Query 改写：LLM 扩展同义词/修正表述/补全隐含条件（"合同能退吗"→合同解除条款/退款政策/撤销条件）
+  - Multi-Query 多角度：一个问题生成多个版本分别检索再合并去重，召回率显著提升
+- 检索侧
+  - 混合检索 Hybrid：向量+BM25 并行；RRF 融合（两路排名倒数相加，双路都靠前分数高）；对超参不敏感实现简单，工程首选
+  - 元数据过滤：缩小范围提精度降开销，不改变检索算法
+- Rerank 精排 【因果】
+  - 位置：召回 top-K 之后，Cross-Encoder 逐对打分重排
+  - 该加：Recall@K 已够好但答案精度不高（召回了没排准）
+  - 不该加：Recall@K 本身低（根本没召回到，加 Rerank 无意义）
+- Context 侧
+  - 父子块检索：小 chunk 检索精准 + 大 chunk 上下文完整，解决 Chunking 经典矛盾【因果：两级索引】
+  - Context 压缩：LLM 提取相关句子丢弃噪声；显著减噪但多一次 LLM 调用延迟成本
+- 初学者优化方法论 【递进】
+  - 先建 baseline：Recall@K+答案质量指标，无基线无法判断有效性
+  - 优先解决"能不能找到"，再解决"找到了对不对"
+  - 每次只改一个变量（控制变量）
+  - 按成本/收益排优先级：混合检索性价比最高第一步
+- 面试答法
+  - 有数据有逻辑："Recall@5 从 60%→78%（混合检索）→加 Rerank 精准率提升 15%"
+
+## 7. 长文档与代码检索 【包含】
+- 三大硬问题 【并列】
+  - 结构不能断、版本不能错、权限不能漏
+  - 一句话：检索单位≠返回单位；相关≠可用；可用=完整+当前+有权限
+- 长文档结构化
+  - 按标题树建层级：章节→小节→条款→表格；保存路径（如 \`产品手册/计费规则/企业版/退款政策\`）参与检索与父级定位
+  - 固定切片失效例：子块"退款周期 7 个工作日"+适用范围在父标题"企业版年付客户"→只返回子块答案缺条件
+- 代码 AST 切分 【对比：不能按字符硬切】
+  - 自然边界是模块/类/函数/方法，不是句号换行
+  - 用 Tree-sitter 生成语法树按 AST 节点切，支持增量更新
+  - 保留信息：函数签名/注释/函数体、所属类与符号全名、起止行号/导入关系/被调用符号、repo/branch/commit/内容哈希
+- Parent-Child 两级节点 【包含】
+  - Child（函数/短条款/小段落）：负责 Embedding、关键词召回、Rerank
+  - Parent（类/章节/完整规则）：负责返回给模型补齐上下文，用 \`parent_id\` 关联
+  - Document（文件/整篇）：跨章节任务按需再向上扩展
+  - 父级扩展是预算决策不是固定动作：设父块最大 Token/扩展层级/相邻节点数三个门槛；超预算优先保留定义/约束/输入输出/直接依赖
+- 版本与权限必须进索引 【因果】
+  - 元数据至少含：repo/path/symbol/branch/commit/parent_id/acl
+  - 原则：先过滤（版本/路径/ACL），后相似度召回【因果：先召回后删权限→受限内容进缓存/日志，且候选数量骤降】
+- 在线检索链路 【递进】
+  - 取 repo+branch/commit+user/tenant→解析 Query 识别符号/错误码/意图→版本路径 ACL 过滤→向量+BM25 并行→Child 粒度 Rerank→按 parent_id 父级扩展→去重+Token 预算组装 Context 附引用
+  - 易错点：先在 Child 小块排序再向父扩展【对比：先展开大块再 Rerank 会稀释信号+延迟上升】
+- 落地与评估
+  - 最小方案 baseline：结构化切分+Child 混合检索+Parent 补全+版本 ACL 前置过滤
+  - 评估集五类问题：跨小节答案/精确符号/同文件不同分支/历史 commit/无权限访问
+  - 专有指标：父级补全正确率、版本错误率、越权召回率（目标必须 0）、Context 有效率、索引新鲜度
+  - 增量更新：用 commit+path+content_hash 判断增删改，只重建受影响节点
+- 知识拓展
+  - AST 切分后还要关键词检索？要：符号名/错误码/路径靠 BM25 或符号索引更稳
+  - Parent-Child vs overlap：overlap 只缓解边界断裂不知结构关系；PC 是显式结构可跨子块补父级但存储复杂
+
+## 8. Agentic RAG 【递进：演进四阶段】
+- 演进路径 【递进】
+  - 第一阶段 传统 RAG（2020 论文）：参数化知识+非参数化知识结合；固定链路 Query→Top-K→Context→生成；隐含假设"一句话足够适合检索且首次 Top-K 含答案"常不成立
+  - 第二阶段 Advanced RAG：加 Query 改写/Multi-Query/混合检索/Rerank/父子块/Context 压缩；边界：流水线变强但仍固定，简单问题照跑，复杂问题不会加轮
+  - 第三阶段 自适应与纠错：Self-RAG（按需检索+反思）、CRAG（评估检索结果不可靠触发纠正）、Adaptive-RAG（按复杂度选不检索/单步/多步）
+  - 第四阶段 Agentic RAG：Function Calling/ReAct 使检索变成工具；Agent 规划-调用工具-根据结果调整
+- 演进对比表 【对比】
+  - 传统：路径写死/1 次/带错误结果继续生成
+  - Advanced：写死更多优化/固定若干次/依赖预设策略
+  - 自适应：分类器或模型判断/0 到多次/评估改写补充检索
+  - Agentic：Agent 按目标和状态决定/动态/换 Query 换工具补证据或拒答
+- 解决什么问题 【并列，与混合检索/Rerank 不同层】
+  - 混合检索/Rerank 解决"这一次怎么查得更准"；Agentic 解决"该不该查、查几次、查什么、不够时怎么办"
+  - 一个 Query 装不下复杂问题：多子问题整句向量化每个方向都查不准→拆解分别找证据
+  - 第一次检索错不会自救：传统 RAG 只能在错误候选集里挣扎→Agent 评估证据后重写/扩范围/换源/拒答
+  - 不同问题要不同数据源：文档库/数据库/网页/业务 API，Agent 在多个受控工具间路由
+  - 不是所有问题值得检索："把上一段改口语化"直接回答，避免白跑延迟
+  - 多跳问题：后一次检索依赖前一次结果，预写死的 Query 做不到
+- 核心原理：五个角色 【包含】
+  - 规划与路由：判断复杂度，直接回答/单次检索/多步拆解
+  - 检索工具：向量/BM25/数据库/网页/API 各自能力清晰
+  - 状态记录：子问题/已查来源/候选证据/冲突点/剩余预算
+  - 证据评估：相关性/完整性/来源可靠性/相互一致性
+  - 停止与生成：证据够→带引用回答；不够且预算尽→拒答或请用户补充
+- 运行循环
+  - 理解目标→决定是否检索→拆子问题→选源→执行检索→评估证据→不够：改写/换工具/继续；足够：整合/标来源/生成【递进=ReAct 落地】
+  - 反思不能只靠模型拍脑袋：生产要加确定性规则（最少几类证据/命中版本/引用回原文/数值来自结构化数据/最大轮数/耗时费用上限）【因果：Agent 负责动态决策，规则负责兜底】
+- 例：对比 2025/2026 差旅政策+上海特殊规定
+  - 识别三个证据槽位→分别生成 Query 并行检索→检查版本号/生效日期/适用组织/来源权限（不只看相似度）→缺 2025 版查归档库、来源冲突核对正式发布记录→齐全后差异比较，每条结论带回来源
+  - 本质变化：系统知道自己为什么查、还缺什么、什么时候算查完
+- 关键辨析 【对比】
+  - Agentic RAG ≠ 多 Agent：单 Agent+几个工具+状态机+证据检查已是；职责边界稳定（不同权限/模型）才拆多 Agent；多 Agent 带来通信/上下文复制/错误传播/调试成本；先跑稳单 Agent
+- 落地权衡 【对比】
+  - 代价：路径动态难预测、多轮调用延迟波动、成本随轮数涨、调试要看完整决策轨迹、多数据源逐工具鉴权
+  - 六条守则：限制循环（最大步骤/超时/Token 预算）、工具要窄（用途清晰 Schema 稳定）、权限前置、证据可回放、失败可降级（退回固定 RAG/澄清/拒答）、分层评估
+- 适用场景 【对比】
+  - 适合：多跳推理、多子问题拆解、知识多源分散、高证据完整性要求、问题模糊需澄清
+  - 不适合（固定 RAG 更划算）：FAQ 单跳、数据源单一命中率高、首字延迟严格、Workflow 可完成
+  - 升级顺序：先做好传统 RAG 文档切片检索评估→加路由与纠错→最后开放 Agent 循环【因果：基础召回差套 Agent=更贵更慢地找不到】
+
+## 9. 排障诊断 【包含：检索侧 5 类+生成侧 4 类】
+- 总原则 【因果】
+  - 答案不好=检索崩了（没找到/找错了）或生成崩了（找到没用好）；不先定位，所有优化治标不治本
+- 检索侧五类问题 【并列】
+  - 文档质量差：OCR 乱码/格式混乱/模板噪声；症状：检索出"第 3 页""版权所有"类片段；应对：切分前加强预处理/专项清洗/人工校对
+  - Chunk 粒度不合理：太小语义不完整、太大多主题混合匹配模糊
+  - Embedding 选型不当：中文/领域覆盖不足→语义相似却距离远；症状：换说法结果差异巨大；应对：MTEB 参考业务数据跑召回对比
+  - 召回不足：索引未及时重建/入库被误过滤/top-K 太小；症状：库里有答案系统给不出、手动搜得到自动搜不到；应对：检查覆盖/加大 K 配 Rerank/混合检索
+  - 缺少 Rerank：向量相似≠真实相关；症状：答案"相关但不精准"、Context 有答案答不准；应对：Cross-Encoder 精排
+- 生成侧四类问题 【并列】
+  - Prompt 拼接问题：chunk 间无分隔符/来源缺失/指令内容混淆；症状：多文档内容混淆、拒答指令遵从率低；应对：指令与资料分离加分隔符
+  - 上下文干扰 Context Noise：低相关 chunk 稀释注意力；症状：答案混入奇怪细节、"平均答案"；应对：Rerank 过滤、宁少勿滥、Prompt 要求只根据资料答
+  - 缺引用约束：模型混入参数知识引入幻觉；应对：明确"严格根据资料回答、无答案明说"、要求标注来源
+  - 模型理解能力不足：跨 chunk 综合推断/复杂逻辑小模型明显；应对：升级模型/逐步推导 Prompt/Query 拆解
+- 系统诊断三步法 【递进】
+  - 第一步：手动查 top-K 是否含正确答案→含但答错=生成侧；不含=检索侧
+  - 第二步（检索侧）：Recall@K 量化；分数普遍低=Embedding 空间不匹配；分数高但无关=领域理解偏差
+  - 第三步（生成侧）：正确 chunk 手动喂模型→能答对=检索问题；答不对=Prompt/模型能力问题
+  - 经验值：Recall@5 低于 70% 说明检索侧明显问题，优先优化
+- 面试答法
+  - "RAG 答不准怎么排查"→先看 top-K 证据分流检索/生成侧，再用 Recall@K 等指标量化，针对性单变量调整
+
+## 10. 评估体系 【包含：检索侧+生成侧】
+- 为什么必须评估 【并列】
+  - 无法量化优化效果、无法对比方案、无法发现退化、面试答不上
+  - 一句话：检索侧保证能找到，生成侧保证用得好；没有评估的优化=拿锤子找钉子
+- 检索侧四大指标 【并列】
+  - Recall@K：正确答案出现在 top-K 的比例；公式 \`(检索到的相关chunk数)/(所有相关chunk总数)\`；Recall<70% 检索侧严重问题；局限：不管噪声
+  - Precision@K：top-K 中相关内容比例，公式 \`(相关chunk数)/K\`；低=噪声多稀释注意力；与 Recall 矛盾（扩 K 升 Recall 降 Precision）
+  - MRR：第一个相关结果排名倒数均值 \`MRR=(1/N)Σ(1/rank_i)\`；衡量"最好的有没有排前面"
+  - NDCG：相关度分级（0-3）+位置折扣+理想排序归一化 \`DCG=Σ(rel_i/log2(i+1))\`；最全面但标注成本高，用于离线对比
+  - 工程平衡：大 K（20-50）保 Recall→Rerank 拉 Precision→最终 3-5 条进 LLM
+- 生成侧 RAGAS 四维度 【包含】
+  - Faithfulness 忠实度：答案拆陈述，LLM 判断可否从上下文推导 \`(可推导陈述数)/(总陈述数)\`；衡量是否 Grounded，低=自由发挥有幻觉
+  - Answer Relevancy 答案相关性：LLM 从答案反向生成 N 个问题算与原问题相似度；低=答非所问
+  - Context Relevancy 上下文相关性：\`(相关句子数)/(总句子数)\`；低=检索/切分质量差
+  - Context Recall 上下文召回：标准答案陈述可从上下文推导比例（需 ground truth）；低=检索漏关键信息
+  - 关系：Context Recall+Context Relevancy=检索质量；Faithfulness+Answer Relevancy=生成质量；Context Recall 低其他再高也没用
+- 评估集构建 【并列】
+  - 三要素：问题 Query、标准答案（可选）、相关 chunk
+  - 人工构造：质量最高成本最高，50-200 条建 baseline
+  - 真实日志采样：持续监控线上问题
+  - LLM 生成：最快最便宜，可能过于理想化
+  - 实践：LLM 生成快速搭框架→人工构造核心场景 50-100 条→日志采样持续扩大
+- 离线 vs 在线评估 【对比】
+  - 离线：可控可重复成本低，但可能不代表真实场景
+  - 在线：显式反馈（赞/踩/纠错）+隐式反馈（追问/复制/停留时长）
+  - 离线是必要条件，在线是充分条件
+- 线上采用率 Adoption 【包含】
+  - 强信号：复制率、点赞率、引用率；弱信号：无追问率、停留时长、跳出率；负向：重复提问率、点踩率、人工接管率
+  - 综合采用率=(复制+点赞×2-点踩×2)/总回答（主动点击成本高信号强）
+  - 离线指标升但采用率降的原因：测试集偏差/延迟变长/答案变长/语气变硬
+  - 结论：离线指标是过程指标（方向盘），采用率是结果指标（目的地）
+- 评估的延迟成本 【因果】
+  - RAGAS 需多次 LLM 调用，评估 Token 是原问答 4-8 倍，额外 1-2 秒
+  - 分级策略：高风险查询（5%）实时全量评估；中风险（20%）实时 Faithfulness 单项；低风险（75%）只记日志离线评
+- 优化闭环 【递进】
+  - 建 baseline→定位瓶颈（Recall 低先召回/Precision 低加 Rerank/Context Relevancy 低改切分/Faithfulness 低改 Prompt）→单变量优化→对比验证→持续迭代
+  - 省钱：采样评估 1-5%/分级/只跑目标单项/便宜模型做评估（成本降 10 倍）
+  - 工具：检索指标自写或 ranx；RAGAS 用 ragas 库；跟踪用 LangSmith/W&B
+
+## 11. 面试回答框架 【包含】
+- 五大落点 【并列】
+  - 业务目标（知识从哪来为什么 RAG）、完整链路（离线建库+在线问答）、选型取舍（Chunk/Embedding/向量库/Top-K 为什么这么选）、问题诊断（区分检索没找到还是模型没用好）、指标证据（三层指标证明有效）
+- 通用回答五步 【递进】
+  - 结论→项目事实→方案取舍（为什么 A 不 B、代价）→指标证据（基线+改后）→适用边界
+  - 反例："Rerank 能提高准确率"；正例：症状（相关 chunk 进 Top-20 但排不进前 5）→判断（问题在排序不在召回）→方案（保留快速召回+Rerank 精排）→代价（推理延迟，候选数按离线指标+P95 一起定）
+- 高频八问要点 【并列】
+  - Q1 为什么用 RAG：业务缺口→RAG 能力→不选其他方案；RAG 解决外部知识接入，不是所有模型问题贴创可贴（固定格式用 Prompt，必要时微调）
+  - Q2 完整链路：离线建库+在线问答+质量控制（引用/拒答/权限/日志）
+  - Q3 Chunk 多大：不报神奇数字，讲数字怎么来（文档结构→问题粒度→参数候选→评估结果）
+  - Q4 Embedding/向量库选型：Embedding 看效果+部署约束（语言匹配/评估集 Recall/维度成本/合规）；向量库看规模+工程能力（并发/索引/持久化/元数据过滤/运维）
+  - Q5 混合检索+Rerank：混合补召回、Rerank 提排序；主动说代价；"没有无条件标配，只有指标和约束下的选择"
+  - Q6 答不准排查：先看 Top-K 证据分流（没有→解析/索引/Chunk/Embedding；有但靠后→融合/Rerank/噪声；有且合理仍错→Prompt/引用/模型；库没有→拒答转人工）
+  - Q7 做了哪些优化：只选 1-2 个讲透四件事（症状/根因定位/为什么选/指标变化）；每次单变量
+  - Q8 怎么证明有效：三层指标——检索侧（Recall/Precision/MRR/NDCG）+生成侧（忠实度/相关性/引用正确率/正确拒答率）+线上业务（任务成功率/转人工率/P95/成本/越权风险）
+  - 句式："优化前 [指标] 是 [基线]；定位到 [根因] 后做了 [单一改动]；指标变成 [结果]；[延迟/成本] 变化 [数据]，所以选择 [上线/灰度/放弃]"；忘数值讲口径和区间，不能编
+- 最易暴露的四个问题 【对比】
+  - 只报技术栈不讲问题→每个工具补"解决什么问题为什么适合"
+  - 把参数说成行业标准→讲候选范围对比实验最终指标
+  - 只讲准确率不讲成本延迟→质量达标后比端到端延迟和每成功任务成本
+  - 编指标→追问评估集规模/标注方式/口径会穿帮；如实说离线评估/人工抽检
+- 只做过 Demo 怎么答
+  - 诚实说明边界："做到离线 Demo 没有真实流量"，继续讲如何构造测试、对比过什么方案、失败样本暴露什么、上线还差什么【因果：诚实讲边界比虚构生产项目更像工程师】
+- 追问没负责的环节
+  - 说明责任边界+讲你理解的接口和影响，不揽团队成果
+`;
+
+function boot() {
+  const mk = window.markmap;
+  if (!mk || !mk.Transformer || !mk.Markmap) { setTimeout(boot, 100); return; }
+  const { Transformer, Markmap, deriveOptions } = mk;
+  const transformer = new Transformer();
+  const { root, frontmatter } = transformer.transform(MD.trim());
+  const opts = Object.assign({
+    initialExpandLevel: 3,
+    colorFreezeLevel: 2,
+    maxWidth: 320,
+    fitRatio: 0.92,
+    paddingX: 24,
+    spacingVertical: 10,
+    spacingHorizontal: 90,
+    duration: 300
+  }, (deriveOptions && frontmatter) ? deriveOptions(frontmatter.markmap) : {});
+  const mm = Markmap.create('#markmap', opts, root);
+  const loading = document.getElementById('loading');
+  if (loading) loading.style.display = 'none';
+  const refit = () => mm.fit();
+  requestAnimationFrame(() => setTimeout(refit, 60));
+  window.addEventListener('resize', refit);
+  const btn = document.getElementById('reset');
+  if (btn) btn.addEventListener('click', refit);
+}
+window.addEventListener('load', boot);
+</script>
+</body>
+</html>
+
+<!--
+使用说明（生成时删除本注释）：
+1. 用 markmap 把 Markdown 标题/缩进列表渲染成可交互思维导图（折叠/缩放/拖拽/导出 SVG）。
+2. 内容写在 JS 的 MD 模板字符串里：
+   - 一个 # = 中心主题（根节点）；## = 一级分支；- 缩进列表 = 二/三级；含中心主题层级 ≤ 4。
+   - 逻辑关系记号照写进节点文字：【因果】【并列】【递进】【包含】【对比】。
+   - 接口/公式/代码用反引号包裹（模板字符串内反引号要转义为 \` ）。
+3. 关键：用「手动初始化 + Markmap.create + mm.fit()」而非 autoloader——
+   autoloader 常在容器尺寸就绪前渲染，导致导图挤在左上角一小团。
+   本模板在 load 后初始化，并 requestAnimationFrame + 延时 fit，再监听 resize 重新 fit，确保铺满居中。
+4. 依赖固定版本走 CDN（cdn.jsdelivr.net）：
+   d3@7 + markmap-view@0.18 + markmap-lib@0.18.12/dist/browser/index.iife.js（注意 lib 浏览器构建是 .iife.js，不是 index.js）。
+   两个 markmap 包都挂在 window.markmap（Transformer 来自 lib，Markmap 来自 view）。首屏需联网。
+5. 交付前务必做无头渲染冒烟检查：确认 window.markmap 就绪、SVG 有节点、内容宽/高占画布比例约 0.8/0.9（已 fit）、无 console 报错，再交付，避免白屏或挤角。
+6. 另存为 <主题>-思维导图.html，用 present_files 打开预览。
+-->

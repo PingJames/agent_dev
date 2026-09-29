@@ -26,7 +26,7 @@ export default function LearnFileList({ files }: { files: LearnFileStat[] }) {
         ))}
       </ul>
       <p className="mt-3 text-xs text-slate-500 dark:text-slate-400">
-        以上文件可在夸克网盘中获取，本站不提供文件下载。
+        以上文件可在百度网盘中获取，本站不提供文件下载。
       </p>
     </div>
   );

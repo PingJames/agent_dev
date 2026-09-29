@@ -6,7 +6,7 @@ import DownloadCard from "@/components/learn/DownloadCard";
 export const metadata: Metadata = {
   title: "快速学习",
   description:
-    "两套成体系的 Agent 学习资料：AI-Agent 知识体系、Agent 面试知识全景。在线直接阅读学习手册与思维导图，源文件通过夸克网盘获取。",
+    "四套成体系的 AI 学习资料：AI-Agent 知识体系、Agent 面试知识全景、RAG 知识、RAG 面试知识。在线直接阅读学习手册与思维导图，源文件通过百度网盘获取。",
 };
 
 function CollectionIcon({ gradient }: { gradient: string }) {
@@ -36,15 +36,15 @@ export default function LearnPage() {
         <div className="mx-auto max-w-3xl text-center">
           <span className="badge-info">快速学习</span>
           <h1 className="mt-4 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl dark:text-white">
-            两套成体系的 Agent 知识资料
+            四套成体系的 Agent / RAG 知识资料
           </h1>
           <p className="mt-4 text-lg leading-relaxed text-slate-600 dark:text-slate-300">
-            学习手册与思维导图都可以直接在网页里阅读，不用下载也能学；需要 PDF / 源文件时，走夸克网盘获取。
+            学习手册与思维导图都可以直接在网页里阅读，不用下载也能学；需要 PDF / 源文件时，走百度网盘获取。
           </p>
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3 text-sm text-slate-500 dark:text-slate-400">
             <span className="tag">{collections.length} 套资料</span>
             <span className="tag">{docCount} 篇在线文档</span>
-            <span className="tag">PDF / HTML / Markdown 源文件</span>
+            <span className="tag">PDF / HTML 源文件</span>
           </div>
         </div>
 

@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAG 面试知识手册</title>
+<style>
+:root { --accent:#0f6e56; --accent-d:#0b5c48; --accent-l:#e8f5f0; --ink:#1f2937; --muted:#6b7280; --line:#e5e7eb; }
+* { box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body { margin:0; background:#f6f8fa; color:var(--ink);
+  font-family:-apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif; font-size:15px; line-height:1.78; }
+header.topbar { position:sticky; top:0; z-index:10; background:#fff; border-bottom:1px solid var(--line);
+  padding:10px 22px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+header.topbar .t { font-weight:600; color:var(--accent); font-size:15px; }
+header.topbar .sub { color:var(--muted); font-size:12px; margin-left:10px; font-weight:400; }
+header.topbar button { font-size:12.5px; color:var(--accent); background:var(--accent-l); border:1px solid #9fe1cb;
+  border-radius:6px; padding:5px 12px; cursor:pointer; }
+header.topbar button:hover { background:#cdeee2; }
+.layout { display:flex; align-items:flex-start; max-width:1500px; margin:0 auto; gap:26px; padding:24px 22px 60px; }
+aside#toc { flex:0 0 292px; position:sticky; top:66px; max-height:calc(100vh - 90px); overflow:auto;
+  background:#fff; border:1px solid var(--line); border-radius:10px; padding:14px 8px 14px 14px; }
+aside#toc .hd { font-size:12px; letter-spacing:.08em; color:var(--muted); text-transform:uppercase; margin:2px 0 8px; }
+.toc-list { list-style:none; margin:0; padding:0; }
+.toc-list li { margin:1px 0; }
+.toc-list a { display:block; padding:5px 10px; border-left:2px solid transparent; border-radius:0 6px 6px 0;
+  color:#374151; text-decoration:none; font-size:13px; line-height:1.5; }
+.toc-list a:hover { background:#f1f7f5; color:var(--accent-d); }
+.toc-list li.lvl1 > a { font-weight:600; color:#111827; margin-top:6px; }
+.toc-list li.lvl2 > a { padding-left:20px; color:#57606a; font-size:12.5px; }
+.toc-list a.active { background:var(--accent-l); border-left-color:var(--accent); color:var(--accent-d); font-weight:600; }
+main { flex:1 1 auto; min-width:0; background:#fff; border:1px solid var(--line); border-radius:10px;
+  padding:34px 44px 56px; max-width:1000px; }
+main h1 { font-size:1.62em; color:var(--accent); margin:0 0 14px; padding-bottom:8px; border-bottom:3px solid var(--accent); }
+main h1.chapter { margin-top:44px; background:var(--accent-l); color:var(--accent-d); border:none;
+  border-left:7px solid var(--accent); border-radius:0 8px 8px 0; padding:12px 16px; font-size:1.42em; }
+main h2 { font-size:1.16em; color:#14532d; margin:28px 0 10px; padding-bottom:5px; border-bottom:1.5px solid #a7d8c8; }
+main h3 { font-size:1.05em; color:#1e5f8a; margin:20px 0 8px; }
+main h4 { font-size:1em; color:#6b4f9e; margin:16px 0 6px; }
+p { margin:9px 0; }
+ul,ol { margin:9px 0; padding-left:26px; }
+li { margin:4px 0; }
+.table-wrap { overflow-x:auto; margin:14px 0; }
+table { border-collapse:collapse; width:100%; font-size:13.5px; }
+th { background:var(--accent); color:#fff; padding:8px 10px; text-align:left; border:1px solid #0c5a48; }
+td { padding:7px 10px; border:1px solid #d7e0dd; vertical-align:top; }
+tbody tr:nth-child(even) { background:#f4f9f7; }
+blockquote { margin:14px 0; padding:10px 16px; background:#fdf6e3; border-left:5px solid #d9a441;
+  color:#5b4a1f; border-radius:0 8px 8px 0; }
+hr.rule { border:none; border-top:1px dashed #b9c6c1; margin:24px 0; }
+code { background:#eef2f1; color:#b4491d; padding:1.5px 5px; border-radius:4px;
+  font-family:Consolas,Monaco,monospace; font-size:.9em; }
+pre.codeblock { background:#1f2937; color:#e5e7eb; padding:14px 16px; border-radius:8px; overflow-x:auto; font-size:13px; }
+pre.codeblock code { background:none; color:inherit; padding:0; font-size:13px; }
+strong { color:#0b3d31; }
+#menuBtn { display:none; }
+@media (max-width:1050px) {
+  .layout { flex-direction:column; padding:14px; }
+  aside#toc { position:static; flex:1 1 auto; width:100%; max-height:none; }
+  main { padding:22px 18px 40px; }
+  #menuBtn { display:inline-block; }
+  aside#toc.collapsed { display:none; }
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div><span class="t">RAG 面试知识手册</span><span class="sub">检索增强生成 · 从原理到工程落地</span></div>
+  <div><button id="menuBtn">目录</button> <button id="printBtn">打印 / 存为 PDF</button></div>
+</header>
+<div class="layout">
+  <aside id="toc">
+    <div class="hd">目录</div>
+    <ul class="toc-list">
+<li class="lvl2"><a href="#知识框架总览-先看这一节-建立全局观">知识框架总览（先看这一节，建立全局观）</a></li>
+<li class="lvl1"><a href="#第-1-章-为什么需要-rag">第 1 章 为什么需要 RAG</a></li>
+<li class="lvl2"><a href="#1-1-从一个真实的困境说起">1.1 从一个真实的困境说起</a></li>
+<li class="lvl2"><a href="#1-2-大模型的四大局限-必背">1.2 大模型的四大局限 ⭐必背</a></li>
+<li class="lvl2"><a href="#1-3-rag-是怎么应对的-必背">1.3 RAG 是怎么应对的 ⭐必背</a></li>
+<li class="lvl2"><a href="#1-4-适用与不适用场景-高频">1.4 适用与不适用场景 ⭐高频</a></li>
+<li class="lvl2"><a href="#1-5-常见误区">1.5 常见误区</a></li>
+<li class="lvl2"><a href="#1-6-面试怎么问">1.6 面试怎么问</a></li>
+<li class="lvl1"><a href="#第-2-章-rag-完整链路拆解">第 2 章 RAG 完整链路拆解</a></li>
+<li class="lvl2"><a href="#2-1-链路总览-必背">2.1 链路总览 ⭐必背</a></li>
+<li class="lvl2"><a href="#2-2-链路的核心认知-必背">2.2 链路的核心认知 ⭐必背</a></li>
+<li class="lvl2"><a href="#2-3-常见误区">2.3 常见误区 ⭐</a></li>
+<li class="lvl2"><a href="#2-4-面试怎么问">2.4 面试怎么问</a></li>
+<li class="lvl1"><a href="#第-3-章-切片策略-chunking">第 3 章 切片策略 Chunking</a></li>
+<li class="lvl2"><a href="#3-1-核心矛盾-必背">3.1 核心矛盾 ⭐必背</a></li>
+<li class="lvl2"><a href="#3-2-四种主流切分策略-必背">3.2 四种主流切分策略 ⭐必背</a></li>
+<li class="lvl2"><a href="#3-3-overlap-被低估的关键参数">3.3 Overlap：被低估的关键参数 ⭐</a></li>
+<li class="lvl2"><a href="#3-4-chunk-大小经验值-没有通用答案-需按业务效果调整">3.4 chunk 大小经验值（没有通用答案，需按业务效果调整）</a></li>
+<li class="lvl2"><a href="#3-5-策略选择决策框架">3.5 策略选择决策框架 ⭐</a></li>
+<li class="lvl2"><a href="#3-6-面试怎么问">3.6 面试怎么问</a></li>
+<li class="lvl1"><a href="#第-4-章-embedding-详解">第 4 章 Embedding 详解</a></li>
+<li class="lvl2"><a href="#4-1-embedding-是什么-必背">4.1 Embedding 是什么 ⭐必背</a></li>
+<li class="lvl2"><a href="#4-2-embedding-不是生成文本-是压缩语义-高频辨析">4.2 Embedding 不是生成文本，是压缩语义 ⭐高频辨析</a></li>
+<li class="lvl2"><a href="#4-3-模型选型四维度-必背">4.3 模型选型四维度 ⭐必背</a></li>
+<li class="lvl2"><a href="#4-4-中文-vs-通用场景">4.4 中文 vs 通用场景</a></li>
+<li class="lvl2"><a href="#4-5-embedding-vs-rerank-最高频">4.5 Embedding vs Rerank ⭐⭐最高频</a></li>
+<li class="lvl2"><a href="#4-6-常见误区">4.6 常见误区 ⭐</a></li>
+<li class="lvl2"><a href="#4-7-面试怎么问">4.7 面试怎么问</a></li>
+<li class="lvl1"><a href="#第-5-章-向量数据库">第 5 章 向量数据库</a></li>
+<li class="lvl2"><a href="#5-1-解决的核心问题">5.1 解决的核心问题 ⭐</a></li>
+<li class="lvl2"><a href="#5-2-为什么不能用-mysql-做向量检索-高频">5.2 为什么不能用 MySQL 做向量检索 ⭐⭐高频</a></li>
+<li class="lvl2"><a href="#5-3-ann-在速度和精度之间取平衡-必背">5.3 ANN：在速度和精度之间取平衡 ⭐必背</a></li>
+<li class="lvl2"><a href="#5-4-向量数据库的附加能力">5.4 向量数据库的附加能力 ⭐</a></li>
+<li class="lvl2"><a href="#5-5-主流选型">5.5 主流选型 ⭐</a></li>
+<li class="lvl2"><a href="#5-6-常见误区">5.6 常见误区 ⭐</a></li>
+<li class="lvl2"><a href="#5-7-面试怎么问">5.7 面试怎么问</a></li>
+<li class="lvl1"><a href="#第-6-章-rag-优化思路全景">第 6 章 RAG 优化思路全景</a></li>
+<li class="lvl2"><a href="#6-1-优化框架-四大类-必背">6.1 优化框架：四大类 ⭐必背</a></li>
+<li class="lvl2"><a href="#6-2-query-侧优化">6.2 Query 侧优化 ⭐</a></li>
+<li class="lvl2"><a href="#6-3-检索侧优化">6.3 检索侧优化 ⭐</a></li>
+<li class="lvl2"><a href="#6-4-精排优化-rerank">6.4 精排优化：Rerank ⭐⭐</a></li>
+<li class="lvl2"><a href="#6-5-context-侧优化">6.5 Context 侧优化 ⭐</a></li>
+<li class="lvl2"><a href="#6-6-初学者优化方法论-必背">6.6 初学者优化方法论 ⭐⭐必背</a></li>
+<li class="lvl2"><a href="#6-7-面试怎么问">6.7 面试怎么问</a></li>
+<li class="lvl1"><a href="#第-7-章-长文档与代码检索">第 7 章 长文档与代码检索</a></li>
+<li class="lvl2"><a href="#7-1-三大硬问题-必背">7.1 三大硬问题 ⭐必背</a></li>
+<li class="lvl2"><a href="#7-2-长文档-按标题树建层级">7.2 长文档：按标题树建层级 ⭐</a></li>
+<li class="lvl2"><a href="#7-3-代码-按-ast-切分-不能按字符硬切">7.3 代码：按 AST 切分，不能按字符硬切 ⭐</a></li>
+<li class="lvl2"><a href="#7-4-parent-child-两级节点-找得准-读得懂-必背">7.4 Parent-Child 两级节点：找得准 + 读得懂 ⭐必背</a></li>
+<li class="lvl2"><a href="#7-5-版本与权限必须进索引">7.5 版本与权限必须进索引 ⭐⭐</a></li>
+<li class="lvl2"><a href="#7-6-在线检索链路-可落地版本">7.6 在线检索链路（可落地版本）⭐</a></li>
+<li class="lvl2"><a href="#7-7-落地与评估">7.7 落地与评估 ⭐</a></li>
+<li class="lvl2"><a href="#7-8-知识拓展四问">7.8 知识拓展四问 ⭐</a></li>
+<li class="lvl1"><a href="#第-8-章-agentic-rag">第 8 章 Agentic RAG</a></li>
+<li class="lvl2"><a href="#8-1-演进路径-四个阶段-必背">8.1 演进路径：四个阶段 ⭐必背</a></li>
+<li class="lvl2"><a href="#8-2-agentic-rag-解决什么问题-必背-与混合检索-rerank-不同层">8.2 Agentic RAG 解决什么问题 ⭐必背（与混合检索/Rerank 不同层）</a></li>
+<li class="lvl2"><a href="#8-3-核心原理-五个角色-必背">8.3 核心原理：五个角色 ⭐必背</a></li>
+<li class="lvl2"><a href="#8-4-关键辨析-agentic-rag-多-agent-高频">8.4 关键辨析：Agentic RAG ≠ 多 Agent ⭐高频</a></li>
+<li class="lvl2"><a href="#8-5-落地权衡">8.5 落地权衡 ⭐</a></li>
+<li class="lvl1"><a href="#第-9-章-排障诊断方法论">第 9 章 排障诊断方法论</a></li>
+<li class="lvl2"><a href="#9-1-检索侧五类问题-必背">9.1 检索侧五类问题 ⭐必背</a></li>
+<li class="lvl2"><a href="#9-2-生成侧四类问题-必背">9.2 生成侧四类问题 ⭐必背</a></li>
+<li class="lvl2"><a href="#9-3-系统诊断三步法-必背">9.3 系统诊断三步法 ⭐⭐必背</a></li>
+<li class="lvl2"><a href="#9-4-面试怎么问">9.4 面试怎么问</a></li>
+<li class="lvl1"><a href="#第-10-章-评估体系与指标">第 10 章 评估体系与指标</a></li>
+<li class="lvl2"><a href="#10-1-为什么必须有评估体系">10.1 为什么必须有评估体系</a></li>
+<li class="lvl2"><a href="#10-2-检索侧四大指标-必背">10.2 检索侧四大指标 ⭐⭐必背</a></li>
+<li class="lvl2"><a href="#10-3-生成侧-ragas-四维度-必背">10.3 生成侧：RAGAS 四维度 ⭐⭐必背</a></li>
+<li class="lvl2"><a href="#10-4-评估集构建">10.4 评估集构建 ⭐</a></li>
+<li class="lvl2"><a href="#10-5-离线评估-vs-在线评估">10.5 离线评估 vs 在线评估 ⭐</a></li>
+<li class="lvl2"><a href="#10-6-线上采用率-adoption">10.6 线上采用率（Adoption）⭐⭐</a></li>
+<li class="lvl2"><a href="#10-7-评估的延迟与成本">10.7 评估的延迟与成本 ⭐</a></li>
+<li class="lvl2"><a href="#10-8-评估驱动的优化闭环-必背">10.8 评估驱动的优化闭环 ⭐⭐必背</a></li>
+<li class="lvl2"><a href="#10-9-知识拓展精选">10.9 知识拓展精选</a></li>
+<li class="lvl1"><a href="#第-11-章-面试回答框架">第 11 章 面试回答框架</a></li>
+<li class="lvl2"><a href="#11-1-项目面试的五大落点-必背">11.1 项目面试的五大落点 ⭐必背</a></li>
+<li class="lvl2"><a href="#11-2-通用回答五步法-必背">11.2 通用回答五步法 ⭐⭐必背</a></li>
+<li class="lvl2"><a href="#11-3-高频八问要点-必背">11.3 高频八问要点 ⭐⭐必背</a></li>
+<li class="lvl2"><a href="#11-4-面试里最容易暴露的四个问题">11.4 面试里最容易暴露的四个问题 ⭐</a></li>
+<li class="lvl2"><a href="#11-5-只做过-demo-怎么答-被问没负责的环节">11.5 只做过 Demo 怎么答 / 被问没负责的环节 ⭐</a></li>
+<li class="lvl1"><a href="#附录-a-重点难点速查-考前必看">附录 A · 重点难点速查（考前必看）</a></li>
+<li class="lvl1"><a href="#附录-b-复习建议">附录 B · 复习建议</a></li>
+</ul>
+  </aside>
+  <main>
+    <h1>RAG 面试知识手册</h1>
+    <blockquote>检索增强生成 · 从原理到工程落地的完整学习文档<br/>依据「卡码笔记 · RAG 系列」11 篇文章知识整理 · 2026 年 9 月</blockquote>
+<hr class="rule"/>
+<h2 id="知识框架总览-先看这一节-建立全局观">知识框架总览（先看这一节，建立全局观）</h2>
+<p>本手册的知识骨架是一条主线：<strong>「为什么需要 → 怎么搭 → 怎么优化 → 怎么排障 → 怎么评估 → 怎么答」</strong>。</p>
+<div class="table-wrap"><table><thead><tr><th>学习阶段</th><th>章节</th><th>解决的问题</th></tr></thead><tbody><tr><td>动机</td><td>第 1 章 为什么需要 RAG</td><td>大模型的四大局限是什么，RAG 凭什么应对</td></tr><tr><td>搭建</td><td>第 2 章 完整链路拆解</td><td>离线建库 + 在线检索生成，每个环节做什么</td></tr><tr><td>搭建</td><td>第 3 章 切片策略 Chunking</td><td>文档怎么切，检索粒度怎么定</td></tr><tr><td>搭建</td><td>第 4 章 Embedding 详解</td><td>语义怎么变成向量，模型怎么选</td></tr><tr><td>搭建</td><td>第 5 章 向量数据库</td><td>海量向量怎么毫秒级检索，为什么不用 MySQL</td></tr><tr><td>优化</td><td>第 6 章 优化思路全景</td><td>Query 侧 / 检索侧 / 精排侧 / Context 侧四大类手段</td></tr><tr><td>优化</td><td>第 7 章 长文档与代码检索</td><td>结构不能断、版本不能错、权限不能漏</td></tr><tr><td>优化</td><td>第 8 章 Agentic RAG</td><td>该不该查、查几次、查什么、不够时怎么办</td></tr><tr><td>排障</td><td>第 9 章 排障诊断方法论</td><td>检索侧五类 + 生成侧四类问题逐一排查</td></tr><tr><td>评估</td><td>第 10 章 评估体系与指标</td><td>Recall/Precision/MRR/NDCG + RAGAS 四维度 + 采用率</td></tr><tr><td>表达</td><td>第 11 章 面试回答框架</td><td>五大落点、五步回答法、高频八问</td></tr></tbody></table></div>
+<p><strong>学习路线建议</strong>：第一次学习按章节顺序通读（第 1→2→3→4→5 章是地基，必须先懂）；复习时按「链路 → 排障 → 优化 → 评估」的面试追问顺序自测；最后用第 11 章的高频八问做模拟问答。</p>
+<hr class="rule"/>
+<h1 id="第-1-章-为什么需要-rag" class="chapter">第 1 章 为什么需要 RAG</h1>
+<p><strong>一句话定位</strong>：RAG 不是大模型能力的升级，而是大模型的「外置数据库」——让模型在回答时能检索自己的 cheat sheet，有据可依。</p>
+<h2 id="1-1-从一个真实的困境说起">1.1 从一个真实的困境说起</h2>
+<p>公司有几千份内部文档（产品手册、操作规范、历史项目经验、客户合同），想做一个 AI 问答系统。直接用大模型，第一轮测试效果不错，但很快发现四个绕不开的问题：</p>
+<ul>
+<li>模型对公司内部文档一无所知，回答全靠「编」；</li>
+<li>产品文档上周刚更新，模型说的还是老版本内容；</li>
+<li>回答很流畅，但无法知道真假、无法追溯来源；</li>
+<li>文档加载进 Prompt，token 成本高到无法接受。</li>
+</ul>
+<p>这不是模型能力不够，而是大模型作为技术的<strong>根本性天花板</strong>——RAG 就是为突破这些天花板而诞生的。</p>
+<h2 id="1-2-大模型的四大局限-必背">1.2 大模型的四大局限 ⭐必背</h2>
+<h3 id="1-幻觉问题-hallucination">（1）幻觉问题（Hallucination）</h3>
+<p>大模型本质是概率语言模型，生成每个 token 时做的是「预测下一个最可能的词」，而不是「从知识库里查询正确答案」。它不知道答案时<strong>不会说不知道</strong>，而是生成一个「听起来最合理」的答案——可能完全是捏造的，但语气坚定、格式工整，难以判别真假。企业场景里，它会<strong>以可信的方式传播错误信息</strong>，危害远比「回答错误」更严重。</p>
+<h3 id="2-私有知识问题">（2）私有知识问题</h3>
+<p>大模型在公开数据上训练。内部文档、客户合同、产品手册、会议记录它从未见过。把文档全塞进 Prompt 的方案不可行：文档量到几百份、几千份时，<strong>token 成本和上下文长度成为瓶颈</strong>，且模型在极长上下文里<strong>注意力严重稀释，对中间内容利用率极低</strong>。</p>
+<h3 id="3-知识更新问题">（3）知识更新问题</h3>
+<p>模型训练有截止日期，通常<strong>落后现实 6 个月到 1 年</strong>。价格变了、政策修订了、新对手出现了，模型全不知道。每隔几个月重训模型更新知识，在成本和时间上都不可接受。</p>
+<h3 id="4-可追溯性问题">（4）可追溯性问题</h3>
+<p>模型无法告诉你「这句话来自哪份文档的第几页」。法律、医疗、金融等对准确性要求极高的场景，<strong>没有来源引用的答案不可接受</strong>。</p>
+<h2 id="1-3-rag-是怎么应对的-必背">1.3 RAG 是怎么应对的 ⭐必背</h2>
+<p>RAG 全称 <strong>Retrieval-Augmented Generation（检索增强生成）</strong>。核心思路：在让模型回答之前，先去知识库检索出最相关的内容，作为上下文一起喂给模型，让模型「看着资料」回答。</p>
+<div class="table-wrap"><table><thead><tr><th>大模型局限</th><th>RAG 的应对</th></tr></thead><tbody><tr><td>幻觉</td><td>检索到的原文片段作为事实锚点，模型被要求「根据资料回答」；幻觉概率大幅降低，<strong>但不是归零</strong></td></tr><tr><td>私有知识</td><td>知识库自建自维护，可包含任何内部文档；模型只需基于检索到的片段推理和组织语言</td></tr><tr><td>知识更新</td><td>更新知识库只需更新文档 + 重新向量化索引，<strong>与模型训练截止日期解耦</strong></td></tr><tr><td>溯源</td><td>每次检索都知道命中了哪份文档的哪个片段，答案可附引用来源供核查</td></tr></tbody></table></div>
+<h2 id="1-4-适用与不适用场景-高频">1.4 适用与不适用场景 ⭐高频</h2>
+<p><strong>适合 RAG 的场景</strong>：</p>
+<ul>
+<li><strong>知识密集型问答</strong>：企业知识库、产品手册问答、法律法规查询——事实准确性要求高、内容量大、需要来源追溯；</li>
+<li><strong>内容频繁更新的业务</strong>：新闻摘要、竞品分析、政策解读——知识库持续接入实时数据，模型本身不动；</li>
+<li><strong>长尾事实查询</strong>：「公司在上海的办公地址」「合同甲方是谁」——答案藏在特定文档里，必须检索。</li>
+</ul>
+<p><strong>不适合 RAG 的场景</strong>：创意生成、强推理任务、模型训练数据已良好覆盖的稳定领域——这些场景加 RAG 只是<strong>增加延迟和成本</strong>，没有实质收益。</p>
+<h2 id="1-5-常见误区">1.5 常见误区</h2>
+<ul>
+<li><strong>「RAG 能根治幻觉」</strong>——错。能显著缓解，无法根治：检索质量差时模型仍会「补充生成」，也可能在正确资料上做出错误推理。RAG 降低幻觉概率，不消灭幻觉根因。</li>
+</ul>
+<h2 id="1-6-面试怎么问">1.6 面试怎么问</h2>
+<ul>
+<li><strong>Q：为什么有了大模型还需要 RAG？</strong> 答：大模型有幻觉、私有知识盲区、知识时效性、无法溯源四大局限；RAG 在回答前先检索外部知识库，把相关片段注入上下文，让模型「看资料回答」，针对性缓解以上问题。</li>
+<li><strong>Q：RAG 能解决幻觉问题吗？</strong> 答：能显著缓解但不能根治——检索结果可作事实锚点、答案可附来源核查；但检索质量差时模型会补充生成，也可能在资料上错误推理。</li>
+<li><strong>Q：什么场景用 RAG、什么场景不用？</strong> 答：适合知识密集、频繁更新、需溯源的场景；不适合创意生成、强推理和训练数据已覆盖的稳定领域（只增加延迟和成本）。</li>
+</ul>
+<hr class="rule"/>
+<h1 id="第-2-章-rag-完整链路拆解" class="chapter">第 2 章 RAG 完整链路拆解</h1>
+<p><strong>一句话定位</strong>：RAG 不是一个算法，而是一条工程流水线。离线侧解决「知识怎么进去」，在线侧解决「知识怎么找出来、怎么用起来」。</p>
+<h2 id="2-1-链路总览-必背">2.1 链路总览 ⭐必背</h2>
+<p><strong>离线阶段（把知识存进去）</strong>：</p>
+<ol>
+<li><strong>文档加载</strong>：PDF / Word / 网页 / Markdown / 数据库记录 / 邮件，不同格式需不同解析方式。解析质量直接影响整个系统的上限——扫描件或排版混乱的 PDF 会带来噪声，<strong>「垃圾进，垃圾出」</strong>。</li>
+<li><strong>文档处理（清洗与预处理）</strong>：去页眉页脚、无意义格式符号、重复内容；识别并保留标题结构；过滤表格乱码、图片占位符。这是<strong>工程量最大、最容易被低估</strong>的部分。</li>
+<li><strong>切片（Chunking）</strong>：清洗好的文档切成更小的 chunk。整篇文档做检索单元会导致粒度太粗（相关内容被淹没）或上下文太长（放不进模型 / 注意力被稀释）。这是<strong>设计决策最多</strong>的环节。</li>
+<li><strong>向量化（Embedding）</strong>：每个 chunk 经 Embedding 模型转成高维浮点向量，代表语义。<strong>关键约束：用户 Query 和文档 chunk 必须用同一个 Embedding 模型</strong>，两者才在同一语义空间，相似度计算才有意义。</li>
+<li><strong>存元数据</strong>：chunk 来自哪份文档、哪一页、创建时间等。支撑「只看最近三个月的文档」这类过滤需求。</li>
+<li><strong>存入向量数据库</strong>：Milvus / Weaviate / Chroma / Pinecone 等，同时向量与元数据分别存储。核心能力是 <strong>ANN 近似最近邻搜索</strong>，毫秒级找到 top-K。</li>
+</ol>
+<p><strong>在线阶段（找出来 + 用起来）</strong>：</p>
+<ol>
+<li><strong>Query 处理（可选）</strong>：Query 改写（口语化问题转检索友好形式、复杂问题拆成子问题分别检索）、Query 扩展（同义词扩展提高召回覆盖面）。</li>
+<li><strong>检索（Retrieval）</strong>：Query 向量化后与库内向量做相似度计算（通常余弦相似度），召回 top-K（K 常取 3-10）。进阶做<strong>混合检索</strong>：向量检索（语义相似）+ 关键词检索（BM25 精确匹配）两路合并。</li>
+<li><strong>Rerank 精排</strong>：用 Cross-Encoder 模型对 (Query, Chunk) 对打分重排，只保留最相关的几条。<strong>最常见也最有效的优化之一</strong>，代价是多一次模型推理延迟。</li>
+<li><strong>上下文构建（Context）</strong>：最终 chunk + 元数据（来源、页码）按格式拼装 Prompt。Prompt 结构通常包含：系统指令（区分指令与资料、要求资料不足时明确说明）、参考资料（带来源标注）、用户问题。</li>
+<li><strong>生成（Generation）</strong>：LLM 基于上下文生成回答。Prompt 要有明确引导——<strong>优先依据资料回答，不依赖参数知识，并要求标注来源</strong>。</li>
+</ol>
+<h2 id="2-2-链路的核心认知-必背">2.2 链路的核心认知 ⭐必背</h2>
+<ul>
+<li><strong>每个环节都影响质量，但影响方式不同</strong>：Chunking 决定「能不能检索到相关内容」；Embedding 决定「语义理解是否准确」；Rerank 决定「top 结果是否真的最相关」；Prompt 设计决定「模型能否正确利用上下文」。优化 RAG 本质是<strong>找到当前系统的薄弱环节</strong>，不是无差别调参。</li>
+<li><strong>离线在线必须一致</strong>：Embedding 模型、文本清洗方式，离线建索引怎么做，在线就必须怎么做。A 模型建索引、B 模型做查询，向量空间不同，相似度计算完全失效。</li>
+<li><strong>检索的目标是精准，不是全面</strong>：top-3 高质量 chunk 通常优于 top-20 混杂结果。上下文越长，注意力越分散，信噪比越低。</li>
+</ul>
+<h2 id="2-3-常见误区">2.3 常见误区 ⭐</h2>
+<div class="table-wrap"><table><thead><tr><th>误区</th><th>纠正</th></tr></thead><tbody><tr><td>RAG = 向量检索</td><td>向量检索只是在线侧一步；完整系统还有文档解析、Chunking 策略、Embedding 选型、元数据管理、Rerank、Prompt 设计</td></tr><tr><td>模型够强，Chunking 随便切</td><td>Chunking 是最底层基础设施；chunk 太短语义不完整、太长信息被稀释，模型能力无法弥补检索质量缺陷</td></tr><tr><td>Rerank 一定要加</td><td>Rerank 有延迟和成本代价；实时性要求高、文档量小时，精准 Embedding + 合理 top-K 往往已够。先评估是否真需要</td></tr></tbody></table></div>
+<h2 id="2-4-面试怎么问">2.4 面试怎么问</h2>
+<ul>
+<li><strong>Q：请描述完整的 RAG 链路。</strong> 答：分两段——离线：文档加载 → 清洗预处理 → Chunking → Embedding 向量化 → 存入向量数据库（同时存元数据）；在线：Query →（可选改写）→ Query 向量化 → 向量检索召回 top-K →（可选混合检索、Rerank 精排）→ 拼装 Context + Prompt → LLM 生成 → 输出带来源引用的答案。</li>
+<li><strong>Q：哪些环节最影响效果？</strong> 答：离线侧最关键是 Chunking 策略（检索粒度）和 Embedding 选型（语义理解质量）；在线侧最关键是 Prompt 设计；文档质量是前提。</li>
+<li><strong>Q：Embedding 模型离线在线需要一致吗？</strong> 答：必须一致。不同模型的向量空间不同，相似度计算会完全失效。</li>
+</ul>
+<hr class="rule"/>
+<h1 id="第-3-章-切片策略-chunking" class="chapter">第 3 章 切片策略 Chunking</h1>
+<p><strong>一句话定位</strong>：Chunking 是 RAG 里最「不起眼」却影响深远的设计决策——糟糕的 Chunking 会让后面所有优化努力都打折扣。</p>
+<h2 id="3-1-核心矛盾-必背">3.1 核心矛盾 ⭐必背</h2>
+<p>类比：把 500 页教材撕成复习卡片——切太细，每张卡片上下文不完整；切太粗，要找的那句话藏在一堆无关文字里。</p>
+<ul>
+<li><strong>chunk 太小</strong>：单个片段语义不完整、孤立一句话缺乏上下文（例：「是的，这种做法符合规范。」——符合什么规范？）；同时 chunk 数量膨胀，索引变大、检索变慢。</li>
+<li><strong>chunk 太大</strong>：话题太多、与问题相关度被稀释；无关内容占用上下文窗口、注意力难聚焦；chunk 越大向量表示越「平均化」，语义越模糊，检索精准度越低。</li>
+</ul>
+<h2 id="3-2-四种主流切分策略-必背">3.2 四种主流切分策略 ⭐必背</h2>
+<div class="table-wrap"><table><thead><tr><th>策略</th><th>做法</th><th>优点</th><th>缺点 / 适用</th></tr></thead><tbody><tr><td>固定长度 Fixed-size</td><td>按字符数 / token 数硬切（如每 chunk 512 token）</td><td>实现极简</td><td>不管语义边界，可能切断句子、拆散论述；只适合原型验证，上线前换掉</td></tr><tr><td>递归字符 Recursive Character</td><td>按分隔符优先级递归切：先 <code>\n\n</code>（段落），再 <code>\n</code>（换行），再句号……直到 chunk 达标</td><td>在自然语义边界断开 + 控制上限；<strong>工程最常用、默认选择</strong>（LangChain <code>RecursiveCharacterTextSplitter</code>）</td><td>普通文本场景的不错默认</td></tr><tr><td>语义切分 Semantic</td><td>按句子切分，计算相邻句子的 Embedding 相似度，相似度明显跌落处 = 话题转换处切开</td><td>语义完整性最好，chunk 主题聚焦</td><td>需全文 Embedding 计算，慢、成本高，chunk 大小不规则</td></tr><tr><td>结构感知 Structure-aware</td><td>按文档层级结构切：Markdown 标题（#/##/###）、法律条款编号、代码函数/类边界</td><td>结构化文档最优、检索精准度往往最高</td><td>要求文档有明确结构</td></tr></tbody></table></div>
+<h2 id="3-3-overlap-被低估的关键参数">3.3 Overlap：被低估的关键参数 ⭐</h2>
+<ul>
+<li><strong>问题</strong>：重要信息恰好落在两个 chunk 边界（前半句在 chunk 1、后半句在 chunk 2），单独命中任何一侧都是一半，答案会出错。</li>
+<li><strong>做法</strong>：相邻 chunk 保留重叠内容。例：chunk 512 token、overlap 64 token，则 chunk 2 的前 64 token 与 chunk 1 的后 64 token 完全相同。</li>
+<li><strong>效果</strong>：边界信息在两个 chunk 都有备份，命中哪个都能拿到完整上下文。</li>
+<li><strong>代价</strong>：索引体积增大（重叠内容存两次）、检索结果可能重复。<strong>一般推荐 overlap 为 chunk 大小的 10%~20%</strong>。</li>
+</ul>
+<h2 id="3-4-chunk-大小经验值-没有通用答案-需按业务效果调整">3.4 chunk 大小经验值（没有通用答案，需按业务效果调整）</h2>
+<div class="table-wrap"><table><thead><tr><th>场景</th><th>参考范围</th></tr></thead><tbody><tr><td>对话型问答</td><td>256~512 token</td></tr><tr><td>知识库检索</td><td>512~1024 token</td></tr><tr><td>长文档摘要</td><td>1500~2000 token</td></tr></tbody></table></div>
+<h2 id="3-5-策略选择决策框架">3.5 策略选择决策框架 ⭐</h2>
+<ul>
+<li>文档有清晰结构（章节、标题、条款）→ <strong>结构感知切分</strong>；</li>
+<li>普通散文、无明确结构 → <strong>递归字符切分</strong>（配好 chunk size 和 overlap）；</li>
+<li>质量要求极高、话题切换频繁 → <strong>语义切分</strong>（付计算成本）；</li>
+<li>快速验证原型 → <strong>固定长度</strong>够用（上线前换掉）。</li>
+</ul>
+<h2 id="3-6-面试怎么问">3.6 面试怎么问</h2>
+<ul>
+<li><strong>Q：你们项目里 chunk 是怎么切的？</strong> 答：先说策略及原因 → 再说参数（chunk size、overlap）→ 最后说如何评估调整。示例话术：「我们的文档是有章节结构的产品手册，所以用结构感知切分，按二级标题划分。每个 chunk 控制在 600 token 以内，overlap 设了 80 token。后来发现部分技术规格内容跨段落，把 overlap 调大到 120 token 后，相关问题的召回率有明显提升。」</li>
+<li><strong>Q：chunk 过大过小分别有什么问题？</strong> 答：过小——语义不完整、缺上下文、向量语义模糊、索引膨胀；过大——Context 噪声多、注意力分散、向量是多话题混合的平均、语义匹配变差。两个方向都直接影响生成质量。</li>
+<li><strong>Q：为什么要设置 overlap？</strong> 答：防止重要信息落在 chunk 边界被割裂，通过相邻 chunk 共享一段内容，保证边界信息在两侧都能被完整检索到。</li>
+</ul>
+<hr class="rule"/>
+<h1 id="第-4-章-embedding-详解" class="chapter">第 4 章 Embedding 详解</h1>
+<p><strong>一句话定位</strong>：Embedding 不是把文字变成数字的简单编码，而是把语义压缩进可计算的空间——让相似的意思在空间里相互靠近。</p>
+<h2 id="4-1-embedding-是什么-必背">4.1 Embedding 是什么 ⭐必背</h2>
+<ul>
+<li>将文本（或图片、音频）映射到<strong>高维向量空间</strong>的技术。一个句子变成几百到几千个浮点数的数组（维度常见 384、768、1536 维）。</li>
+<li>关键不在数字本身，而在<strong>空间位置</strong>：语义相似的文本向量距离近，不相关的距离远。核心承诺：<strong>用空间距离表达语义相似度</strong>。</li>
+<li>向量检索的本质：Query 向量化后，计算它与所有文档向量的距离，找最近的几个。</li>
+</ul>
+<h2 id="4-2-embedding-不是生成文本-是压缩语义-高频辨析">4.2 Embedding 不是生成文本，是压缩语义 ⭐高频辨析</h2>
+<ul>
+<li>生成式大模型（GPT、Claude）：目标是<strong>输出文字</strong>。</li>
+<li>Embedding 模型：输出是<strong>向量表示</strong>，把语义压缩到固定维度的数组里——<strong>保留语义信息，丢掉格式和措辞细节</strong>。同一语义换不同说法，好模型给出的向量应非常接近——这是语义搜索能跨越措辞差异（「飞机」vs「民用航空器」）的根本原因。</li>
+</ul>
+<h2 id="4-3-模型选型四维度-必背">4.3 模型选型四维度 ⭐必背</h2>
+<div class="table-wrap"><table><thead><tr><th>维度</th><th>要点</th></tr></thead><tbody><tr><td>向量维度</td><td>越高语义越细腻，但存储与检索开销越大。常见 384（轻量）/ 768（均衡）/ 1536（高精度）；中等规模业务选 768 维是合理起点</td></tr><tr><td>最大 token 限制</td><td>直接约束 chunk 大小上限（如 bge-small-zh 最多 512 token）；选型前必核对</td></tr><tr><td>中文支持</td><td>中文场景最关键依据。通用英文模型（如 OpenAI text-embedding-ada-002）中文偏弱；中文优选 <strong>BGE 系列 / M3E 系列</strong></td></tr><tr><td>非对称检索支持</td><td>RAG 典型场景是短 Query 找长文档；BGE 系列支持给 Query 加前缀 <code>Represent this sentence for searching relevant passages:</code> 提升效果</td></tr></tbody></table></div>
+<h2 id="4-4-中文-vs-通用场景">4.4 中文 vs 通用场景</h2>
+<ul>
+<li><strong>分词边界</strong>：中文没有天然空格分词，通用模型对中文语义捕捉明显弱于专门训练的中文模型。</li>
+<li><strong>专业术语</strong>：法律条款、医疗术语、金融名词，通用模型难以精准表达语义关系。</li>
+<li><strong>评估基准</strong>：看 MTEB（Massive Text Embedding Benchmark）中文 Retrieval 子任务榜单；开源中文模型中 BGE 系列（<code>BAAI/bge-large-zh-v1.5</code>、<code>bge-m3</code> 等）和 E5 系列表现较出色。</li>
+<li><strong>双语需求</strong>：<code>bge-m3</code> 专门针对多语言检索优化，适合中英双语文档。</li>
+</ul>
+<h2 id="4-5-embedding-vs-rerank-最高频">4.5 Embedding vs Rerank ⭐⭐最高频</h2>
+<div class="table-wrap"><table><thead><tr><th>维度</th><th>Embedding（双塔 Bi-Encoder）</th><th>Rerank（交叉编码器 Cross-Encoder）</th></tr></thead><tbody><tr><td>编码方式</td><td>Query 和文档<strong>各自独立</strong>编码成向量</td><td>Query 和文档<strong>拼接后联合</strong>输入模型</td></tr><tr><td>相关性计算</td><td>向量距离（余弦相似度）</td><td>直接输出相关性分数</td></tr><tr><td>速度</td><td>文档向量可<strong>离线预计算</strong>，检索毫秒级，可处理<strong>百万量级</strong></td><td>无法预计算，需<strong>逐对推理</strong>，只适合少量候选（top-20 以内）精排</td></tr><tr><td>精度</td><td>相对粗</td><td>能看到 Query 与文档的完整交互，<strong>精度更高</strong></td></tr><tr><td>角色</td><td><strong>粗筛</strong>：从全量文档召回 top-K（20-50 个）</td><td><strong>精排</strong>：精选出 top-N（通常 3-5 个）进 LLM 的 Context</td></tr></tbody></table></div>
+<p>两者是<strong>流水线关系</strong>：Embedding 快速召回候选池 → Rerank 精排过滤出最终上下文。</p>
+<h2 id="4-6-常见误区">4.6 常见误区 ⭐</h2>
+<div class="table-wrap"><table><thead><tr><th>误区</th><th>纠正</th></tr></thead><tbody><tr><td>Embedding 模型越大越好</td><td>不一定。大模型推理慢、占内存；轻量但针对检索优化的模型（如 bge-small-zh）可能更快更准更省</td></tr><tr><td>用 OpenAI 的 Embedding 就够了</td><td>英文场景表现极好；中文场景要做评测对比，专门中文模型往往更好，还能减少第三方依赖、降低成本</td></tr><tr><td>Embedding 和 Rerank 模型随意配</td><td>Rerank 最好与 Embedding 训练数据分布相近，否则评分口径不一致，精排效果不稳定</td></tr><tr><td>换了 Embedding 模型不用重建索引</td><td><strong>完全错误</strong>。不同模型向量空间不同，旧索引与新 Query 向量不可比；必须全量重新 Embedding + 重建整个索引</td></tr></tbody></table></div>
+<h2 id="4-7-面试怎么问">4.7 面试怎么问</h2>
+<ul>
+<li><strong>Q：Embedding 模型怎么选？</strong> 答：四个维度——语言场景（中文优先 BGE/M3E）、输入长度（token 上限决定 chunk 上限）、向量维度（768 起步）、任务类型（非对称/对称检索最优模型不同）。</li>
+<li><strong>Q：Embedding 和 Rerank 有什么区别？</strong> 答：Bi-Encoder 分别独立编码、可离线预计算、毫秒级百万量级召回、适合粗筛；Cross-Encoder 拼接联合输入、深度交互打分、精度更高但需逐对推理、只适合少量候选精排。流水线关系：粗筛召回 → 精排过滤 → 进 Context。</li>
+</ul>
+<hr class="rule"/>
+<h1 id="第-5-章-向量数据库" class="chapter">第 5 章 向量数据库</h1>
+<p><strong>一句话定位</strong>：向量数据库解决一个传统数据库根本没有设计来解决的问题——在海量高维向量中快速找到相似的那些。</p>
+<h2 id="5-1-解决的核心问题">5.1 解决的核心问题 ⭐</h2>
+<p>100 万个 768 维向量中找与 Query 向量最相似的 top-5：</p>
+<ul>
+<li><strong>暴力搜索</strong>：逐一计算余弦相似度再排序，普通服务器需几百毫秒到几秒——实时对话不可接受；向量到 1000 万、1 亿时耗时线性增长，无法用于生产。</li>
+<li><strong>向量数据库要解决的核心问题</strong>：在海量高维向量中，<strong>毫秒级</strong>找到最相似结果。</li>
+</ul>
+<h2 id="5-2-为什么不能用-mysql-做向量检索-高频">5.2 为什么不能用 MySQL 做向量检索 ⭐⭐高频</h2>
+<ul>
+<li><strong>功能层面</strong>：传统关系库的查询是<strong>精确匹配 / 范围扫描</strong>（如 <code>WHERE age &gt; 25 AND city='北京'</code>），靠 B-Tree / Hash 索引快速定位行；而向量搜索问的是「哪些向量和查询向量<strong>最接近</strong>」——是高维连续空间里的<strong>几何问题</strong>，B-Tree/Hash 对此完全无效。</li>
+<li><strong>性能层面</strong>：即便用 pgvector 等扩展支持向量，大规模场景下全量计算复杂度 O(N)，远不如专用向量库通过 ANN 索引把复杂度降到近似 O(log N)。</li>
+</ul>
+<h2 id="5-3-ann-在速度和精度之间取平衡-必背">5.3 ANN：在速度和精度之间取平衡 ⭐必背</h2>
+<p>ANN（Approximate Nearest Neighbor，近似最近邻搜索）：预先构建索引结构，检索时只访问一小部分向量。「近似」= 不保证绝对最近邻，但实践精度通常 95%+（用 recall@K 衡量），速度提升是数量级的。</p>
+<h3 id="hnsw-分层可导航小世界图">HNSW（分层可导航小世界图）</h3>
+<ul>
+<li>结构：顶层少量节点形成「高速公路」，底层全量节点形成「街道网络」；检索从顶层入口进入，沿邻居边导航逐层下降，像 GPS 导航越来越精细。</li>
+<li>优点：查询极快、精度高；是 Milvus、Qdrant、Weaviate 等主流向量库的<strong>默认索引</strong>。</li>
+<li>缺点：<strong>构建索引内存占用较大</strong>。</li>
+<li>超参数：M（每个节点最大连接数）、efConstruction（建图搜索深度）——越大精度越高，但内存和构建时间成比例增加。<strong>不是越大越好</strong>，要找精度/速度/内存的平衡点。</li>
+</ul>
+<h3 id="ivf-倒排文件索引">IVF（倒排文件索引）</h3>
+<ul>
+<li>结构：先对全量向量做 K-Means 聚类分「货架」；检索先找最近的几个货架，只在货架内精细查找。</li>
+<li>优点：内存占用低，适合超大规模数据集。</li>
+<li>缺点：Query 落在两个货架边界时可能漏掉相关结果（<strong>边界效应</strong>）。</li>
+</ul>
+<h2 id="5-4-向量数据库的附加能力">5.4 向量数据库的附加能力 ⭐</h2>
+<ul>
+<li><strong>元数据过滤</strong>：向量附带结构化元数据（来源、时间、部门、类型），检索时叠加条件——「语义相关 + 业务过滤」的组合查询。</li>
+<li><strong>混合检索（Hybrid Search）</strong>：同时跑向量搜索和关键词搜索，用融合算法（如 RRF，Reciprocal Rank Fusion）合并两路结果。对中文专业术语场景尤其有用——专有名词语义表示弱，必须靠关键词精确匹配。</li>
+<li><strong>向量更新和删除</strong>：知识库持续更新，索引也要对应更新；不同产品支持成本差异大，选型要考虑业务更新频率。</li>
+</ul>
+<h2 id="5-5-主流选型">5.5 主流选型 ⭐</h2>
+<div class="table-wrap"><table><thead><tr><th>类别</th><th>代表</th><th>特点 / 适用</th></tr></thead><tbody><tr><td>专用向量数据库</td><td>Milvus / Qdrant / Weaviate / Pinecone</td><td>功能最完善、性能最优；大规模生产</td></tr><tr><td>传统数据库的向量扩展</td><td>PostgreSQL + pgvector、ES + dense vectors</td><td>已有基础设施的小规模场景可用；百万量级性能明显不如专用方案</td></tr><tr><td>轻量级本地库</td><td>FAISS / Chroma</td><td>FAISS 是<strong>纯向量索引库</strong>（非完整数据库，无持久化 / 元数据管理 / CRUD），适合嵌入应用做原型；Chroma 轻量级，适合开发调试</td></tr></tbody></table></div>
+<p><strong>选型决策</strong>：几十万向量以内 → Chroma 或 pgvector 足够；百万以上、需要元数据过滤和混合检索 → Milvus / Qdrant；云端托管免运维 → Pinecone。</p>
+<h2 id="5-6-常见误区">5.6 常见误区 ⭐</h2>
+<div class="table-wrap"><table><thead><tr><th>误区</th><th>纠正</th></tr></thead><tbody><tr><td>ANN 结果不精确，所以不可靠</td><td>精度通常 95%-99%（recall@K），对 RAG 完全够用，速度收益是数量级的</td></tr><tr><td>索引参数越高越好</td><td>超参越大精度越高但内存/构建时间成比例增加；按实际场景找平衡点</td></tr><tr><td>向量相似度高 = 语义相关</td><td>相似度取决于 Embedding 模型的训练质量和领域覆盖；模型不行，相似度没意义</td></tr><tr><td>用 FAISS 就是用了向量数据库</td><td>FAISS 只是索引库；生产环境需自己封装持久化和业务逻辑，或用封装好的向量数据库</td></tr></tbody></table></div>
+<h2 id="5-7-面试怎么问">5.7 面试怎么问</h2>
+<ul>
+<li><strong>Q：为什么不用 MySQL 做相似检索？</strong> 答：两层——功能上，B-Tree/Hash 索引无法支持高维几何相似度问题；性能上，pgvector 全量计算 O(N) 无法满足毫秒级检索，专用向量库用 HNSW/IVF 把复杂度降到近似 O(log N)。</li>
+<li><strong>Q：向量数据库为什么能加速召回？</strong> 答：核心是 ANN 预建索引避免全量计算。以 HNSW 为例：分层可导航图从顶层稀疏图快速导航、逐层定位，只访问极少数节点即得近似最近邻，快几个数量级；代价是「近似」，但 95%+ 的 recall 满足 RAG 需求。</li>
+</ul>
+<hr class="rule"/>
+<h1 id="第-6-章-rag-优化思路全景" class="chapter">第 6 章 RAG 优化思路全景</h1>
+<p><strong>一句话定位</strong>：RAG 优化没有万能药——先诊断问题出在哪个环节，再选择对应手段；「加个 Rerank 就搞定」很多时候是拿锤子找钉子。</p>
+<h2 id="6-1-优化框架-四大类-必背">6.1 优化框架：四大类 ⭐必背</h2>
+<ul>
+<li><strong>Query 侧</strong>：让问题更适合被检索；</li>
+<li><strong>检索侧</strong>：改善召回质量；</li>
+<li><strong>精排侧（Rerank）</strong>：把真正相关的排到前面；</li>
+<li><strong>Context / 生成侧</strong>：改善喂给 LLM 的上下文。</li>
+</ul>
+<h2 id="6-2-query-侧优化">6.2 Query 侧优化 ⭐</h2>
+<ul>
+<li><strong>Query 改写（Query Rewrite）</strong>：检索前先用 LLM 处理用户问题——扩展同义词、修正表述、补全隐含条件。例：「这个合同能退吗」→「合同解除条款、退款政策、合同撤销条件」多个角度检索，覆盖率明显更好。</li>
+<li><strong>Multi-Query 多角度查询</strong>：一个问题生成多个版本分别检索，结果合并去重。例：「我们产品的 SLA 是多少」→ 展开「服务等级协议内容 / 故障响应时间 / 可用性承诺 / 赔偿条款」四路检索，召回率显著提升。</li>
+</ul>
+<h2 id="6-3-检索侧优化">6.3 检索侧优化 ⭐</h2>
+<ul>
+<li><strong>混合检索（Hybrid Search）</strong>：向量检索擅长语义，但专有名词、精确匹配（人名、产品型号、法规编号）不如关键词准确。混合检索同时跑向量检索 + BM25，用 <strong>RRF（Reciprocal Rank Fusion）</strong> 融合：文档在两路排名都靠前则融合分数高，只在一路靠前则打折。RRF <strong>对超参数不敏感、实现简单、效果稳定，是工程首选</strong>。</li>
+<li><strong>元数据过滤（Metadata Filtering）</strong>：相似度检索叠加结构化条件（「只搜 2024 年之后的文档」「只搜合同类」）。不改变检索算法，但大幅缩小范围——既提精度又降开销。</li>
+</ul>
+<h2 id="6-4-精排优化-rerank">6.4 精排优化：Rerank ⭐⭐</h2>
+<ul>
+<li><strong>位置</strong>：向量检索召回 top-K 之后，Cross-Encoder 对每个 (Query, Chunk) 对精细打分、重排，只保留真正高相关的 top-N 给 LLM。</li>
+<li><strong>核心价值</strong>：向量检索是独立编码，无法完整捕捉 Query 与文档的深度语义关联；Cross-Encoder 能看到完整交互，打分更精准。</li>
+<li><strong>成熟组合</strong>：混合检索 + Rerank 是工程上最成熟的检索优化组合——两路各召回候选 → RRF 融合 → Cross-Encoder 精排 → 最终只有 3-5 条高质量 chunk 进 Context。</li>
+<li><strong>什么时候该加 Rerank</strong>：Recall@K 已经足够好（相关内容确实被召回），但答案精准度不高——问题在排序不在召回。</li>
+<li><strong>什么时候不急着加</strong>：Recall@K 本身很低，相关内容根本没被召回——加 Rerank 没有意义，先解决召回问题。</li>
+</ul>
+<h2 id="6-5-context-侧优化">6.5 Context 侧优化 ⭐</h2>
+<ul>
+<li><strong>父子块检索（Parent-Child Retrieval）</strong>：解决 Chunking 经典矛盾——小 chunk 利于精准匹配但上下文不完整，大 chunk 上下文完整但检索精准度差。做法：<strong>建两级索引</strong>——用小 chunk（子块）做检索，命中后返回包含它的大 chunk（父块）给模型。例：2000 字文章按段落切 5 个 400 字子块做索引，命中后传整篇文章或更完整的部分。</li>
+<li><strong>Context 压缩（Context Compression）</strong>：用 LLM 阅读召回的 chunk，提取与 Query 高度相关的句子、丢弃无关内容，再拼最终 Context。显著减噪，但<strong>多一次 LLM 调用的延迟和成本</strong>，适合准确性要求极高、延迟容忍度较高的场景。</li>
+</ul>
+<h2 id="6-6-初学者优化方法论-必背">6.6 初学者优化方法论 ⭐⭐必背</h2>
+<ol>
+<li><strong>先建立 baseline，做好评估</strong>：用 Recall@K + 答案质量指标（LLM 打分或人工评估）建立可量化基线。没有基线就无法判断优化是否有效。</li>
+<li><strong>优先解决「能不能找到」，再解决「找到了对不对」</strong>：Recall@5 低先优化召回（换 Embedding、调 Chunk 策略、加混合检索），而不是先加 Rerank。</li>
+<li><strong>每次只改一个变量</strong>：同时改 Chunk 大小、Embedding 模型和 Rerank，永远不知道哪个起了作用。</li>
+<li><strong>按成本/收益排优先级</strong>：混合检索成本低覆盖广，通常是<strong>性价比最高的第一步</strong>；Query 改写、Rerank 增加延迟成本，按业务 SLA 决定。</li>
+</ol>
+<h2 id="6-7-面试怎么问">6.7 面试怎么问</h2>
+<ul>
+<li><strong>Q：你们 RAG 系统做了哪些优化？</strong> 答：按 Query 侧 / 检索侧 / 精排侧 / Context 侧分类，说清每个优化针对的问题、前后效果变化和取舍。示例：「我们发现 Recall@5 在 60% 左右，先引入混合检索，Recall@5 提升到 78%；再加 Rerank，答案精准率提升了约 15%。」<strong>有数据有逻辑才是好回答。</strong></li>
+<li><strong>Q：混合检索怎么实现？两路结果怎么融合？</strong> 答：向量检索用 Embedding + 向量库；关键词用 BM25（Elasticsearch 或向量库关键词功能）；融合用 RRF——文档在两路的名次取倒数相加得融合分、重排。RRF 对超参不敏感、实现简单，工程首选。</li>
+</ul>
+<hr class="rule"/>
+<h1 id="第-7-章-长文档与代码检索" class="chapter">第 7 章 长文档与代码检索</h1>
+<p><strong>一句话定位</strong>：检索单位 ≠ 返回单位；相关 ≠ 可用。可用 = <strong>完整 + 当前 + 有权限</strong>。结构不能断、版本不能错、权限不能漏。</p>
+<h2 id="7-1-三大硬问题-必背">7.1 三大硬问题 ⭐必背</h2>
+<p>「按 512 token 切 + overlap + 向量检索」适合原型，不适合真实系统：</p>
+<ul>
+<li>固定切片会把标题和正文、函数签名和函数体拆开（<strong>结构不能断</strong>）；</li>
+<li>不记录分支与提交，可能拿旧代码回答（<strong>版本不能错</strong>）；</li>
+<li>不在检索前做权限过滤，受限内容可能进入候选集（<strong>权限不能漏</strong>）。</li>
+</ul>
+<h2 id="7-2-长文档-按标题树建层级">7.2 长文档：按标题树建层级 ⭐</h2>
+<ul>
+<li>需求文档通常是「章节 → 小节 → 条款 → 表格」的层级。子块里只有「退款周期为 7 个工作日」，适用范围却写在父标题「企业版年付客户」里——只返回子块答案缺条件，返回整篇噪声和 token 太多。</li>
+<li>所以不能只保存文本，还要保存<strong>它在标题树中的位置</strong>，如：<code>产品手册 / 计费规则 / 企业版 / 退款政策</code>。这条路径既能参与检索和 Rerank，也能在命中后帮助找到父章节、相邻条款和表格说明。</li>
+</ul>
+<h2 id="7-3-代码-按-ast-切分-不能按字符硬切">7.3 代码：按 AST 切分，不能按字符硬切 ⭐</h2>
+<ul>
+<li>代码的自然边界不是句号和换行，而是<strong>模块、类、函数、方法、语句块</strong>。固定切片从函数中间切开，chunk 里可能只有实现没有函数名/参数/返回类型，或只有调用点没有被调用函数的定义。</li>
+<li>做法：先用解析器生成语法树，再按 <strong>AST 节点</strong>切分。Tree-sitter 可为源码构建具体语法树并支持文件编辑后的<strong>增量更新</strong>。</li>
+<li>工程中通常保留：函数/方法签名、注释和函数体；所属类、模块、文件路径和符号全名；起止行号、语言、导入关系和被调用符号；仓库、分支、提交哈希与内容哈希。</li>
+<li>AST 负责「不把结构切坏」，但不解决所有检索问题：README、配置、SQL、错误日志仍要用对应的结构解析器或文本切分策略。</li>
+</ul>
+<h2 id="7-4-parent-child-两级节点-找得准-读得懂-必背">7.4 Parent-Child 两级节点：找得准 + 读得懂 ⭐必背</h2>
+<ul>
+<li><strong>Child</strong>：函数、短条款、小段落——负责 Embedding、关键词召回、Rerank；</li>
+<li><strong>Parent</strong>：类、章节、完整规则——负责最终返回给模型补齐上下文；</li>
+<li><strong>Document</strong>：文件或整篇——跨章节任务才按需向上扩展。</li>
+</ul>
+<p>每个 Child 保存 <code>parent_id</code>。命中 Child 后<strong>不是机械返回整篇文档</strong>，而是根据问题取父节点、标题路径、必要的相邻节点。</p>
+<p><strong>父级扩展是预算决策，不是固定动作</strong>：</p>
+<ul>
+<li>30 行的函数可以返回整个函数；3000 行的类只补签名、字段、目标方法和直接依赖；两页的章节可返回完整章节，几十页的章节只补标题路径和相邻条款。</li>
+<li>设三个门槛：<strong>父块最大 Token、允许扩展的层级、相邻节点数量</strong>。超预算时优先保留定义、约束、输入输出和直接依赖，不要粗暴截断末尾。</li>
+</ul>
+<h2 id="7-5-版本与权限必须进索引">7.5 版本与权限必须进索引 ⭐⭐</h2>
+<p>代码不是静态文本：同一路径在 main、功能分支和历史 commit 上可能完全不同。索引至少保存：</p>
+<pre class="codeblock"><code>{
+  "repo": "payment-service",
+  "path": "src/refund/RefundService.java",
+  "symbol": "RefundService.apply",
+  "branch": "feature/refund-v2",
+  "commit": "a1b2c3d",
+  "parent_id": "class:RefundService",
+  "acl": ["team:payment"]
+}</code></pre>
+<p><strong>原则：先过滤（版本/路径/ACL），后相似度召回。</strong> 如果先召回再删权限不匹配的结果：受限内容仍可能进入候选缓存、Rerank 服务或调试日志；且删除后候选数量不足，召回质量突然下降。访问控制要在<strong>检索边界</strong>生效。</p>
+<h2 id="7-6-在线检索链路-可落地版本">7.6 在线检索链路（可落地版本）⭐</h2>
+<ol>
+<li>从会话或 IDE 获取 repo + branch/commit + user/tenant；</li>
+<li>解析 Query，识别符号名、文件名、错误码和自然语言意图；</li>
+<li>先做版本、路径和 ACL 过滤；</li>
+<li>同时跑向量检索与 BM25，合并候选；</li>
+<li>在 <strong>Child 粒度 Rerank</strong>（避免大父块稀释相关度）；</li>
+<li>根据 parent_id 取父级、标题路径或必要的相邻节点；</li>
+<li>去重并按 Token 预算组装 Context，附带路径、行号和 commit 作为引用。</li>
+</ol>
+<p><strong>易错点</strong>：第五、六步最容易写反——<strong>先在小块上排序，再向父级扩展</strong>。如果先把所有 Child 展开成大块再 Rerank，相关信号会被大量父级文本冲淡，延迟也会上升。</p>
+<h2 id="7-7-落地与评估">7.7 落地与评估 ⭐</h2>
+<ul>
+<li><strong>最小方案 baseline</strong>：结构化切分 + Child 混合检索 + Parent 补全 + 版本/ACL 前置过滤。不要一开始就加调用图、摘要树和复杂 Agent。</li>
+<li><strong>评估集专门覆盖五类问题</strong>：跨小节答案、精确符号查找、同文件不同分支、历史 commit、无权限访问。</li>
+<li><strong>专有指标</strong>：父级补全正确率（命中 Child 后是否拿到正确父节点）、版本错误率（是否引用了目标 commit 之外的内容）、<strong>越权召回率（目标必须是 0）</strong>、Context 有效率（进入上下文的 token 中有多少真正支持答案）、索引新鲜度（代码更新到可检索之间的延迟）。</li>
+<li><strong>增量更新</strong>：用 commit + path + content_hash 判断增删改，只重建受影响节点及父子关系——否则每次全量重建，代码库一大成本和更新延迟失控。</li>
+</ul>
+<h2 id="7-8-知识拓展四问">7.8 知识拓展四问 ⭐</h2>
+<ul>
+<li><strong>有了 AST 切分还需要关键词检索吗？</strong> 需要。函数名、类名、错误码、配置键和路径是精确符号，BM25 或符号索引通常比纯向量更稳；自然语言描述和业务意图交给向量检索，两路召回后统一 Rerank。</li>
+<li><strong>Parent-Child 和 overlap 有什么区别？</strong> Overlap 只缓解相邻切片的边界断裂，不知道标题、类和函数的真实父子关系；Parent-Child 是显式结构关系，可跨多个子块补回完整父级，但索引和存储更复杂。</li>
+<li><strong>代码依赖是不是全部展开进 Context？</strong> 不是。调用图会迅速扩散；先返回目标符号，再按问题补一跳直接依赖，只有测试失败分析、跨模块重构等任务才逐层扩展并设深度与 token 上限。</li>
+<li><strong>多个分支会不会让索引膨胀？</strong> 会。常见做法：长期保留默认分支和活跃分支，历史版本按需构建或设过期策略；相同内容按内容哈希去重，但版本、路径和 ACL 关系不能丢。</li>
+</ul>
+<hr class="rule"/>
+<h1 id="第-8-章-agentic-rag" class="chapter">第 8 章 Agentic RAG</h1>
+<p><strong>一句话定位</strong>：混合检索/Rerank 解决「这一次怎么查得更准」；Agentic RAG 解决「<strong>该不该查、查几次、查什么、不够时怎么办</strong>」——系统知道自己为什么查、还缺什么、什么时候算查完。</p>
+<h2 id="8-1-演进路径-四个阶段-必背">8.1 演进路径：四个阶段 ⭐必背</h2>
+<div class="table-wrap"><table><thead><tr><th>阶段</th><th>代表</th><th>核心特征</th><th>边界</th></tr></thead><tbody><tr><td>第一阶段</td><td>传统 RAG（2020 论文）</td><td>参数化知识 + 非参数化知识结合；固定链路 Query→Top-K→Context→生成</td><td>隐含假设「一句话足够适合检索且首次 Top-K 含答案」常不成立</td></tr><tr><td>第二阶段</td><td>Advanced RAG</td><td>加 Query 改写 / Multi-Query / 混合检索 / Rerank / 父子块 / Context 压缩</td><td>流水线变强但仍固定：简单问题照跑，复杂问题不会加轮</td></tr><tr><td>第三阶段</td><td>自适应与纠错</td><td>Self-RAG（按需检索+反思）、CRAG（评估检索结果不可靠触发纠正）、Adaptive-RAG（按复杂度选不检索/单步/多步）</td><td>—</td></tr><tr><td>第四阶段</td><td>Agentic RAG</td><td>Function Calling / ReAct 使检索变成工具；Agent 规划-调用工具-根据结果调整</td><td>—</td></tr></tbody></table></div>
+<p><strong>演进对比</strong>：传统——路径写死、检索 1 次、带错误结果继续生成；Advanced——写死更多优化、固定若干次、依赖预设策略；自适应——分类器或模型判断、0 到多次、评估后改写补充检索；Agentic——Agent 按目标和状态决定、动态次数、换 Query 换工具补证据或拒答。</p>
+<h2 id="8-2-agentic-rag-解决什么问题-必背-与混合检索-rerank-不同层">8.2 Agentic RAG 解决什么问题 ⭐必背（与混合检索/Rerank 不同层）</h2>
+<ul>
+<li><strong>一个 Query 装不下复杂问题</strong>：多子问题整句向量化，每个方向都查不准 → 拆解分别找证据；</li>
+<li><strong>第一次检索错不会自救</strong>：传统 RAG 只能在错误候选集里挣扎 → Agent 评估证据后重写 Query / 扩范围 / 换源 / 拒答；</li>
+<li><strong>不同问题要不同数据源</strong>：文档库 / 数据库 / 网页 / 业务 API → Agent 在多个受控工具间路由；</li>
+<li><strong>不是所有问题值得检索</strong>：「把上一段改口语化」直接回答，避免白跑延迟；</li>
+<li><strong>多跳问题</strong>：后一次检索依赖前一次结果，预写死的 Query 做不到。</li>
+</ul>
+<h2 id="8-3-核心原理-五个角色-必背">8.3 核心原理：五个角色 ⭐必背</h2>
+<ol>
+<li><strong>规划与路由</strong>：判断复杂度——直接回答 / 单次检索 / 多步拆解；</li>
+<li><strong>检索工具</strong>：向量 / BM25 / 数据库 / 网页 / API，各自能力清晰；</li>
+<li><strong>状态记录</strong>：子问题、已查来源、候选证据、冲突点、剩余预算；</li>
+<li><strong>证据评估</strong>：相关性、完整性、来源可靠性、相互一致性；</li>
+<li><strong>停止与生成</strong>：证据够 → 带引用回答；不够且预算尽 → 拒答或请用户补充。</li>
+</ol>
+<p><strong>运行循环</strong>：理解目标 → 决定是否检索 → 拆子问题 → 选源 → 执行检索 → 评估证据 → 不够则改写/换工具/继续，足够则整合/标来源/生成【递进 = ReAct 落地】。</p>
+<p><strong>反思不能只靠模型拍脑袋</strong>：生产要加确定性规则——最少几类证据 / 命中版本 / 引用回原文 / 数值来自结构化数据 / 最大轮数 / 耗时费用上限。<strong>Agent 负责动态决策，规则负责兜底。</strong></p>
+<p><strong>示例</strong>（对比 2025/2026 差旅政策 + 上海特殊规定）：识别三个证据槽位 → 分别生成 Query 并行检索 → 检查版本号 / 生效日期 / 适用组织 / 来源权限（不只看相似度）→ 缺 2025 版查归档库、来源冲突核对正式发布记录 → 齐全后做差异比较，每条结论带回来源。</p>
+<h2 id="8-4-关键辨析-agentic-rag-多-agent-高频">8.4 关键辨析：Agentic RAG ≠ 多 Agent ⭐高频</h2>
+<p>单 Agent + 几个工具 + 状态机 + 证据检查<strong>已经是</strong> Agentic RAG。只有职责边界稳定（不同权限/不同模型）才拆多 Agent；多 Agent 带来通信、上下文复制、错误传播、调试成本。<strong>先跑稳单 Agent。</strong></p>
+<h2 id="8-5-落地权衡">8.5 落地权衡 ⭐</h2>
+<p><strong>代价</strong>：路径动态难预测、多轮调用延迟波动、成本随轮数涨、调试要看完整决策轨迹、多数据源逐工具鉴权。</p>
+<p><strong>六条守则</strong>：限制循环（最大步骤/超时/Token 预算）、工具要窄（用途清晰 Schema 稳定）、权限前置、证据可回放、失败可降级（退回固定 RAG/澄清/拒答）、分层评估。</p>
+<p><strong>适用场景</strong>：适合多跳推理、多子问题拆解、知识多源分散、高证据完整性要求、问题模糊需澄清；不适合（固定 RAG 更划算）FAQ 单跳、数据源单一命中率高、首字延迟严格、Workflow 可完成。</p>
+<p><strong>升级顺序</strong>：先做好传统 RAG（文档切片检索评估）→ 加路由与纠错 → 最后开放 Agent 循环。<strong>基础召回差就套 Agent = 更贵更慢地找不到。</strong></p>
+<hr class="rule"/>
+<h1 id="第-9-章-排障诊断方法论" class="chapter">第 9 章 排障诊断方法论</h1>
+<p><strong>一句话定位</strong>：答案不好 = 检索崩了（没找到/找错了）或生成崩了（找到没用好）。<strong>不先定位，所有优化都是治标不治本。</strong></p>
+<h2 id="9-1-检索侧五类问题-必背">9.1 检索侧五类问题 ⭐必背</h2>
+<div class="table-wrap"><table><thead><tr><th>问题</th><th>症状</th><th>应对</th></tr></thead><tbody><tr><td>文档质量差</td><td>OCR 乱码 / 格式混乱 / 模板噪声；检索出「第 3 页」「版权所有」类片段</td><td>切分前加强预处理、专项清洗、人工校对</td></tr><tr><td>Chunk 粒度不合理</td><td>太小语义不完整；太大多主题混合、匹配模糊</td><td>按 Chunking 章节调策略与参数</td></tr><tr><td>Embedding 选型不当</td><td>中文/领域覆盖不足→语义相似却距离远；换说法结果差异巨大</td><td>MTEB 参考 + 业务数据跑召回对比</td></tr><tr><td>召回不足</td><td>库里有答案系统给不出、手动搜得到自动搜不到；索引未及时重建 / 入库被误过滤 / top-K 太小</td><td>检查索引覆盖、加大 K 配 Rerank、混合检索</td></tr><tr><td>缺少 Rerank</td><td>答案「相关但不精准」、Context 有答案答不准</td><td>Cross-Encoder 精排</td></tr></tbody></table></div>
+<h2 id="9-2-生成侧四类问题-必背">9.2 生成侧四类问题 ⭐必背</h2>
+<div class="table-wrap"><table><thead><tr><th>问题</th><th>症状</th><th>应对</th></tr></thead><tbody><tr><td>Prompt 拼接问题</td><td>chunk 间无分隔符 / 来源缺失 / 指令内容混淆；多文档内容混淆、拒答指令遵从率低</td><td>指令与资料分离、加分隔符</td></tr><tr><td>上下文干扰 Context Noise</td><td>低相关 chunk 稀释注意力；答案混入奇怪细节、给「平均答案」</td><td>Rerank 过滤、宁少勿滥、Prompt 要求只根据资料答</td></tr><tr><td>缺引用约束</td><td>模型混入参数知识引入幻觉</td><td>明确「严格根据资料回答、无答案明说」、要求标注来源</td></tr><tr><td>模型理解能力不足</td><td>跨 chunk 综合推断 / 复杂逻辑小模型明显</td><td>升级模型、逐步推导 Prompt、Query 拆解</td></tr></tbody></table></div>
+<h2 id="9-3-系统诊断三步法-必背">9.3 系统诊断三步法 ⭐⭐必背</h2>
+<ol>
+<li><strong>第一步·分流</strong>：手动查 top-K 是否含正确答案 → 含但答错 = 生成侧；不含 = 检索侧。</li>
+<li><strong>第二步·检索侧定位</strong>：Recall@K 量化；相似度分数普遍低 = Embedding 空间不匹配；分数高但内容无关 = 领域理解偏差。</li>
+<li><strong>第三步·生成侧定位</strong>：把正确 chunk 手动构造 Prompt 喂模型 → 能答对 = 检索问题；答不对 = Prompt / 模型能力问题。</li>
+</ol>
+<p><strong>经验值</strong>：Recall@5 低于 70% 说明检索侧有明显问题，优先优化。</p>
+<h2 id="9-4-面试怎么问">9.4 面试怎么问</h2>
+<ul>
+<li><strong>Q：RAG 答不准怎么排查？</strong> 答：先看 top-K 证据分流检索/生成侧，再用 Recall@K 等指标量化，针对性单变量调整。</li>
+<li><strong>Q：如何评估召回效果？</strong> 答：构造评估集（已知有答案的问题 + 正确 chunk），计算 Recall@K（K 常取 5 或 10）；Recall@5 &lt; 70% 需优先优化检索侧。</li>
+</ul>
+<hr class="rule"/>
+<h1 id="第-10-章-评估体系与指标" class="chapter">第 10 章 评估体系与指标</h1>
+<p><strong>一句话定位</strong>：检索侧保证<strong>能找到</strong>，生成侧保证<strong>用得好</strong>。没有评估的优化 = 拿锤子找钉子。离线指标是过程指标（方向盘），线上采用率是结果指标（目的地）。</p>
+<h2 id="10-1-为什么必须有评估体系">10.1 为什么必须有评估体系</h2>
+<ul>
+<li>无法量化优化效果（提升 5% 还是 50%？哪些场景变差了？）；</li>
+<li>无法对比不同方案（混合检索 vs Rerank 哪个适合业务？只能猜）；</li>
+<li>无法发现退化（加了新功能，老场景效果有没有变差？）；</li>
+<li>面试答不上（「感觉更好了」不是工程师的回答）。</li>
+</ul>
+<h2 id="10-2-检索侧四大指标-必背">10.2 检索侧四大指标 ⭐⭐必背</h2>
+<div class="table-wrap"><table><thead><tr><th>指标</th><th>定义</th><th>公式</th><th>工程意义 / 局限</th></tr></thead><tbody><tr><td>Recall@K</td><td>正确答案出现在 top-K 的比例</td><td>Recall@K = 检索到的相关 chunk 数 / 所有相关 chunk 总数</td><td>Recall &lt; 70% 说明检索侧严重问题；Recall 不够加 Rerank 也救不回来；局限：只看找没找到，不管噪声</td></tr><tr><td>Precision@K</td><td>top-K 中相关内容的比例</td><td>Precision@K = 相关 chunk 数 / K</td><td>低 = 噪声多稀释注意力；与 Recall 矛盾（扩 K 升 Recall 降 Precision）</td></tr><tr><td>MRR</td><td>第一个相关结果排名倒数的均值</td><td>MRR = (1/N) × Σ(1/rank_i)</td><td>衡量「最好的有没有排前面」；示例：3 个查询第一个相关结果排第 1/3/2 位，MRR = (1 + 1/3 + 1/2)/3 = 0.611</td></tr><tr><td>NDCG</td><td>相关度分级 + 位置折扣 + 理想排序归一化</td><td>DCG@K = Σ(rel_i / log2(i+1))；NDCG@K = DCG@K / IDCG@K</td><td>最全面但需标注相关度等级（0-3 分）、成本高，用于离线对比方案</td></tr></tbody></table></div>
+<p><strong>例</strong>：知识库有 3 个 chunk 含正确答案，top-5 含其中 2 个 → Recall@5 = 2/3 ≈ 66.7%，Precision@5 = 2/5 = 40%。</p>
+<p><strong>工程平衡</strong>：先用较大 K（20-50）保 Recall → Rerank 把 Precision 拉回来 → 最终 3-5 条高质量 chunk 进 LLM。</p>
+<h2 id="10-3-生成侧-ragas-四维度-必背">10.3 生成侧：RAGAS 四维度 ⭐⭐必背</h2>
+<p>RAGAS（Retrieval Augmented Generation Assessment）是基于 LLM 的自动化评估框架，已成 RAG 生成评估事实标准。</p>
+<div class="table-wrap"><table><thead><tr><th>维度</th><th>衡量什么</th><th>评估方法 / 公式</th><th>低分意味着</th></tr></thead><tbody><tr><td>Faithfulness 忠实度</td><td>答案是否忠实于上下文、有没有幻觉</td><td>答案拆成多个陈述，LLM 判断每条能否从上下文推导；Faithfulness = 可推导陈述数 / 总陈述数</td><td>模型自由发挥、有幻觉</td></tr><tr><td>Answer Relevancy 答案相关性</td><td>答案是否真正回答了问题</td><td>LLM 从答案反向生成 N 个问题，算与原问题的语义相似度均值</td><td>答非所问、跑偏</td></tr><tr><td>Context Relevancy 上下文相关性</td><td>检索到的上下文有多少有用</td><td>LLM 提取与问题相关句子；= 相关句子数 / 总句子数</td><td>检索 / 切分质量差，噪声多</td></tr><tr><td>Context Recall 上下文召回</td><td>关键信息是否都被检索到</td><td>需 ground truth；判断标准答案的陈述能否从上下文推导；= 可推导陈述数 / 标准答案总陈述数</td><td>检索漏了关键信息</td></tr></tbody></table></div>
+<p><strong>四指标关系</strong>：Context Recall + Context Relevancy = 检索质量（从生成角度看）；Faithfulness + Answer Relevancy = 生成质量。<strong>Context Recall 低，其他指标再高也没用</strong>（关键信息根本没检索到）；Context Relevancy 低会拉低 Faithfulness 和 Answer Relevancy（噪声干扰生成）。</p>
+<p><strong>Faithfulness 示例</strong>：上下文「年假 10 天，工龄满 3 年增加到 15 天」，答案多编了「满 5 年 20 天」→ 3 条陈述中 2 条可推导 → Faithfulness = 2/3 ≈ 66.7%。</p>
+<h2 id="10-4-评估集构建">10.4 评估集构建 ⭐</h2>
+<p>评估集三要素：问题（Query）+ 标准答案（Ground Truth，可选）+ 相关文档片段（Relevant Chunks）。</p>
+<div class="table-wrap"><table><thead><tr><th>构建方法</th><th>质量 / 成本</th><th>适用</th></tr></thead><tbody><tr><td>人工构造</td><td>质量最高 / 成本最高</td><td>核心场景，50-200 条建 baseline</td></tr><tr><td>真实日志采样</td><td>质量中等 / 成本中等</td><td>持续监控线上问题</td></tr><tr><td>LLM 生成</td><td>质量较低 / 成本最低</td><td>快速验证（注意：问题可能过于理想化，不代表真实用户行为）</td></tr></tbody></table></div>
+<p><strong>工程实践</strong>：先用 LLM 生成快速搭框架 → 再人工构造核心场景 50-100 条 → 用日志采样持续扩大覆盖。</p>
+<h2 id="10-5-离线评估-vs-在线评估">10.5 离线评估 vs 在线评估 ⭐</h2>
+<ul>
+<li><strong>离线评估</strong>：测试集上跑指标、优化前后对比。优点：可控、可重复、成本低；缺点：测试集可能不代表真实场景。</li>
+<li><strong>在线评估</strong>：真实用户反馈。显式反馈（点赞/点踩/纠错）+ 隐式反馈（是否追问、是否复制、停留时长）。</li>
+<li><strong>关系</strong>：离线评估是必要条件，在线评估是充分条件。</li>
+</ul>
+<h2 id="10-6-线上采用率-adoption">10.6 线上采用率（Adoption）⭐⭐</h2>
+<p><strong>强信号</strong>：复制率（复制次数/总回答次数）、点赞率、引用率——主动采用行为。</p>
+<p><strong>弱信号（规模大）</strong>：无追问率（需结合停留时长判断）、停留时长（3-10 秒可能是扫一眼，30 秒以上可能是认真阅读）、跳出率。</p>
+<p><strong>负向信号</strong>：重复提问率（换问法再问一遍）、点踩率、人工接管率。</p>
+<p><strong>综合采用率 =（复制次数 + 点赞次数 × 2 − 点踩次数 × 2）/ 总回答次数</strong>。点赞/点踩权重 ×2 是因为<strong>用户主动点击的成本比复制高，信号更强</strong>。</p>
+<p><strong>离线指标升但采用率降的常见原因</strong> ⭐：</p>
+<ul>
+<li>测试集偏差（测试集问题分布与真实用户不一致）；</li>
+<li>延迟变长（加了 Rerank 和多轮检索，P95 从 2 秒涨到 5 秒，用户等不及）；</li>
+<li>答案变长（把检索内容都塞进答案，用户看不完）；</li>
+<li>语气变硬（Prompt 约束太强，答案变成「根据资料显示…」的八股文）。</li>
+</ul>
+<h2 id="10-7-评估的延迟与成本">10.7 评估的延迟与成本 ⭐</h2>
+<ul>
+<li>RAGAS 各指标都需要 LLM 调用：Faithfulness 2-3 次、Answer Relevancy 1-2 次、Context Relevancy 每个 chunk 一次、Context Recall 1-2 次；评估一个答案可能额外 1-2 秒；<strong>评估 Token 可能是原问答的 4-8 倍</strong>。</li>
+<li><strong>分级评估策略（工程化回答模板）</strong>：高风险查询（约 5%，涉及金额/法律条款）→ 实时 RAGAS 全量评估，延迟 +2 秒可接受；中风险（约 20%）→ 实时 Faithfulness 单项，+500ms；低风险（约 75%）→ 只记日志离线评估，无额外延迟。</li>
+<li><strong>省钱方法</strong>：采样评估（每天随机 1%-5% 跑完整评估）、分级评估、只跑当前优化目标单项、用便宜模型做评估（如 GPT-4o-mini / Claude-Haiku，成本降 10 倍、准确率只降约 5%）。</li>
+<li><strong>工具</strong>：检索指标自写脚本或 ranx 库；RAGAS 用 ragas 库；实验跟踪用 LangSmith / Weights &amp; Biases。</li>
+</ul>
+<h2 id="10-8-评估驱动的优化闭环-必背">10.8 评估驱动的优化闭环 ⭐⭐必背</h2>
+<ol>
+<li><strong>建立 baseline</strong>：评估集上跑当前系统，记录所有指标作基准；</li>
+<li><strong>定位瓶颈</strong>：Recall 低 → 先优化召回；Recall 高但 Precision 低 → 加 Rerank；Context Relevancy 低 → 改 Chunking 或减 top-K；Faithfulness 低 → 改 Prompt 约束；Answer Relevancy 低 → 检查 Query 理解和模型能力；</li>
+<li><strong>针对性优化</strong>：每次只改一个变量；</li>
+<li><strong>对比验证</strong>：新指标更好 → 采纳；更差或部分场景退化 → 回滚或继续调整；</li>
+<li><strong>持续迭代</strong>：新问题加入评估集、定期重评、监控线上。</li>
+</ol>
+<h2 id="10-9-知识拓展精选">10.9 知识拓展精选</h2>
+<ul>
+<li><strong>Recall 和 Precision 哪个更重要？</strong> 看场景：答不上代价高（医疗/法律）→ Recall 重要；噪声代价高（客服答错被投诉）→ Precision 重要。通常：大 K 保 Recall + Rerank 保 Precision，两头都要。</li>
+<li><strong>RAGAS 依赖 LLM 判断会不会不准？</strong> 会有偏差；在核心评估集上对比 LLM 评估与人工评估一致性，一致性高（85% 以上）就可信任 LLM 做大规模自动化。</li>
+<li><strong>评估集要多大？</strong> 简单场景（FAQ 类）50-100 条可建可信 baseline；复杂场景（开放域）可能需 300-500 条。关键是<strong>有代表性</strong>，不是一味追求数量。</li>
+</ul>
+<hr class="rule"/>
+<h1 id="第-11-章-面试回答框架" class="chapter">第 11 章 面试回答框架</h1>
+<p><strong>一句话定位</strong>：面试官真正想听的不是技术名词，而是你有没有完整做过「发现问题 → 做出取舍 → 验证结果」这条工程链路。</p>
+<h2 id="11-1-项目面试的五大落点-必背">11.1 项目面试的五大落点 ⭐必背</h2>
+<ol>
+<li><strong>业务目标</strong>：知识从哪来、为什么需要 RAG、不用 RAG 会出什么问题；</li>
+<li><strong>完整链路</strong>：离线怎么建库，在线怎么检索、重排、拼接、生成；</li>
+<li><strong>选型取舍</strong>：Chunk、Embedding、向量库、Top-K、混合检索为什么这么选；</li>
+<li><strong>问题诊断</strong>：答案不准时，先区分检索没找到还是模型没用好；</li>
+<li><strong>指标证据</strong>：用检索、生成、线上业务三层指标证明方案有效。</li>
+</ol>
+<p>面试官会沿项目逐层下钻：简历「做过 RAG 项目」→ 业务（为什么需要）→ 链路（离线在线怎么串）→ 选型（参数为什么这样定）→ 排障（答案不准先查哪侧）→ 证据（哪些指标证明有效）。<strong>链路、选型、排障、指标是应用岗必答线</strong>；索引源码、Embedding 训练等底层细节知道原理和工程影响即可。拉开差距的不是背到多底层，而是必答区每一层都有项目证据。</p>
+<h2 id="11-2-通用回答五步法-必背">11.2 通用回答五步法 ⭐⭐必背</h2>
+<p><strong>结论 → 项目事实 → 方案取舍 → 指标证据 → 适用边界。</strong></p>
+<p>反面示例（「为什么加 Rerank」只答「Rerank 能提高准确率」）；正面示例：「我们先看评估集，发现相关 Chunk 多数已进入 Top-20，但真正能回答问题的片段经常排不到前 5，所以问题不在召回覆盖，而在候选排序。我们保留前面的快速召回，再用 Rerank 做精排，只把 Top-N 交给模型。代价是多一段推理延迟，所以候选数和 Top-N 是根据离线排序指标、端到端答案质量和 P95 延迟一起定的。」——<strong>有症状、有判断、有方案、也有代价。</strong></p>
+<h2 id="11-3-高频八问要点-必背">11.3 高频八问要点 ⭐⭐必背</h2>
+<ul>
+<li><strong>Q1 为什么用 RAG</strong>：业务缺口 → RAG 能力 → 不选其他方案的原因。RAG 解决的是<strong>外部知识接入</strong>，不是给所有模型问题贴创可贴（固定格式用 Prompt，必要时才微调）。</li>
+<li><strong>Q2 完整链路</strong>：离线建库 + 在线问答 + 质量控制（引用 / 拒答 / 权限 / 日志）。</li>
+<li><strong>Q3 Chunk 多大</strong>：不报神奇数字，讲数字怎么来——文档结构 → 问题粒度 → 参数候选 → 评估结果。Overlap 只用来保护边界信息，不是越大越好（过大会重复召回、浪费上下文）。</li>
+<li><strong>Q4 Embedding / 向量库怎么选</strong>：Embedding 看<strong>检索效果 + 部署约束</strong>（语言匹配、自有评估集 Recall、维度成本、合规）；向量库看<strong>规模 + 工程能力</strong>（数据量并发量、索引类型与延迟、持久化/扩缩容/高可用、元数据过滤/增量更新/多租户、运维成本）。</li>
+<li><strong>Q5 为什么混合检索 + Rerank</strong>：混合检索<strong>补召回</strong>（产品型号、错误码、法规编号、人名等精确词向量可能漏；BM25 擅长关键词但不理解改写和近义），Rerank <strong>提排序</strong>（找到了但真正有用的排得不够靠前）。主动说代价；「没有无条件标配，只有指标和约束下的选择」。</li>
+<li><strong>Q6 答不准怎么排查</strong>：先看 Top-K 证据分流——没有 → 查解析/索引覆盖/Chunk/Embedding/召回策略；有但靠后 → 查融合/Rerank/Top-K/上下文噪声；有且位置合理仍错 → 查 Prompt 拼接/引用约束/上下文冲突/模型能力；知识库本来没有 → <strong>拒答或转人工</strong>，不能逼模型编答案。</li>
+<li><strong>Q7 做了哪些优化</strong>：只选 1-2 个讲透四件事——优化前症状、如何定位根因、为什么选这个方案、哪些指标变化。每次单变量。</li>
+<li><strong>Q8 怎么证明有效</strong>：三层指标——<strong>检索侧</strong>（Recall@K / Precision@K / MRR / NDCG）+ <strong>生成侧</strong>（忠实度 / 答案相关性 / 引用正确率 / 正确拒答率）+ <strong>线上业务</strong>（任务成功率 / 转人工率 / P95 / 成本 / 越权风险）。</li>
+</ul>
+<p><strong>万能句式</strong> ⭐：「优化前，评估集上的 [指标] 是 [基线]；定位到 [根因] 后，我们做了 [单一改动]，该指标变成 [结果]。同时 [延迟/成本/风险指标] 变化了 [真实数据]，所以最终选择 [上线/灰度/放弃]。」方括号必须换成项目真实数据；<strong>忘了数值就讲统计口径和大致区间，不能编。</strong></p>
+<h2 id="11-4-面试里最容易暴露的四个问题">11.4 面试里最容易暴露的四个问题 ⭐</h2>
+<div class="table-wrap"><table><thead><tr><th>暴露问题</th><th>改法</th></tr></thead><tbody><tr><td>只报技术栈不讲问题</td><td>每个工具补一句「它解决了什么问题、为什么适合当前约束」</td></tr><tr><td>把参数说成行业标准</td><td>讲候选范围、对比实验和最终指标，不把个人配置包装成通用答案</td></tr><tr><td>只讲准确率不讲成本延迟</td><td>质量达标后，比较端到端延迟和每个成功任务成本</td></tr><tr><td>编指标</td><td>面试官追问评估集规模/标注方式/统计口径会穿帮；如实说离线评估 / 人工抽检规则</td></tr></tbody></table></div>
+<h2 id="11-5-只做过-demo-怎么答-被问没负责的环节">11.5 只做过 Demo 怎么答 / 被问没负责的环节 ⭐</h2>
+<ul>
+<li><strong>只做过 Demo</strong>：诚实说明边界——「做到离线 Demo，没有真实线上流量」，然后继续讲：如何构造测试问题和标准证据、对比过哪些方案、失败样本暴露了什么、上线还要补哪些监控/安全/容量工作。<strong>诚实讲清边界比虚构生产项目更像工程师。</strong></li>
+<li><strong>追问没负责的环节</strong>：说明责任边界 + 讲你理解的接口和影响，不揽团队成果。例：「索引集群由基础设施同学维护，我负责检索策略和评估；我关注索引参数对召回、延迟和内存的影响，但没有改过底层实现。」</li>
+</ul>
+<hr class="rule"/>
+<h1 id="附录-a-重点难点速查-考前必看" class="chapter">附录 A · 重点难点速查（考前必看）</h1>
+<ol>
+<li><strong>四大局限 ↔ 四大应对</strong>：幻觉→事实锚点（缓解非根治）；私有知识→自建知识库；时效→更新文档重建索引（与训练解耦）；溯源→引用来源。</li>
+<li><strong>离线在线一致性铁律</strong>：Embedding 模型与清洗方式必须离线在线完全一致。</li>
+<li><strong>Chunking</strong>：太小语义不完整、太大信噪比低；四种策略（固定/递归/语义/结构感知）；overlap 10%~20%；经验值 256-512（对话）/ 512-1024（知识库）/ 1500-2000（长文摘要）。</li>
+<li><strong>Bi-Encoder vs Cross-Encoder</strong>：分别编码可预计算适合粗筛 vs 拼接联合更准但逐对推理只适合精排。</li>
+<li><strong>为什么不用 MySQL</strong>：B-Tree/Hash 不支持高维几何相似度 + 全量 O(N) vs ANN 近似 O(log N)。</li>
+<li><strong>HNSW vs IVF</strong>：分层导航图快而准但内存大 vs 聚类货架省内存但有边界效应。</li>
+<li><strong>Rerank 该不该加</strong>：Recall 够好但精度差 → 加；Recall 本身低 → 先解决召回。</li>
+<li><strong>优化顺序</strong>：先 baseline → 先解决「能不能找到」→ 单变量 → 按成本收益排优先级（混合检索性价比第一）。</li>
+<li><strong>诊断三步法</strong>：查 top-K 分流 → Recall@K 量化 → 手动喂正确 chunk 验证生成侧；Recall@5 &lt; 70% 优先修检索。</li>
+<li><strong>评估核心数字</strong>：Recall@5 &lt; 70% 有问题；综合采用率 = (复制 + 点赞×2 − 点踩×2)/总数；评估 Token 为原问答 4-8 倍；分级评估 5%/20%/75%。</li>
+<li><strong>代码检索</strong>：检索单位 ≠ 返回单位；先过滤（版本/ACL）后召回；先 Child 排序再父级扩展；越权召回率必须为 0。</li>
+<li><strong>Agentic RAG</strong>：解决「该不该查、查几次、查什么、不够怎么办」；单 Agent + 工具 + 状态机 + 证据检查已经是；先跑稳单 Agent；基础召回差别套 Agent。</li>
+</ol>
+<h1 id="附录-b-复习建议" class="chapter">附录 B · 复习建议</h1>
+<ul>
+<li><strong>第 1 遍（通读建框架）</strong>：按章节顺序读，重点记住每章「一句话定位」和 ⭐ 必背表格；配合思维导图 HTML 对照层级记忆。</li>
+<li><strong>第 2 遍（按面试线自测）</strong>：遮住答案，依次回答——完整链路两段式、Chunk 怎么切、Embedding vs Rerank 区别、为什么不用 MySQL、优化怎么排序、答不准怎么排查、评估用什么指标、高频八问。</li>
+<li><strong>第 3 遍（数字与易错点）</strong>：背附录 A 的 12 条速查；特别核对易错点——换 Embedding 必须重建索引、RAG 不能根治幻觉、FAISS 不是数据库、Context Recall 低其他指标再高也没用。</li>
+<li><strong>模拟表达</strong>：用第 11 章的五步法和万能句式，对自己的项目做一次完整口头复述；每个工具名后面都补上「解决什么问题、为什么适合」。</li>
+</ul>
+  </main>
+</div>
+<script>
+const links = [...document.querySelectorAll('.toc-list a')];
+const targets = links.map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+function setActive(id) {
+  links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
+}
+const io = new IntersectionObserver(entries => {
+  const vis = entries.filter(e => e.isIntersecting).sort((a,b) => a.boundingClientRect.top - b.boundingClientRect.top);
+  if (vis.length) setActive(vis[0].target.id);
+}, { rootMargin: '-70px 0px -75% 0px', threshold: 0 });
+targets.forEach(t => io.observe(t));
+document.getElementById('printBtn').addEventListener('click', () => window.print());
+const mb = document.getElementById('menuBtn');
+if (mb) mb.addEventListener('click', () => document.getElementById('toc').classList.toggle('collapsed'));
+</script>
+</body>
+</html>
